@@ -1,0 +1,134 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  
+  .btn-master, .login-user .right .sign-in .form-group .btn-signin {
+    padding: 5px 15px;
+    border-radius: 8px;
+    border: 0;
+    font-size: 14px;
+  }
+  
+  .login-user .left {
+    background-image: url(/assets/img/bg-login.svg);
+    width: 50%;
+    min-height: 900px;
+    float: left;
+  }
+  .login-user .left .logo {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    display: flex;
+    flex-direction: row;
+  }
+  .login-user .left .logo h2 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 0 20px;
+    display: flex;
+    align-items: center;
+  }
+  .login-user .left .logo img {
+    height: 40px;
+  }
+  .login-user .left .text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 247px;
+  }
+  .login-user .left .text h1 {
+    font-size: 36px;
+    font-weight: 700;
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 90px;
+  }
+  .login-user .left .text img {
+    height: 335px;
+  }
+  .login-user .right {
+    width: 50%;
+    float: right;
+    padding: 120px;
+  }
+  .login-user .right .logo {
+    width: 60px;
+    margin-bottom: 30px;
+  }
+  .login-user .right .title-welcome {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 70px;
+  }
+  .login-user .right .title-signin {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 50px;
+  }
+  .login-user .right .sign-in .form-group label {
+    font-size: 14px;
+    margin-bottom: 4px;
+    color: #4C4A55;
+  }
+  .login-user .right .sign-in .form-group .form-control {
+    font-size: 14px;
+    border: 1px solid #E9E8EA;
+    border-radius: 4px;
+    height: 40px;
+    padding: 0 15px;
+    color: #000000;
+  }
+  .login-user .right .sign-in .form-group .form-control:focus {
+    border: 1px solid #1438AE;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }
+  .login-user .right .sign-in .form-group .form-control:focus-within {
+    box-shadow: none !important;
+  }
+  .login-user .right .sign-in .form-group .form-control::-moz-placeholder {
+    color: #8F8E95;
+    font-size: 14px;
+  }
+  .login-user .right .sign-in .form-group .form-control:-ms-input-placeholder {
+    color: #8F8E95;
+    font-size: 14px;
+  }
+  .login-user .right .sign-in .form-group .form-control::placeholder {
+    color: #8F8E95;
+    font-size: 14px;
+  }
+  .login-user .right .sign-in .form-group a {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1438AE;
+    text-decoration: none;
+  }
+  .login-user .right .sign-in .form-group a:hover {
+    color: #1F50EF;
+  }
+  .login-user .right .sign-in .form-group .btn-signin {
+    background-color: #1438AE;
+    color: #ffffff;
+    border: 0;
+    border-radius: 8px;
+    font-size: 14px;
+    height: 40px;
+    width: 100%;
+    padding: 0px 15px;
+  }
+  .login-user .right .sign-in .form-group .btn-signin:hover {
+    background-color: #1F50EF;
+  }
+  .login-user .right .sign-in .form-group .btn-signin:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  }/*# sourceMappingURL=login.css.map */
