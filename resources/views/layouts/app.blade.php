@@ -58,11 +58,11 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
         <script>
-            // $.ajaxSetup({
-            //     headers: {
-            //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            //     }
-            // });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
             // function preview(target, image) {
             //     $(target)

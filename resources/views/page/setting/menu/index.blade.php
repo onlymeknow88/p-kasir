@@ -33,6 +33,34 @@
         let modalMenu = '#modalMenu';
 
         $(function() {
+
+            $('.kategori-item').on('click', function() {
+                var $this = $(this);
+                var id_kategori = $this.attr('data-kategori-id');
+
+                var $list_menu = $('#list_menu');
+
+                $list_menu.empty();
+
+                $.get('/aplikasi/menu/kategori/' + id_kategori, function(data) {
+                    // $btn.removeClass('processing');
+                    console.log(data)
+                    if (data) {
+                        $('#list_menu').html(data);
+                    } else {
+                        $('#list_menu').html(
+                            '<div class="alert alert-danger">Data tidak ditemukan</div>');
+                    }
+
+                    $('#list_menu').wdiMenuEditor('customInit');
+                })
+            })
+
+
+
+            // $.post(`{{ url('aplikasi/menu') }}/${id}`, function(response) {
+            // });
+
             $('#form').on('keyup keypress', function(e) {
                 var keyCode = e.keyCode || e.which;
                 if (keyCode === 13) {
@@ -41,16 +69,38 @@
                 }
             });
 
-            $('#nestable').nestable({
-                group: 1
+            $('#list_menu').wdiMenuEditor({
+                expandBtnHTML: '<button data-action="expand" class="fa fa-plus" type="button">Expand</button>',
+                collapseBtnHTML: '<button data-action="collapse" class="fa fa-minus" type="button">Collapse</button>',
+                editBtnCallback: function($list) {
+                    // console.log($list.data('id'))
+                    editFormMenu('Edit', $list.data('id'))
+                },
             });
 
-            $('#module_id').select2({
+            $('#parent_id').select2({
                 theme: "bootstrap-5",
                 placeholder: $(this).data('placeholder'),
                 dropdownParent: $("#modalMenu"),
-                minimumInputLength: 2,
+                // minimumInputLength: 2,
                 allowClear: true,
+                ajax: {
+                    url: "/aplikasi/menu/get-pMenu",
+                    type: "post",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // search term
+                        };
+                    },
+                    processResults: function(response) {
+                        return {
+                            results: response
+                        };
+                    },
+                    cache: true
+                }
             });
 
 
@@ -144,46 +194,81 @@
                 });
         }
 
-        function deleteData(url) {
-            Swal.fire({
-                title: "Delete?",
-                text: "Apakah anda yakin?",
-                type: "warning",
-                showCancelButton: !0,
-                confirmButtonText: "Yes",
-                cancelButtonText: "No",
-                reverseButtons: !0,
-            }).then(
-                function(e) {
-                    if (e.value === true) {
-                        $.post(url, {
-                                _method: "delete",
-                                // '_token': `{{ csrf_token() }}`
-                            })
-                            .done((response) => {
-                                console.log(response);
-                                if (response.meta.message == "File Deleted") {
-                                    window.location.href = location.pathname;
-                                }
-                                table.ajax.reload();
-                            })
-                            .fail((errors) => {
-                                Swal.fire(
-                                    "Something went wrong.",
-                                    "You clicked the button!",
-                                    "error"
-                                );
-                                return;
-                            });
+        function editFormMenu(type = '', id = '') {
+            var url = '{{ route('aplikasi.menu.update', ':id') }}';
+            url = url.replace(':id', id);
+            $.get('/aplikasi/menu/' + id + '/s-menu')
+                .done(response => {
+                    $(modalMenu).modal('show');
+                    $(`${modalMenu} .modal-title`).text(type);
+                    $(`${modalMenu} form`).attr('action', url);
+                    $(`${modalMenu} [name=_method]`).val('put');
+
+                    var options = new Option(response.data.parent == null ? 'Tidak ada parent menu' : response.data[
+                            'parent'].nama_menu,
+                        response.data.parent == null ? 'Tidak ada parent menu' : response.data['parent'].id, true,
+                        true);
+                    $('#parent_id').append(options).change();
+
+                    var option = new Option(response.data.class, response.data.class, true, true);
+                    $('#icon_class').append(option).change();
+
+                    var aktif = $("input[name=aktif");
+                    if (response.data.aktif == 'Y') {
+                        aktif.attr("checked", 'checked');
                     } else {
-                        e.dismiss;
+                        aktif.removeAttr('checked','checked');
                     }
-                },
-                function(dismiss) {
-                    return false;
-                }
-            );
+
+                    resetForm(`${modalMenu} form`);
+                    loopForm(response.data);
+                })
+                .fail(errors => {
+                    alert('Tidak dapat menampilkan data');
+                    return;
+                });
         }
+
+        // function deleteData(url) {
+        //     Swal.fire({
+        //         title: "Delete?",
+        //         text: "Apakah anda yakin?",
+        //         type: "warning",
+        //         showCancelButton: !0,
+        //         confirmButtonText: "Yes",
+        //         cancelButtonText: "No",
+        //         reverseButtons: !0,
+        //     }).then(
+        //         function(e) {
+        //             if (e.value === true) {
+        //                 $.post(url, {
+        //                         _method: "delete",
+        //                         // '_token': `{{ csrf_token() }}`
+        //                     })
+        //                     .done((response) => {
+        //                         console.log(response);
+        //                         if (response.meta.message == "File Deleted") {
+        //                             window.location.href = location.pathname;
+        //                         }
+        //                         table.ajax.reload();
+        //                     })
+        //                     .fail((errors) => {
+        //                         Swal.fire(
+        //                             "Something went wrong.",
+        //                             "You clicked the button!",
+        //                             "error"
+        //                         );
+        //                         return;
+        //                     });
+        //             } else {
+        //                 e.dismiss;
+        //             }
+        //         },
+        //         function(dismiss) {
+        //             return false;
+        //         }
+        //     );
+        // }
 
         function submitForm(originalForm) {
             $.post({
@@ -224,7 +309,9 @@
         function resetForm(selector) {
             $(selector)[0].reset();
 
-            $('.select2').trigger('change');
+            $('#aktif').removeAttr('checked','checked');
+
+            $('#parent_id').val('').trigger('change');
             $('.form-control, .custom-select, [type=radio], [type=checkbox], [type=file], .select2, .note-edito')
                 .removeClass('is-invalid');
             $('.invalid-feedback').remove();
@@ -306,7 +393,7 @@
                 <div class="col-auto d-flex flex-row">
                     <div class="col-md-5 col-sm-4">
                         <button class="btn btn-primary d-flex align-items-center" title="Add" href="#"
-                            onclick="addFormKategori('{{ route('menuKategori.store') }}')">
+                            onclick="addFormKategori('{{ route('aplikasi.menuKategori.store') }}')">
                             {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
                             <i class="fa fa-plus me-2"></i>
                             Tambah Kategori
@@ -314,10 +401,11 @@
                         <div class="horizontal-line my-4"></div>
                         <ul class="list-group">
                             @foreach ($menuKategori as $item)
-                                <li class="list-group-item kategori-item">{{ $item->nama_kategori }}
+                                <li class="list-group-item kategori-item" data-kategori-id="{{ $item->id }}">
+                                    {{ $item->nama_kategori }}
                                     <div class="toolbox">
                                         <a href="#"
-                                            onclick="editFormKategori('{{ route('menuKategori.show', $item->id) }}')"><i
+                                            onclick="editFormKategori('{{ route('aplikasi.menuKategori.show', $item->id) }}')"><i
                                                 class="fas fa-pen mx-2 text-green"></i></a>
                                         <a href="#" onclick="deleteKategori()"><i
                                                 class="fas fa-times mx-2 text-red"></i></a>
@@ -335,84 +423,16 @@
                             Tambah Menu
                         </button>
                         <div class="horizontal-line my-4"></div>
-                        <div class="dd" id="nestable">
-                            <ol class="dd-list">
-                                <li class="dd-item" data-id="2">
-                                    <div class="dd-handle">
-                                        <div class="d-flex justify-content-between">
-                                            <div class="dd-title">
-                                                <i class="far fa-sun me-2"></i>
-                                                <span>Aplikasi</span>
-                                            </div>
-                                            <div class="toolbox">
-                                                <a href="#" onclick="editFormKategori('')"><i
-                                                        class="fas fa-pen mx-1 text-green"></i></a>
-                                                <a href="#" onclick="deleteKategori()"><i
-                                                        class="fas fa-times mx-1 text-red"></i></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ol class="dd-list">
-                                        <li class="dd-item" data-id="3">
-                                            <div class="dd-handle">
-                                                <div class="d-flex justify-content-between">
-                                                    <div class="dd-title">
-                                                        <i class="fas fa-clone me-2"></i>
-                                                        <span>Menu</span>
-                                                    </div>
-                                                    <div class="toolbox">
-                                                        <a href="#" onclick="editFormKategori('')"><i
-                                                                class="fas fa-pen mx-1 text-green"></i></a>
-                                                        <a href="#" onclick="deleteKategori()"><i
-                                                                class="fas fa-times mx-1 text-red"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="dd-item" data-id="5">
-                                            <div class="dd-handle">
-                                                <div class="d-flex justify-content-between">
-                                                    <div class="dd-title">
-                                                        <i class="fas fa-cogs me-2"></i>
-                                                        <span>Setting</span>
-                                                    </div>
-                                                    <div class="toolbox">
-                                                        <a href="#" onclick="editFormKategori('')"><i
-                                                                class="fas fa-pen mx-1 text-green"></i></a>
-                                                        <a href="#" onclick="deleteKategori()"><i
-                                                                class="fas fa-times mx-1 text-red"></i></a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <ol class="dd-list">
-                                                <li class="dd-item" data-id="6">
-                                                    <div class="dd-handle">
-                                                        <div class="d-flex justify-content-between">
-                                                            <div class="dd-title">
-                                                                <i class="fas fa-sun me-2"></i>
-                                                                <span>Setting Aplikasi</span>
-                                                            </div>
-                                                            <div class="toolbox">
-                                                                <a href="#" onclick="editFormKategori('')"><i
-                                                                        class="far fa-pen mx-1 text-green"></i></a>
-                                                                <a href="#" onclick="deleteKategori()"><i
-                                                                        class="fas fa-times mx-1 text-red"></i></a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            </ol>
-                                        </li>
-                                    </ol>
-                                </li>
-                            </ol>
+                        <div class="dd" id="list_menu">
+                            {!! $menu !!}
                         </div>
                     </div>
                 </div>
-
-
             </div>
+
+
         </div>
+    </div>
     </div>
     @includeIf('page.setting.menu.form_kategori')
     @includeIf('page.setting.menu.form_menu')

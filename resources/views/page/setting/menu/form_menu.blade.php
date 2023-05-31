@@ -21,7 +21,7 @@
                         <label for="url"
                             class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">URL</label>
                         <div class="col-sm-8">
-                            <textarea type="text" name="url" id="url" class="form-control"></textarea>
+                            <input type="text" name="url" id="url" class="form-control">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -30,18 +30,18 @@
                         <div class="col-sm-8">
                             <div class="form-check-sm form-switch">
                                 <input class="form-check-input" name="aktif" id="aktif" type="checkbox"
-                                    id="flexSwitchCheckDefault">
-                                {{-- <label class="form-check-label" for="flexSwitchCheckDefault">Default switch checkbox input</label> --}}
+                                    id="switch-aktif">
+                                <label class="form-check-label" for="switch-aktif"></label>
                             </div>
                             <span class="form-text-12 fw-light text-muted"><em>Jika tidak aktif, semua children tidak
                                     akan dimunculkan</em></span>
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <label for="module_id"
-                            class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">Module</label>
+                        <label for="parent_id"
+                            class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">Parent</label>
                         <div class="col-sm-8">
-                            <select name="module_id" id="module_id" class="form-select"
+                            <select name="parent_id" id="parent_id" class="form-select"
                                 data-placeholder="Choose one thing"></select>
                             <span class="form-text-12 fw-light text-muted"><em>Untuk highlight menu dan
                                     parent</em></span>

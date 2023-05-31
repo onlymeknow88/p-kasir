@@ -16,10 +16,29 @@ class MenuController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $menuKategori = MenuKategori::all();
-        return view('page.setting.menu.index', compact('menuKategori'));
+
+
+        // //menu
+        $menus = Menu::where('menu_kategori_id', 1)->orderby('urut', 'asc')->get();
+        $menu = new Menu;
+        $menu = $menu->getHTML($menus);
+        // dd($menu);
+        return view('page.setting.menu.index', compact('menuKategori','menu'));
+    }
+
+    public function buildMenu(Request $request)
+    {
+        $kategori_id = empty($request->id) ? '' : $request->id;
+
+        $menus = Menu::where('menu_kategori_id', $kategori_id)->orderby('urut', 'asc')->get();
+        $menu = new Menu;
+        $menu = $menu->buildMenu($menus);
+
+        return response()->json($menu);
+
     }
 
     /**
@@ -68,9 +87,9 @@ class MenuController extends Controller
         $menu->nama_menu = $request->input('nama_menu');
         $menu->url = $request->input('url');
 
-        if(empty($request->input('aktif'))){
+        if (empty($request->input('aktif'))) {
             $aktif = 'N';
-        }else {
+        } else {
             $aktif = 'Y';
         }
 
@@ -79,7 +98,7 @@ class MenuController extends Controller
         $menu->module_id = $request->input('module_id');
         $menu->class = $request->input('icon_class');
 
-        if($request->input('menu_kategori_id') == '') {
+        if ($request->input('menu_kategori_id') == '') {
             $menu_kategori_id = NULL;
         } else {
             $menu_kategori_id = $request->input('menu_kategori_id');
@@ -100,7 +119,14 @@ class MenuController extends Controller
      */
     public function show($id)
     {
-        //
+        $menuKategori = MenuKategori::find($id);
+        return response()->json(['data' => $menuKategori]);
+    }
+
+    public function showMenu($id)
+    {
+        $menu = Menu::with('parent')->find($id);
+        return response()->json(['data' => $menu]);
     }
 
     /**
@@ -135,5 +161,25 @@ class MenuController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function getParent(Request $request)
+    {
+        $search = $request->search;
+
+        if($search == ''){
+            $menus = Menu::orderby('nama_menu','asc')->select('id','nama_menu')->limit(5)->get();
+         }else{
+            $menus = Menu::orderby('nama_menu','asc')->select('id','nama_menu')->where('nama_menu', 'like', '%' .$search . '%')->limit(5)->get();
+         }
+
+         $response = array();
+         foreach($menus as $menu){
+            $response[] = array(
+                 "id"=>$menu->id,
+                 "text"=>$menu->nama_menu
+            );
+         }
+         return response()->json($response);
     }
 }

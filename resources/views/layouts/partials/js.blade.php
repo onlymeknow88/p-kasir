@@ -6,7 +6,8 @@
 <script src="{{ asset('assets/js/select2.full.min.js') }}"></script>
 <script src="{{ asset('assets/js/sweetalert2.js') }}"></script>
 <script src="{{ asset('assets/js/flatpickr.js') }}"></script>
-<script src="{{ asset('assets/js/jquery.nestable.js') }}"></script>
+<script src="{{ asset('assets/js/jquery-nestable/jquery.nestable.js') }}"></script>
+<script src="{{ asset('assets/js/jquery-nestable/jquery.wdi-menueditor.js') }}"></script>
 
 <!-- Resources -->
 <script src="{{ asset('assets/js/highcharts.js') }}"></script>

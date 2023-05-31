@@ -1,3 +1,11 @@
+.pull-right {
+  float: right !important;
+}
+
+.br-none {
+  border-radius: 0px !important;
+}
+
 /* Margin */
 .mt-10 {
   margin-top: 10px;
@@ -194,6 +202,10 @@
 }
 
 /* text size */
+.form-text-22 {
+  font-size: 22px !important;
+}
+
 .form-text-20 {
   font-size: 20px !important;
 }

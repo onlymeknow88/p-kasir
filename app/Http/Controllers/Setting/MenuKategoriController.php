@@ -48,9 +48,9 @@ class MenuKategoriController extends Controller
             ],
             [
                 'nama_kategori.required' => 'Silahkan isi nama kategori',
-                'deskripsi.required' => 'Silahkan isi nama kategori',
-                'aktif.required' => 'Silahkan isi nama kategori',
-                'show_title.required' => 'Silahkan isi nama kategori',
+                'deskripsi.required' => 'Silahkan isi deskripsi',
+                'aktif.required' => 'Silahkan isi pilih',
+                'show_title.required' => 'Silahkan pilih',
             ]
         );
 

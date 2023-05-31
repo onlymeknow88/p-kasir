@@ -15,11 +15,9 @@ class CreateRoleTable extends Migration
     {
         Schema::create('role', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_role');
-            $table->string('judul_role');
-            $table->string('keterangan');
-            $table->unsignedBigInteger('module_id');
-            $table->foreign('module_id')->references('id')->on('module')->onDelete('cascade');
+            $table->string('nama_role')->nullable();
+            $table->string('judul_role')->nullable();
+            $table->string('keterangan')->nullable();
             $table->timestamps();
         });
     }

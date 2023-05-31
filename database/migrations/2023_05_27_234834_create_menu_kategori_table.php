@@ -15,8 +15,8 @@ class CreateMenuKategoriTable extends Migration
     {
         Schema::create('menu_kategori', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kategori');
-            $table->string('deskripsi');
+            $table->string('nama_kategori')->nullable();
+            $table->string('deskripsi')->nullable();
             $table->enum('aktif',['Y','N'])->default('N');
             $table->enum('show_title',['Y','N'])->default('N');
             $table->integer('urut')->default('0');

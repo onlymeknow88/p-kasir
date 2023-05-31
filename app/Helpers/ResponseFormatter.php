@@ -11,6 +11,7 @@ use App\Models\ActionLog;
 use App\Models\Component;
 use LdapRecord\Connection;
 use App\Models\LicenseSeat;
+use App\Models\MenuKategori;
 use Illuminate\Support\Str;
 use Laravolt\Avatar\Avatar;
 use Illuminate\Support\Facades\DB;
@@ -111,41 +112,67 @@ class ResponseFormatter
         return $initials;
     }
 
-    public static function format_uang ($angka) {
+    public static function format_uang($angka)
+    {
         return number_format($angka, 0, ',', '.');
     }
 
-    public static function menu($id)
+    public static function menuKategori()
     {
-        $menu = DB::table('menus')
-            ->join('permissions', 'permissions.menu_id', '=', 'menus.id')
-            ->select('permissions.*', 'menus.nama_menu', 'menus.level_menu', 'menus.no_urut', 'menus.link')
-            ->where('permissions.role_id', $id)
-            // ->where('menu.aktif','N')
-            // ->orderBy('menus.no_urut')
+        $menuKategori =  DB::table('menu_kategori')
+// ->where('permission.role_id', Auth::user()->role_id)
+            ->where('menu_kategori.aktif', 'Y')
+            ->orderBy('urut', 'ASC')
             ->get();
+
+
+        return $menuKategori;
+    }
+
+    public static function list_menu(){
+        $menu = DB::table('menu')
+        ->join('permission','permission.menu_id','=','menu.id')
+        ->select('permission.*','menu.nama_menu','menu.urut','menu.link')
+        // ->where('permission.role_id',$id)
+        // ->where('menu.aktif','N')
+        // ->orderBy('menu.no_urut')
+        ->get();
 
         return $menu;
     }
 
+    // public static function menu($id){
+    //     $menu = DB::table('menu')
+    //     ->join('permission','permission.menu_id','=','menu.id')
+    //     ->select('permission.*','menu.nama_menu','menu.urut','menu.link')
+    //     // ->where('permission.role_id',$id)
+    //     // ->where('menu.aktif','N')
+    //     // ->orderBy('menu.no_urut')
+    //     ->get();
+
+    //     return $menu;
+    // }
+
     public static function main_menu()
     {
-        $main_menu = DB::table('permissions')->join('menus', 'menus.id', '=', 'permissions.menu_id')
-            ->select('menus.*', 'permissions.access', 'permissions.create', 'permissions.edit', 'permissions.delete')
-            ->where('permissions.role_id', Auth::user()->role_id)
-            ->where('permissions.access', 'Y')
-            ->where('menus.level_menu', 'main_menu')->orderBy('menus.no_urut', 'ASC')->get();
+        $main_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
+            ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
+            // ->where('permission.role_id', Auth::user()->role_id)
+            ->where('menu.aktif', 'Y')
+            ->where('menu.parent_id','=', null)
+            ->orderBy('menu.urut', 'ASC')->get();
 
         return $main_menu;
     }
 
     public static function sub_menu()
     {
-        $sub_menu = DB::table('permissions')->join('menus', 'menus.id', '=', 'permissions.menu_id')
-            ->select('menus.*', 'permissions.access', 'permissions.create', 'permissions.edit', 'permissions.delete')
-            ->where('permissions.role_id', Auth::user()->role_id)
-            ->where('permissions.access', 'Y')
-            ->where('menus.level_menu', 'sub_menu')->orderBy('menus.no_urut', 'ASC')->get();
+        $sub_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
+            ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
+            // ->where('permission.role_id', Auth::user()->role_id)
+            ->where('menu.aktif', 'Y')
+            ->where('menu.parent_id','!=', null )
+            ->orderBy('menu.urut', 'ASC')->get();
 
         return $sub_menu;
     }
@@ -182,7 +209,8 @@ class ResponseFormatter
         return sprintf("%0" . $threshold . "s", $value);
     }
 
-    public static function terbilang ($angka) {
+    public static function terbilang($angka)
+    {
         $angka = abs($angka);
         $baca  = array('', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas');
         $terbilang = '';
@@ -190,15 +218,15 @@ class ResponseFormatter
         if ($angka < 12) { // 0 - 11
             $terbilang = ' ' . $baca[$angka];
         } elseif ($angka < 20) { // 12 - 19
-            $terbilang = ResponseFormatter::terbilang($angka -10) . ' belas';
+            $terbilang = ResponseFormatter::terbilang($angka - 10) . ' belas';
         } elseif ($angka < 100) { // 20 - 99
             $terbilang = ResponseFormatter::terbilang($angka / 10) . ' puluh' . ResponseFormatter::terbilang($angka % 10);
         } elseif ($angka < 200) { // 100 - 199
-            $terbilang = ' seratus' . ResponseFormatter::terbilang($angka -100);
+            $terbilang = ' seratus' . ResponseFormatter::terbilang($angka - 100);
         } elseif ($angka < 1000) { // 200 - 999
             $terbilang = ResponseFormatter::terbilang($angka / 100) . ' ratus' . ResponseFormatter::terbilang($angka % 100);
         } elseif ($angka < 2000) { // 1.000 - 1.999
-            $terbilang = ' seribu' . ResponseFormatter::terbilang($angka -1000);
+            $terbilang = ' seribu' . ResponseFormatter::terbilang($angka - 1000);
         } elseif ($angka < 1000000) { // 2.000 - 999.999
             $terbilang = ResponseFormatter::terbilang($angka / 1000) . ' ribu' . ResponseFormatter::terbilang($angka % 1000);
         } elseif ($angka < 1000000000) { // 1000000 - 999.999.990
@@ -207,7 +235,4 @@ class ResponseFormatter
 
         return $terbilang;
     }
-
-
-
 }
