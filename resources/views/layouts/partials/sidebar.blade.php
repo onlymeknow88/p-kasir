@@ -16,12 +16,25 @@
                                              <span class="form-text-12 fw-light text-gray">{{ $mk->deskripsi }}</span>
                                          </div>
                                          <div class="horizontal-line my-2"></div>
-                                         @foreach (Helper::main_menu() as $mm)
+                                     @endif
+                                     {!! Helper::build_menu(Route::current()->getName(), $mk->id) !!}
+                                 @endforeach
+                                 {{-- @foreach (Helper::menuKategori() as $mk)
+                                     @if ($mk->show_title == 'Y')
+                                         <div class="d-flex flex-column py-2">
+                                             <span
+                                                 class="form-text-13 fw-bold text-gray">{{ $mk->nama_kategori }}</span>
+                                             <span class="form-text-12 fw-light text-gray">{{ $mk->deskripsi }}</span>
+                                         </div>
+                                         <div class="horizontal-line my-2"></div>
+                                     @endif
+                                     {{ Helper::build_menu(Route::current()->getName(),Helper::main_menu()) }} --}}
+                                 {{-- @foreach (Helper::main_menu() as $mm)
                                              @if ($mm->link == '#' && $mm->menu_kategori_id == $mk->id)
                                                  <a href="{{ $mm->link . '' . $mm->url }}"
                                                      data-bs-toggle="collapse" class="item-link {{ Request::is($mm->url.'/*')  ? 'active' : '' }}" aria-expanded="{{ Request::is($mm->url.'/*') ? 'true' : 'false' }}">
                                                      <div class="item-icon">
-                                                         <i class="far {{ $mm->class }} text-black form-text-22"></i>
+                                                         <i class="far {{ $mm->class }} text-black form-text-18"></i>
                                                      </div>
                                                      <div class="item-title">
                                                          {{ $mm->nama_menu }}
@@ -83,9 +96,8 @@
                                                      </div>
                                                  </a>
                                              @endif
-                                         @endforeach
-                                     @endif
-                                 @endforeach
+                                         @endforeach --}}
+                                 {{-- @endforeach --}}
                              </div>
                          </div>
                      </div>

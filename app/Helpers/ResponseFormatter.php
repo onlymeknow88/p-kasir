@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\Menu;
 use App\Models\Asset;
 use App\Models\Company;
 use App\Models\General;
@@ -11,9 +12,9 @@ use App\Models\ActionLog;
 use App\Models\Component;
 use LdapRecord\Connection;
 use App\Models\LicenseSeat;
-use App\Models\MenuKategori;
 use Illuminate\Support\Str;
 use Laravolt\Avatar\Avatar;
+use App\Models\MenuKategori;
 use Illuminate\Support\Facades\DB;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -120,7 +121,7 @@ class ResponseFormatter
     public static function menuKategori()
     {
         $menuKategori =  DB::table('menu_kategori')
-// ->where('permission.role_id', Auth::user()->role_id)
+            // ->where('permission.role_id', Auth::user()->role_id)
             ->where('menu_kategori.aktif', 'Y')
             ->orderBy('urut', 'ASC')
             ->get();
@@ -129,14 +130,15 @@ class ResponseFormatter
         return $menuKategori;
     }
 
-    public static function list_menu(){
+    public static function list_menu()
+    {
         $menu = DB::table('menu')
-        ->join('permission','permission.menu_id','=','menu.id')
-        ->select('permission.*','menu.nama_menu','menu.urut','menu.link')
-        // ->where('permission.role_id',$id)
-        // ->where('menu.aktif','N')
-        // ->orderBy('menu.no_urut')
-        ->get();
+            ->join('permission', 'permission.menu_id', '=', 'menu.id')
+            ->select('permission.*', 'menu.nama_menu', 'menu.urut', 'menu.link')
+            // ->where('permission.role_id',$id)
+            // ->where('menu.aktif','N')
+            ->orderBy('menu.urut')
+            ->get();
 
         return $menu;
     }
@@ -159,7 +161,7 @@ class ResponseFormatter
             ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
             // ->where('permission.role_id', Auth::user()->role_id)
             ->where('menu.aktif', 'Y')
-            ->where('menu.parent_id','=', null)
+            // ->where('menu.parent_id', '=', null)
             ->orderBy('menu.urut', 'ASC')->get();
 
         return $main_menu;
@@ -171,7 +173,7 @@ class ResponseFormatter
             ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
             // ->where('permission.role_id', Auth::user()->role_id)
             ->where('menu.aktif', 'Y')
-            ->where('menu.parent_id','!=', null )
+            ->where('menu.parent_id', '!=', null)
             ->orderBy('menu.urut', 'ASC')->get();
 
         return $sub_menu;
@@ -234,5 +236,110 @@ class ResponseFormatter
         }
 
         return $terbilang;
+    }
+
+    public static function build_menu($currentModel, $menuKategoriId, $parentid = 0)
+    {
+        // $result = null;
+        $result = "\n" . '<div class="menu-item accordion" id="menu">' . "\r\n";
+        $arr = Menu::where('aktif', 'Y')->get();
+        foreach ($arr as $key => $val) {
+            $children = Menu::where('parent_id', $val->id)->where('aktif','Y')->get();
+
+            // Menu icon
+            $menu_icon = '';
+            if ($val->class) {
+                $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
+            }
+            $url = $val->url;
+            if ($val->link == '#') {
+                $link = $val->link;
+                $collapse = 'data-bs-toggle="collapse" aria-expanded="false"';
+                $buildsubMenu = ResponseFormatter::build_submenu($currentModel, $children, $val->id, $val->url, 'menu');
+            } else {
+                $link = '';
+                $collapse = '';
+                $buildsubMenu = '';
+            }
+            if ($val->parent_id == $parentid && $val->menu_kategori_id == $menuKategoriId) {
+                // $result .= '<li class="nav-item">
+                //         <a href="' . $link . '' . $url . '" class="nav-link item-link" ' . $collapse . '>' .
+                //     '<div class="item-icon">
+                //             ' . $menu_icon . '
+                //         </div>
+                //         <div class="item-title">
+                //             ' . $val->nama_menu . '
+                //         </div></a>';
+                //         $result .= $buildsubMenu;
+                //         $result .= "</li>\n";
+
+                $result .= '<div class="accordion-item">
+                            <a href="' . $link . '' . $url . '" class="item-link" ' . $collapse . '>
+                                <div class="item-icon">
+                                    ' . $menu_icon . '
+                                </div>
+                                <div class="item-title">
+                                    ' . $val->nama_menu . '
+                                </div>
+                            </a>
+                        </div>';
+                $result .= $buildsubMenu;
+            }
+        }
+
+        $result .= "</div>\n";
+        return $result;
+    }
+
+    public static function build_submenu($currentModel, $arr, $parentid = 0, $urlParent, $submenu = false)
+    {
+        $result = null;
+        foreach ($arr as $key => $val) {
+
+            // Menu icon
+            $menu_icon = '';
+            if ($val->class) {
+                $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
+            }
+            if($urlParent != null) {
+                $parentUrl = route($urlParent.'.'.$val->url.'.index');;
+            }
+            if ($val->link == '#') {
+                $link = $val->link;
+                $url = $link.''.$val->url;
+                $collapse = 'data-bs-toggle="collapse" aria-expanded="false"';
+            } else {
+                $link = '';
+                $url = $parentUrl;
+                $collapse = '';
+            }
+
+            if ($val->parent_id == $parentid) {
+
+                // $result .= "<li class='w-100'>
+                //     <a href='{$link}{$url}' class='nav-link sub-item-link'>
+                //     <div class='item-icon'>
+                //     {$menu_icon}
+                //     </div>
+                //     <div class='item-title'>
+                //     {$val->nama_menu}
+                //     </div>
+                //     </a>
+                // </li>";
+
+                $result .= '<div class="menu-item" id="menu">
+                            <a href="' . $url . '" class="item-link" ' . $collapse . '>
+                                <div class="item-icon">
+                                    ' . $menu_icon . '
+                                </div>
+                                <div class="item-title">
+                                    ' . $val->nama_menu . '
+                                </div>
+                            </a>
+                        </div>';
+            }
+        }
+
+        return $result ? "\n<div class=\"accordion-collapse collapse\" id='{$urlParent}' data-bs-parent='#{$submenu}'>\n$result</div>\n" : null;
     }
 }

@@ -814,7 +814,6 @@ select {
                                 }
 
                                 .item-link {
-                                    // background-color: $egyptian_blue_70;
                                     box-sizing: border-box;
                                     display: flex;
                                     text-decoration: none;
@@ -824,74 +823,8 @@ select {
                                     align-items: center;
                                     padding: 0 22px;
                                     height: 40px;
-                                    width: inherit;
+                                    width: 100% !important;
                                     border-radius: 8px;
-
-                                    &.active {
-                                        background-color: $nero_black_5;
-
-                                        i {
-                                            color: $nero_white;
-                                        }
-
-                                        &:hover {
-                                            background-color: $nero_black_10;
-
-                                            .item-icon {
-                                                svg path {
-                                                    fill: $nero_white;
-                                                }
-                                            }
-
-                                            .item-title {
-                                                color: $nero_black_50;
-                                            }
-                                        }
-
-                                        .item-icon {
-                                            svg path {
-                                                fill: $nero_white;
-                                            }
-
-                                            i {
-                                                color: $nero_black_50;
-                                            }
-                                        }
-
-                                        .item-title {
-                                            font-weight: map-get($font-weights, bold);
-                                            color: $nero_black_50;
-                                        }
-                                    }
-
-                                    // &.nuxt-link-active {
-                                    //     background-color: $egyptian_blue_50;
-
-                                    //     &:hover {
-                                    //         background-color: $egyptian_blue_30;
-
-                                    //         .item-icon {
-                                    //             svg path {
-                                    //                 fill: $nero_white;
-                                    //             }
-                                    //         }
-
-                                    //         .item-title {
-                                    //             color: $nero_white;
-                                    //         }
-                                    //     }
-
-                                    //     .item-icon {
-                                    //         svg path {
-                                    //             fill: $nero_white;
-                                    //         }
-                                    //     }
-
-                                    //     .item-title {
-                                    //         font-weight: map-get($font-weights, bold);
-                                    //         color: $nero_white;
-                                    //     }
-                                    // }
 
                                     &[aria-expanded="true"] {
                                         // background-color: $nero_black_2;
@@ -938,6 +871,32 @@ select {
                                         }
                                     }
 
+                                    .item-icon {
+                                        width: 22px;
+                                        height: 22px;
+                                        margin-right: 30px;
+                                        display: flex;
+                                        align-items: center;
+
+                                        svg path {
+                                            fill: $nero_black_90;
+                                        }
+
+                                        i {
+                                            font-size: 18px !important;
+                                        }
+                                    }
+
+                                    .item-title {
+                                        overflow: hidden;
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                        font-size: 14px;
+                                        font-weight: map-get($font-weights, medium);
+                                        letter-spacing: normal;
+                                        color: $nero_black_90;
+                                    }
+
                                     &:hover {
                                         background-color: $nero_black_5;
 
@@ -952,360 +911,158 @@ select {
                                         }
                                     }
 
-                                    .item-icon {
-                                        width: 22px;
-                                        height: 22px;
-                                        margin-right: 30px;
-                                        display: flex;
-                                        align-items: center;
+                                    &.active {
+                                        background-color: $nero_black_5;
 
-                                        svg path {
-                                            fill: $nero_black_90;
+                                        i {
+                                            color: $nero_white;
                                         }
-                                    }
 
-                                    .item-title {
-                                        overflow: hidden;
-                                        white-space: nowrap;
-                                        text-overflow: ellipsis;
-                                        font-size: 14px;
-                                        font-weight: map-get($font-weights, medium);
-                                        letter-spacing: normal;
-                                        color: $nero_black_90;
-                                    }
-                                }
+                                        &:hover {
+                                            background-color: $nero_black_10;
 
-                                // .item-link {
-                                //     text-decoration: none;
-                                //     min-height: 40px;
-                                //     cursor: pointer;
-                                //     box-sizing: border-box;
-                                //     outline: 0;
-                                //     display: flex;
-                                //     flex-direction: row;
-                                //     align-items: center;
-                                //     padding: 0 22px;
-                                //     min-width: 0;
-                                //     height: 40;
-                                //     width: inherit;
-
-                                //     &.active {
-                                //         background-color: $nero_black_5;
-                                //         font-weight: map-get($font-weights, bold);
-
-                                //         .item-icon {
-                                //             svg path {
-                                //                 //   stroke: $egyptian_blue_50;
-                                //                 fill: $nero_black_90;
-                                //             }
-                                //         }
-
-                                //         .item-title {
-                                //             color: $nero_black_90;
-                                //         }
-
-                                //     }
-
-                                //     &.active::after {
-                                //         content: " ";
-                                //         border: 3px solid $egyptian_blue_50;
-                                //         border-radius: 999px;
-                                //         width: 0px;
-                                //         height: 30px;
-                                //         position: absolute;
-                                //         background-color: $egyptian_blue_70;
-                                //         right: -1px;
-                                //         transition: all 0.2s linear;
-                                //     }
-
-                                //     &:hover {
-                                //         background-color: $nero_black_5;
-
-                                //         .item-icon {
-                                //             svg path {
-                                //                 fill: $nero_black_90;
-                                //             }
-                                //         }
-
-                                //         .item-title {
-                                //             color: $nero_black_90;
-                                //         }
-                                //     }
-
-                                //     &[aria-expanded="true"] {
-                                //         background-color: $nero_black_2;
-
-                                //         .item-icon {
-                                //             svg path {
-                                //                 fill: $nero_black_90;
-                                //             }
-                                //         }
-
-                                //         .item-title {
-                                //             color: $nero_black_90;
-                                //             font-weight: map-get($font-weights, medium);
-                                //         }
-
-                                //         &::after {
-                                //             content: "";
-                                //             flex-shrink: 0;
-                                //             width: 1rem;
-                                //             height: 1rem;
-                                //             margin-left: auto;
-                                //             content: "";
-                                //             background-image: url(/assets/icon/arrow-right.svg);
-                                //             background-repeat: no-repeat;
-                                //             background-size: 1rem;
-                                //             transform: rotate(90deg);
-                                //             transition: transform 0.2s ease-in-out;
-                                //         }
-                                //     }
-
-                                //     &[aria-expanded="false"],
-                                //     &.collapsed {
-                                //         &::after {
-                                //             content: "";
-                                //             flex-shrink: 0;
-                                //             width: 1rem;
-                                //             height: 1rem;
-                                //             margin-left: auto;
-                                //             content: "";
-                                //             background-image: url(/assets/icon/arrow-right.svg);
-                                //             background-repeat: no-repeat;
-                                //             background-size: 1rem;
-                                //             transition: transform 0.2s ease-in-out;
-                                //         }
-                                //     }
-
-                                //     .item-icon {
-                                //         width: 22px;
-                                //         height: 22px;
-                                //         margin-right: 10px;
-                                //         display: flex;
-                                //         align-items: center;
-
-                                //         svg path {
-                                //             fill: $nero_black_30;
-                                //         }
-                                //     }
-
-                                //     .item-title {
-                                //         overflow: hidden;
-                                //         white-space: nowrap;
-                                //         text-overflow: ellipsis;
-                                //         font-size: 14px;
-                                //         font-weight: map-get($font-weights, normal);
-                                //         letter-spacing: normal;
-                                //         color: $nero_black_90;
-                                //     }
-                                // }
-
-                                .sidebar-dropdown-collapse {
-                                    background-color: $nero_white;
-
-                                    .sidebar-dropdown-content {
-                                        display: block;
-                                        position: relative;
-                                        width: 100%;
-                                        min-height: 40px;
-                                        box-sizing: border-box;
-
-                                        .sub-item-link {
-                                            box-sizing: border-box;
-                                            display: flex;
-                                            text-decoration: none;
-                                            min-height: 40px;
-                                            flex-direction: row;
-                                            min-width: 0;
-                                            align-items: center;
-                                            // margin-left: 60px;
-                                            padding: 0 22px;
-                                            height: 40px;
-                                            width: 100%;
-                                            border-radius: 8px;
-                                            cursor: pointer;
-
-                                            font-size: 14px;
-                                            color: $nero_black_90;
-
-                                            &:hover {
-                                                background-color: $nero_black_5;
-
-                                                .item-icon {
-                                                    svg path {
-                                                        fill: $nero_white;
-                                                    }
-                                                }
-
-                                                .item-title {
-                                                    color: $nero_black_70;
+                                            .item-icon {
+                                                svg path {
+                                                    fill: $nero_white;
                                                 }
                                             }
 
                                             .item-title {
-                                                overflow: hidden;
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                margin-left: 52px;
-                                                font-size: 14px;
-                                                font-weight: map-get($font-weights, medium);
-                                                letter-spacing: normal;
-                                                color: $nero_black_90;
+                                                color: $nero_black_50;
                                             }
-
-                                            // &::after {
-                                            //     content: " ";
-                                            //     border: 0.5px solid $nero_black_10;
-                                            //     // border-radius: 999px;
-                                            //     width: 0px;
-                                            //     height: 40px;
-                                            //     position: absolute;
-                                            //     // background-color: $nero_black_50;
-                                            //     left: 30px;
-                                            //     transition: all 0.2s linear;
-                                            // }
                                         }
 
-                                        .sub-item-links {
-                                            box-sizing: border-box;
-                                            display: flex;
-                                            text-decoration: none;
-                                            min-height: 40px;
-                                            flex-direction: row;
-                                            min-width: 0;
-                                            align-items: center;
-                                            // margin-left: px;
-                                            padding: 0 22px;
-                                            height: 40px;
-                                            width: 100%;
-                                            border-radius: 8px;
-                                            cursor: pointer;
-
-                                            font-size: 14px;
-                                            color: $nero_black_90;
-
-                                            &[aria-expanded="true"] {
-                                                // background-color: $nero_black_2;
-
-                                                .item-icon {
-                                                    svg path {
-                                                        fill: $nero_black_90;
-                                                    }
-                                                }
-
-                                                .item-title {
-                                                    color: $nero_black_90;
-                                                    font-weight: map-get($font-weights, bold);
-                                                }
-
-                                                &::after {
-                                                    content: "";
-                                                    flex-shrink: 0;
-                                                    width: 1rem;
-                                                    height: 1rem;
-                                                    margin-left: auto;
-                                                    content: "";
-                                                    background-image: url(/assets/icon/arrow-right.svg);
-                                                    background-repeat: no-repeat;
-                                                    background-size: 1rem;
-                                                    transform: rotate(90deg);
-                                                    transition: transform 0.2s ease-in-out;
-                                                }
+                                        .item-icon {
+                                            svg path {
+                                                fill: $nero_white;
                                             }
 
-                                            &[aria-expanded="false"],
-                                            &.collapsed {
-                                                &::after {
-                                                    content: "";
-                                                    flex-shrink: 0;
-                                                    width: 1rem;
-                                                    height: 1rem;
-                                                    margin-left: auto;
-                                                    content: "";
-                                                    background-image: url(/assets/icon/arrow-right.svg);
-                                                    background-repeat: no-repeat;
-                                                    background-size: 1rem;
-                                                    transition: transform 0.2s ease-in-out;
-                                                }
+                                            i {
+                                                color: $nero_black_50;
                                             }
+                                        }
 
-                                            .vertical-line {
-                                                width: 1px;
-                                                height: 40px;
-                                                margin: 0 12px;
-                                                background-color: $nero_black_30;
-                                                margin-right: 28px;
-                                            }
+                                        .item-title {
+                                            font-weight: map-get($font-weights, bold);
+                                            color: $nero_black_50;
+                                        }
+                                    }
+                                }
 
-                                            // &::after {
-                                            //     content: " ";
-                                            //     border: 0.5px solid $nero_black_10;
-                                            //     // border-radius: 999px;
-                                            //     width: 0px;
-                                            //     height: 40px;
-                                            //     position: absolute;
-                                            //     // background-color: $nero_black_50;
-                                            //     left: 30px;
-                                            //     transition: all 0.2s linear;
-                                            // }
+                                    .sub-item-link {
+                                        box-sizing: border-box;
+                                        display: flex;
+                                        text-decoration: none;
+                                        min-height: 40px;
+                                        flex-direction: row;
+                                        min-width: 0;
+                                        align-items: center;
+                                        padding: 0 22px;
+                                        height: 40px;
+                                        width: inherit;
+                                        border-radius: 8px;
+
+                                        &[aria-expanded="true"] {
+                                            // background-color: $nero_black_2;
 
                                             .item-icon {
-                                                width: 22px;
-                                                height: 22px;
-                                                margin-right: 30px;
-                                                display: flex;
-                                                align-items: center;
-
                                                 svg path {
                                                     fill: $nero_black_90;
                                                 }
                                             }
 
                                             .item-title {
-                                                overflow: hidden;
-                                                white-space: nowrap;
-                                                text-overflow: ellipsis;
-                                                font-size: 14px;
-                                                font-weight: map-get($font-weights, medium);
-                                                letter-spacing: normal;
                                                 color: $nero_black_90;
+                                                font-weight: map-get($font-weights, bold);
                                             }
 
-                                            &.active {
-                                                background-color: $egyptian_blue_50;
-                                                // color: $nero_white;
-                                                font-weight: map-get($font-weights, bold);
+                                            &::after {
+                                                content: "";
+                                                flex-shrink: 0;
+                                                width: 1rem;
+                                                height: 1rem;
+                                                margin-left: auto;
+                                                content: "";
+                                                background-image: url(/assets/icon/arrow-right.svg);
+                                                background-repeat: no-repeat;
+                                                background-size: 1rem;
+                                                transform: rotate(90deg);
+                                                transition: transform 0.2s ease-in-out;
+                                            }
+                                        }
 
-                                                .item-icon {
-                                                    svg path {
-                                                        fill: $nero_white;
-                                                    }
-                                                    i {
-                                                        color: $nero_white;
-                                                    }
+                                        &[aria-expanded="false"],
+                                        &.collapsed {
+                                            &::after {
+                                                content: "";
+                                                flex-shrink: 0;
+                                                width: 1rem;
+                                                height: 1rem;
+                                                margin-left: auto;
+                                                content: "";
+                                                background-image: url(/assets/icon/arrow-right.svg);
+                                                background-repeat: no-repeat;
+                                                background-size: 1rem;
+                                                transition: transform 0.2s ease-in-out;
+                                            }
+                                        }
+
+                                        .item-icon {
+                                            width: 22px;
+                                            height: 22px;
+                                            margin-right: 30px;
+                                            display: flex;
+                                            align-items: center;
+
+                                            svg path {
+                                                fill: $nero_black_90;
+                                            }
+
+                                            i {
+                                                font-size: 18px !important;
+                                            }
+                                        }
+
+                                        .item-title {
+                                            overflow: hidden;
+                                            white-space: nowrap;
+                                            text-overflow: ellipsis;
+                                            font-size: 14px;
+                                            font-weight: map-get($font-weights, medium);
+                                            letter-spacing: normal;
+                                            color: $nero_black_90;
+                                        }
+
+                                        &:hover {
+                                            background-color: $nero_black_5;
+
+                                            .item-icon {
+                                                svg path {
+                                                    fill: $nero_black_90;
                                                 }
+                                            }
 
-                                                .item-title {
+                                            .item-title {
+                                                color: $nero_black_90;
+                                            }
+                                        }
+
+                                        &.active {
+                                            background-color: $egyptian_blue_50;
+                                            // color: $nero_white;
+                                            font-weight: map-get($font-weights, bold);
+
+                                            .item-icon {
+                                                svg path {
+                                                    fill: $nero_white;
+                                                }
+                                                i {
                                                     color: $nero_white;
                                                 }
+                                            }
 
-                                                &:hover {
-                                                    background-color: $nero_black_5;
-
-                                                    .item-icon {
-                                                        svg path {
-                                                            fill: $nero_white;
-                                                        }
-
-                                                        i {
-                                                            color: $nero_black_50;
-                                                        }
-                                                    }
-
-                                                    .item-title {
-                                                        color: $nero_black_50;
-                                                    }
-                                                }
+                                            .item-title {
+                                                color: $nero_white;
                                             }
 
                                             &:hover {
@@ -1315,15 +1072,248 @@ select {
                                                     svg path {
                                                         fill: $nero_white;
                                                     }
+
+                                                    i {
+                                                        color: $nero_black_50;
+                                                    }
                                                 }
 
                                                 .item-title {
-                                                    color: $nero_black_70;
+                                                    color: $nero_black_50;
                                                 }
                                             }
                                         }
                                     }
-                                }
+
+                                    .accordion-item {
+                                        border: none !important;
+                                    }
+
+                                // .sidebar-dropdown-collapse,
+                                // ul.collapse {
+                                //     background-color: $nero_white;
+
+                                //     .sidebar-dropdown-content {
+                                //         display: block;
+                                //         position: relative;
+                                //         width: 100%;
+                                //         min-height: 40px;
+                                //         box-sizing: border-box;
+
+                                //         .sub-item-link {
+                                //             box-sizing: border-box;
+                                //             display: flex;
+                                //             text-decoration: none;
+                                //             min-height: 40px;
+                                //             flex-direction: row;
+                                //             min-width: 0;
+                                //             align-items: center;
+                                //             // margin-left: 60px;
+                                //             padding: 0 22px;
+                                //             height: 40px;
+                                //             width: 100%;
+                                //             border-radius: 8px;
+                                //             cursor: pointer;
+
+                                //             font-size: 14px;
+                                //             color: $nero_black_90;
+
+                                //             &:hover {
+                                //                 background-color: $nero_black_5;
+
+                                //                 .item-icon {
+                                //                     svg path {
+                                //                         fill: $nero_white;
+                                //                     }
+                                //                 }
+
+                                //                 .item-title {
+                                //                     color: $nero_black_70;
+                                //                 }
+                                //             }
+
+                                //             .item-title {
+                                //                 overflow: hidden;
+                                //                 white-space: nowrap;
+                                //                 text-overflow: ellipsis;
+                                //                 margin-left: 52px;
+                                //                 font-size: 14px;
+                                //                 font-weight: map-get($font-weights, medium);
+                                //                 letter-spacing: normal;
+                                //                 color: $nero_black_90;
+                                //             }
+
+                                //             // &::after {
+                                //             //     content: " ";
+                                //             //     border: 0.5px solid $nero_black_10;
+                                //             //     // border-radius: 999px;
+                                //             //     width: 0px;
+                                //             //     height: 40px;
+                                //             //     position: absolute;
+                                //             //     // background-color: $nero_black_50;
+                                //             //     left: 30px;
+                                //             //     transition: all 0.2s linear;
+                                //             // }
+                                //         }
+
+                                //         .sub-item-links {
+                                //             box-sizing: border-box;
+                                //             display: flex;
+                                //             text-decoration: none;
+                                //             min-height: 40px;
+                                //             flex-direction: row;
+                                //             min-width: 0;
+                                //             align-items: center;
+                                //             // margin-left: px;
+                                //             padding: 0 22px;
+                                //             height: 40px;
+                                //             width: 100%;
+                                //             border-radius: 8px;
+                                //             cursor: pointer;
+
+                                //             font-size: 14px;
+                                //             color: $nero_black_90;
+
+                                //             &[aria-expanded="true"] {
+                                //                 // background-color: $nero_black_2;
+
+                                //                 .item-icon {
+                                //                     svg path {
+                                //                         fill: $nero_black_90;
+                                //                     }
+                                //                 }
+
+                                //                 .item-title {
+                                //                     color: $nero_black_90;
+                                //                     font-weight: map-get($font-weights, bold);
+                                //                 }
+
+                                //                 &::after {
+                                //                     content: "";
+                                //                     flex-shrink: 0;
+                                //                     width: 1rem;
+                                //                     height: 1rem;
+                                //                     margin-left: auto;
+                                //                     content: "";
+                                //                     background-image: url(/assets/icon/arrow-right.svg);
+                                //                     background-repeat: no-repeat;
+                                //                     background-size: 1rem;
+                                //                     transform: rotate(90deg);
+                                //                     transition: transform 0.2s ease-in-out;
+                                //                 }
+                                //             }
+
+                                //             &[aria-expanded="false"],
+                                //             &.collapsed {
+                                //                 &::after {
+                                //                     content: "";
+                                //                     flex-shrink: 0;
+                                //                     width: 1rem;
+                                //                     height: 1rem;
+                                //                     margin-left: auto;
+                                //                     content: "";
+                                //                     background-image: url(/assets/icon/arrow-right.svg);
+                                //                     background-repeat: no-repeat;
+                                //                     background-size: 1rem;
+                                //                     transition: transform 0.2s ease-in-out;
+                                //                 }
+                                //             }
+
+                                //             .vertical-line {
+                                //                 width: 1px;
+                                //                 height: 40px;
+                                //                 margin: 0 12px;
+                                //                 background-color: $nero_black_30;
+                                //                 margin-right: 28px;
+                                //             }
+
+                                //             // &::after {
+                                //             //     content: " ";
+                                //             //     border: 0.5px solid $nero_black_10;
+                                //             //     // border-radius: 999px;
+                                //             //     width: 0px;
+                                //             //     height: 40px;
+                                //             //     position: absolute;
+                                //             //     // background-color: $nero_black_50;
+                                //             //     left: 30px;
+                                //             //     transition: all 0.2s linear;
+                                //             // }
+
+                                //             .item-icon {
+                                //                 width: 22px;
+                                //                 height: 22px;
+                                //                 margin-right: 30px;
+                                //                 display: flex;
+                                //                 align-items: center;
+
+                                //                 svg path {
+                                //                     fill: $nero_black_90;
+                                //                 }
+                                //             }
+
+                                //             .item-title {
+                                //                 overflow: hidden;
+                                //                 white-space: nowrap;
+                                //                 text-overflow: ellipsis;
+                                //                 font-size: 14px;
+                                //                 font-weight: map-get($font-weights, medium);
+                                //                 letter-spacing: normal;
+                                //                 color: $nero_black_90;
+                                //             }
+
+                                //             &.active {
+                                //                 background-color: $egyptian_blue_50;
+                                //                 // color: $nero_white;
+                                //                 font-weight: map-get($font-weights, bold);
+
+                                //                 .item-icon {
+                                //                     svg path {
+                                //                         fill: $nero_white;
+                                //                     }
+                                //                     i {
+                                //                         color: $nero_white;
+                                //                     }
+                                //                 }
+
+                                //                 .item-title {
+                                //                     color: $nero_white;
+                                //                 }
+
+                                //                 &:hover {
+                                //                     background-color: $nero_black_5;
+
+                                //                     .item-icon {
+                                //                         svg path {
+                                //                             fill: $nero_white;
+                                //                         }
+
+                                //                         i {
+                                //                             color: $nero_black_50;
+                                //                         }
+                                //                     }
+
+                                //                     .item-title {
+                                //                         color: $nero_black_50;
+                                //                     }
+                                //                 }
+                                //             }
+
+                                //             &:hover {
+                                //                 background-color: $nero_black_5;
+
+                                //                 .item-icon {
+                                //                     svg path {
+                                //                         fill: $nero_white;
+                                //                     }
+                                //                 }
+
+                                //                 .item-title {
+                                //                     color: $nero_black_70;
+                                //                 }
+                                //             }
+                                //         }
+                                //     }
+                                // }
                             }
                         }
                     }
@@ -4034,5 +4024,3 @@ text.highcharts-credits {
         }
     }
 }
-
-
