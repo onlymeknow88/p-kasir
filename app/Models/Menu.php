@@ -23,7 +23,10 @@ class Menu extends Model
         return $this->belongsTo(Menu::class, 'parent_id', 'id');
     }
 
-
+    public function children()
+    {
+        return $this->hasMany(Menu::class, 'parent_id');
+    }
 
     public function buildMenu($menu, $parentid = 0)
     {
@@ -32,11 +35,11 @@ class Menu extends Model
         foreach ($menu as $item)
             if ($item->parent_id == $parentid) {
 
-        $result .= "<li class='dd-item' data-id='{$item->id}'>
+                $result .= "<li class='dd-item' data-id='{$item->id}'>
         <div class='dd-handle'>
                     <i class='{$item->class} me-2'></i>
                     <span>{$item->nama_menu}</span>
-        </div>". $this->buildMenu($menu, $item->id) . "</li>";
+        </div>" . $this->buildMenu($menu, $item->id) . "</li>";
             }
         return $result ?  "\n<ol class=\"dd-list\">\n$result</ol>\n" : null;
     }

@@ -22,9 +22,9 @@ Route::get('/', function () {
 });
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
+
+
     Route::resource('/dashboard', DashboardController::class);
-
-
     Route::name('aplikasi.')->prefix('aplikasi')->group(function () {
         //menu kategori
         Route::resource('/menuKategori', MenuKategoriController::class);

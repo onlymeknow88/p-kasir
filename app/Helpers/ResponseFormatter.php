@@ -20,6 +20,7 @@ use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 use Illuminate\Support\Facades\Auth;
 use Intervention\Image\Facades\Image;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ResponseFormatter
@@ -238,43 +239,36 @@ class ResponseFormatter
         return $terbilang;
     }
 
-    public static function build_menu($currentModel, $menuKategoriId, $parentid = 0)
+    public static function build_menu($currentPage, $menuKategoriId, $parentid = 0)
     {
-        // $result = null;
         $result = "\n" . '<div class="menu-item accordion" id="menu">' . "\r\n";
         $arr = Menu::where('aktif', 'Y')->get();
         foreach ($arr as $key => $val) {
-            $children = Menu::where('parent_id', $val->id)->where('aktif','Y')->get();
 
             // Menu icon
             $menu_icon = '';
             if ($val->class) {
                 $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
             }
-            $url = $val->url;
+            $active_link = Request::is($val->url . '/*') ? 'active' : '';
+            $active_collpase = Request::is($val->url . '/*') ? 'true' : 'false';
+
+            // menu link
             if ($val->link == '#') {
                 $link = $val->link;
-                $collapse = 'data-bs-toggle="collapse" aria-expanded="false"';
-                $buildsubMenu = ResponseFormatter::build_submenu($currentModel, $children, $val->id, $val->url, 'menu');
+                $url = $link . '' . $val->url;
+                $collapse = 'data-bs-toggle="collapse" aria-expanded="' . $active_collpase . '"';
+                // $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $children, $val->id, $val->url, 'menu');
             } else {
                 $link = '';
+                $url = '/'.$val->url;
                 $collapse = '';
-                $buildsubMenu = '';
+                // $buildsubMenu = '';
             }
-            if ($val->parent_id == $parentid && $val->menu_kategori_id == $menuKategoriId) {
-                // $result .= '<li class="nav-item">
-                //         <a href="' . $link . '' . $url . '" class="nav-link item-link" ' . $collapse . '>' .
-                //     '<div class="item-icon">
-                //             ' . $menu_icon . '
-                //         </div>
-                //         <div class="item-title">
-                //             ' . $val->nama_menu . '
-                //         </div></a>';
-                //         $result .= $buildsubMenu;
-                //         $result .= "</li>\n";
 
+            if ($val->parent_id == $parentid && $val->menu_kategori_id == $menuKategoriId) {
                 $result .= '<div class="accordion-item">
-                            <a href="' . $link . '' . $url . '" class="item-link" ' . $collapse . '>
+                            <a href="' . $url . '" class="item-link ' . $active_link . '" ' . $collapse . '>
                                 <div class="item-icon">
                                     ' . $menu_icon . '
                                 </div>
@@ -283,7 +277,11 @@ class ResponseFormatter
                                 </div>
                             </a>
                         </div>';
-                $result .= $buildsubMenu;
+
+                if (!$val->children->isEmpty()) {
+
+                    $result .= ResponseFormatter::build_submenu($currentPage, $val->children, $val->id, $val->url, 'menu');
+                }
             }
         }
 
@@ -291,9 +289,10 @@ class ResponseFormatter
         return $result;
     }
 
-    public static function build_submenu($currentModel, $arr, $parentid = 0, $urlParent, $submenu = false)
+    public static function build_submenu($currentPage, $arr, $parentid = 0, $urlParent, $submenu = false)
     {
         $result = null;
+
         foreach ($arr as $key => $val) {
 
             // Menu icon
@@ -301,45 +300,40 @@ class ResponseFormatter
             if ($val->class) {
                 $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
             }
-            if($urlParent != null) {
-                $parentUrl = route($urlParent.'.'.$val->url.'.index');;
-            }
-            if ($val->link == '#') {
-                $link = $val->link;
-                $url = $link.''.$val->url;
-                $collapse = 'data-bs-toggle="collapse" aria-expanded="false"';
-            } else {
-                $link = '';
-                $url = $parentUrl;
-                $collapse = '';
-            }
 
-            if ($val->parent_id == $parentid) {
+            if ($val->aktif == 'Y') {
+                // $route_url = route($urlParent.'.'.$val->url.'.index');
 
-                // $result .= "<li class='w-100'>
-                //     <a href='{$link}{$url}' class='nav-link sub-item-link'>
-                //     <div class='item-icon'>
-                //     {$menu_icon}
-                //     </div>
-                //     <div class='item-title'>
-                //     {$val->nama_menu}
-                //     </div>
-                //     </a>
-                // </li>";
+                if ($val->link == '#') {
+                    $link = $val->link;
+                    $route_url = $link . '' . $val->url;
+                    $collapse = 'data-bs-toggle="collapse" aria-expanded="false"';
+                    // $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $children, $val->id, $val->url, 'menu');
+                } else {
+                    $link = '';
+                    $route_url = route($urlParent.'.'.$val->url.'.index');
+                    $collapse = '';
+                    // $buildsubMenu = '';
+                }
 
-                $result .= '<div class="menu-item" id="menu">
-                            <a href="' . $url . '" class="item-link" ' . $collapse . '>
-                                <div class="item-icon">
-                                    ' . $menu_icon . '
-                                </div>
-                                <div class="item-title">
-                                    ' . $val->nama_menu . '
-                                </div>
-                            </a>
-                        </div>';
+                if($val->parent_id == $parentid) {
+
+                    $result .= '<div class="menu-item" id="menu">
+                                    <a href="' . $route_url . '" class="item-link" '.$collapse.'>
+                                        <div class="item-icon">
+                                            ' . $menu_icon . '
+                                        </div>
+                                        <div class="item-title">
+                                            ' . $val->nama_menu . '
+                                        </div>
+                                    </a>
+                                </div>';
+                }
+
             }
         }
 
+        // return $result;
         return $result ? "\n<div class=\"accordion-collapse collapse\" id='{$urlParent}' data-bs-parent='#{$submenu}'>\n$result</div>\n" : null;
     }
 }
