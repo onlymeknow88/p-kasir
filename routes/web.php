@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
+use App\Http\Controllers\Setting\SettingController;
 use App\Http\Controllers\Setting\MenuKategoriController;
 
 /*
@@ -35,8 +36,14 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::resource('/menu', MenuController::class);
         //role
         Route::resource('/role', RoleController::class);
+        //setting
 
 
+
+    });
+    Route::name('setting.')->prefix('setting')->group(function () {
+
+        Route::resource('/app', SettingController::class);
     });
 
 

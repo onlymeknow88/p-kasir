@@ -261,7 +261,7 @@ class ResponseFormatter
                 // $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $children, $val->id, $val->url, 'menu');
             } else {
                 $link = '';
-                $url = '/'.$val->url;
+                $url = '/' . $val->url;
                 $collapse = '';
                 // $buildsubMenu = '';
             }
@@ -301,6 +301,9 @@ class ResponseFormatter
                 $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
             }
 
+            $active_link = Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'active' : '';
+            $show_collapse = Request::is($urlParent .'/'.$val->url. '/*') ? 'show' : '';;
+
             if ($val->aktif == 'Y') {
                 // $route_url = route($urlParent.'.'.$val->url.'.index');
 
@@ -308,18 +311,18 @@ class ResponseFormatter
                     $link = $val->link;
                     $route_url = $link . '' . $val->url;
                     $collapse = 'data-bs-toggle="collapse" aria-expanded="false"';
-                    // $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $children, $val->id, $val->url, 'menu');
+                    $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $val->children, $val->id, $val->url, 'submenu');
                 } else {
                     $link = '';
-                    $route_url = route($urlParent.'.'.$val->url.'.index');
+                    $route_url = route($urlParent . '.' . $val->url . '.index');
                     $collapse = '';
-                    // $buildsubMenu = '';
+                    $buildsubMenu = '';
                 }
 
-                if($val->parent_id == $parentid) {
+                if ($val->parent_id == $parentid) {
 
-                    $result .= '<div class="menu-item" id="menu">
-                                    <a href="' . $route_url . '" class="item-link" '.$collapse.'>
+                    $result .= '<div class="menu-item" id="submenu">
+                                    <a href="' . $route_url . '" class="item-link ' . $active_link . '" ' . $collapse . '>
                                         <div class="item-icon">
                                             ' . $menu_icon . '
                                         </div>
@@ -328,12 +331,13 @@ class ResponseFormatter
                                         </div>
                                     </a>
                                 </div>';
-                }
 
+                                $result .= $buildsubMenu;
+                }
             }
         }
 
         // return $result;
-        return $result ? "\n<div class=\"accordion-collapse collapse\" id='{$urlParent}' data-bs-parent='#{$submenu}'>\n$result</div>\n" : null;
+        return $result ? "\n<div class='accordion-collapse collapse {$show_collapse}' id='{$urlParent}' data-bs-parent='#{$submenu}'>\n$result</div>\n" : null;
     }
 }
