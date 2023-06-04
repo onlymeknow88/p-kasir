@@ -31,7 +31,7 @@
     @include('layouts.partials.js')
 
     <script>
-        var datatable = $('.table').DataTable({
+        var table = $('.table').DataTable({
             ajax: {
                 url: '{{ url()->current() }}',
             },
@@ -68,6 +68,42 @@
                 }
             },
         });
+
+        function deleteData(url) {
+            Swal.fire({
+                title: "Delete?",
+                text: "Apakah anda yakin?",
+                type: "warning",
+                showCancelButton: !0,
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                reverseButtons: !0
+            }).then(function(e) {
+
+                if (e.value === true) {
+                    $.post(url, {
+                            '_method': 'delete',
+                            // '_token': `{{ csrf_token() }}`
+                        })
+                        .done(response => {
+                            console.log(response);
+                            if (response.meta.message == 'File Deleted') {
+                                window.location.href = (location.pathname);
+                            }
+                            table.ajax.reload();
+                        })
+                        .fail(errors => {
+                            Swal.fire("Something went wrong.", "You clicked the button!", "error");
+                            return;
+                        });
+                } else {
+                    e.dismiss;
+                }
+
+            }, function(dismiss) {
+                return false;
+            })
+        }
     </script>
     {{-- <script src="{{ asset('assets/js/script.js') }}"></script> --}}
 @endpush

@@ -1625,6 +1625,7 @@ select {
 
                                 .list-group {
                                     font-size: 13px;
+                                    cursor: pointer;
 
                                     .list-group-item {
                                         &:hover {
@@ -1633,10 +1634,15 @@ select {
                                         &.kategori-item {
                                             display: flex;
                                             justify-content: space-between;
-                                            z .toolbox {
+                                            .toolbox {
                                                 display: flex;
                                                 align-items: center;
                                                 justify-content: space-between;
+                                            }
+
+                                            &.list-group-item-primary {
+                                                background-color: $egyptian_blue_10 !important;
+                                                color: $nero_black_70 !important;
                                             }
                                         }
                                     }
@@ -2095,7 +2101,7 @@ select {
 
                                                     a {
                                                         transition-duration: 0.5s;
-                                                        color: $nero_white !important;
+                                                        // color: $nero_white !important;
                                                     }
                                                 }
                                             }
@@ -3585,6 +3591,12 @@ text.highcharts-credits {
                         height: 40px;
                     }
 
+                    .dd {
+                        &.loader {
+                            display: inline-block !important;
+                        }
+                    }
+
                     .pagination-footer {
                         display: flex;
                         // justify-content: space-between;
@@ -4024,3 +4036,29 @@ text.highcharts-credits {
         }
     }
 }
+
+//loader custom
+.custom-loader {
+    width: 18px;
+    height: 18px;
+    display: grid;
+    animation: s4 4s infinite;
+  }
+  .custom-loader::before,
+  .custom-loader::after {
+    content:"";
+    grid-area: 1/1;
+    border:2px solid;
+    border-radius: 50%;
+    border-color:#1438AE #1438AE #0000 #0000;
+    mix-blend-mode: darken;
+    animation: s4 1s infinite linear;
+  }
+  .custom-loader::after {
+    border-color:#0000 #0000 #E4E4ED #E4E4ED;
+    animation-direction: reverse;
+  }
+
+  @keyframes s4{
+    100%{transform: rotate(1turn)}
+  }

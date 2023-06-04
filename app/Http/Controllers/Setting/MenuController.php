@@ -19,14 +19,15 @@ class MenuController extends Controller
     public function index(Request $request)
     {
         $menuKategori = MenuKategori::all();
-
-
-        // //menu
-        $menus = Menu::where('menu_kategori_id', 1)->orderby('urut', 'asc')->get();
+        //menu
+        $menus_kategori_list = Menu::where('menu_kategori_id', 1)->orderby('urut', 'asc')->get();
         $menu = new Menu;
-        $menu = $menu->getHTML($menus);
-        // dd($menu);
-        return view('page.setting.menu.index', compact('menuKategori','menu'));
+        $menu = $menu->getHTML($menus_kategori_list);
+
+        $children_menu = Menu::all();
+
+
+        return view('page.setting.menu.index', compact('menuKategori','menu','children_menu'));
     }
 
     public function buildMenu(Request $request)
@@ -64,16 +65,16 @@ class MenuController extends Controller
             [
                 'nama_menu' => ['required', 'string', 'max:255'],
                 'url' => ['required', 'string', 'max:255'],
-                'aktif' => ['required'],
-                'module_id' => ['required'],
+                // 'aktif' => ['required'],
+                // 'parent_id' => ['required'],
                 'use_icon' => ['required'],
                 'menu_kategori_id' => ['required'],
             ],
             [
                 'nama_menu.required' => 'Silahkan isi nama menu',
                 'url.required' => 'Silahkan isi url',
-                'aktif.required' => 'Silahkan pilih',
-                'module_id.required' => 'Silahkan pilih',
+                // 'aktif.required' => 'Silahkan pilih',
+                // 'parent_id.required' => 'Silahkan pilih',
                 'use_icon.required' => 'Silahkan pilih',
                 'menu_kategori_id.required' => 'Silahkan pilih',
             ]
@@ -95,7 +96,7 @@ class MenuController extends Controller
 
         $menu->aktif = $aktif;
 
-        $menu->module_id = $request->input('module_id');
+        $menu->parent_id = $request->input('parent_id') ?: NULL;
         $menu->class = $request->input('icon_class');
 
         if ($request->input('menu_kategori_id') == '') {
@@ -137,7 +138,7 @@ class MenuController extends Controller
      */
     public function edit($id)
     {
-        //
+
     }
 
     /**
@@ -149,7 +150,56 @@ class MenuController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_menu' => ['required', 'string', 'max:255'],
+                'url' => ['required', 'string', 'max:255'],
+                'aktif' => ['required'],
+                // 'parent_id' => ['required'],
+                'use_icon' => ['required'],
+                'menu_kategori_id' => ['required'],
+            ],
+            [
+                'nama_menu.required' => 'Silahkan isi nama menu',
+                'url.required' => 'Silahkan isi url',
+                'aktif.required' => 'Silahkan pilih',
+                // 'parent_id.required' => 'Silahkan pilih',
+                'use_icon.required' => 'Silahkan pilih',
+                'menu_kategori_id.required' => 'Silahkan pilih',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        $menu = new Menu();
+
+        $menu->nama_menu = $request->input('nama_menu');
+        $menu->url = $request->input('url');
+
+        if (empty($request->input('aktif'))) {
+            $aktif = 'N';
+        } else {
+            $aktif = 'Y';
+        }
+
+        $menu->aktif = $aktif;
+
+        $menu->parent_id = $request->input('parent_id');
+        $menu->class = $request->input('icon_class');
+
+        if ($request->input('menu_kategori_id') == '') {
+            $menu_kategori_id = NULL;
+        } else {
+            $menu_kategori_id = $request->input('menu_kategori_id');
+        }
+        $menu->menu_kategori_id = $menu_kategori_id;
+        // $menu->save();
+
+        return ResponseFormatter::success([
+            'data' => $menu
+        ], 'Menu Success');
     }
 
     /**
@@ -160,7 +210,11 @@ class MenuController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $menu = Menu::findorfail($id);
+        $menu->delete();
+        return ResponseFormatter::success([
+            'data' => null
+        ],'Menu Deleted');
     }
 
     public function getParent(Request $request)

@@ -42,7 +42,12 @@
                             class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">Parent</label>
                         <div class="col-sm-8">
                             <select name="parent_id" id="parent_id" class="form-select"
-                                data-placeholder="Choose one thing"></select>
+                                data-placeholder="Choose one thing">
+                                <option value="">Tidak Ada Menu Parent</option>
+                                @foreach ($children_menu as $key => $val)
+                                    <option value="{{ $val->key }}">{{ $val->nama_menu }} ({{ $val->menu_status->nama_status }})</option>
+                                @endforeach
+                            </select>
                             <span class="form-text-12 fw-light text-muted"><em>Untuk highlight menu dan
                                     parent</em></span>
                         </div>
@@ -59,7 +64,8 @@
                                 </select>
                             </div>
                             <div class="col-sm-7">
-                                <select name="icon_class" id="icon_class" class="form-select d-none" data-placeholder="Choose one thing">
+                                <select name="icon_class" id="icon_class" class="form-select d-none"
+                                    data-placeholder="Choose one thing">
                                 </select>
                             </div>
                         </div>

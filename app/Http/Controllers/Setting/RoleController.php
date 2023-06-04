@@ -166,6 +166,10 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $role = Role::findorfail($id);
+        $role->delete();
+        return ResponseFormatter::success([
+            'data' => null
+        ],'Role Deleted');
     }
 }
