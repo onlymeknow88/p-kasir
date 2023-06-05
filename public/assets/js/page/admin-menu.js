@@ -1,7 +1,7 @@
 let modalKategori = "#modalKategori";
 let modalMenu = "#modalMenu";
 
-$(document).ready(function(){
+$(document).ready(function () {
     $("body").delegate("form", "submit", function (e) {
         e.preventDefault();
         return false;
@@ -130,11 +130,10 @@ $(document).ready(function(){
                     if (e.value === true) {
                         $.post("/aplikasi/menu/" + item.attr("data-id"), {
                             _method: "delete",
-                            // '_token': `{{ csrf_token() }}`
                         })
                             .done((response) => {
                                 // console.log(response);
-                                if (response.meta.message == "File Deleted") {
+                                if (response.meta.message == "Menu Deleted") {
                                     plugin.deleteList(item);
                                     if (
                                         $("#list_menu").find("li").length == 0
@@ -143,9 +142,7 @@ $(document).ready(function(){
                                             .find(".list-group-item-primary")
                                             .click();
                                     }
-                                    // window.location.href = location.pathname;
                                 }
-                                // table.ajax.reload();
                             })
                             .fail((errors) => {
                                 Swal.fire(
@@ -174,40 +171,36 @@ $(document).ready(function(){
         allowClear: true,
     });
 
-    $(document).on('change', 'select[name="use_icon"]', function(){
+    $(document).on("change", 'select[name="use_icon"]', function () {
         $this = $(this);
-        if (this.value == 1)
-		{
-            $icon_preview = $('.icon-preview').show();
-			$('.icon-preview').show().removeClass('d-none');
+        if (this.value == 1) {
+            $icon_preview = $(".icon-preview").show();
+            $(".icon-preview").show().removeClass("d-none");
 
-			var calass_name = $icon_preview.find('i').attr('class');
-			$this.parent().find('[name="icon_class"]').val(calass_name);
-		} else {
-			$this.next().hide();
-		}
-
+            var calass_name = $icon_preview.find("i").attr("class");
+            $this.parent().find('[name="icon_class"]').val(calass_name);
+        } else {
+            $this.next().hide();
+        }
     });
 
-    $(document).on('click', '.icon-preview', function() {
-		$bootbox.hide();
-		$this = $(this);
-		fapicker({
-			iconUrl: '/assets/css/fontawesome/metadata/icons.yml',
-			onSelect: function (elm) {
-				$bootbox.show();
-				var icon_class = $(elm).data('icon');
+    $(document).on("click", ".icon-preview", function () {
+        $bootbox.hide();
+        $this = $(this);
+        fapicker({
+            iconUrl: "/assets/css/fontawesome/metadata/icons.yml",
+            onSelect: function (elm) {
+                $bootbox.show();
+                var icon_class = $(elm).data("icon");
                 // console.log(icon_class)
-				$this.find('i').removeAttr('class').addClass(icon_class);
-				$this.parent().find('[name="icon_class"]').val(icon_class);
-			},
-			onClose: function() {
-				$bootbox.show();
-			}
-		});
-	});
-
-
+                $this.find("i").removeAttr("class").addClass(icon_class);
+                $this.parent().find('[name="icon_class"]').val(icon_class);
+            },
+            onClose: function () {
+                $bootbox.show();
+            },
+        });
+    });
 
     $("#add-kategori").click(function (e) {
         e.preventDefault();
@@ -216,13 +209,9 @@ $(document).ready(function(){
 
     $("#add-menu").click(function (e) {
         e.preventDefault();
-        $bootbox = showFormMenu('add');
+        $bootbox = showFormMenu("add");
     });
-
 });
-
-
-
 
 function showFormMenu(type = "add", id = "") {
     $bootbox = bootbox.dialog({
@@ -244,58 +233,117 @@ function showFormMenu(type = "add", id = "") {
                         formdata = new FormData($form_filled[0]);
                     }
 
-                    list_data = $('#list_menu').wdiMenuEditor('serialize');
+                    list_data = $("#list_menu").wdiMenuEditor("serialize");
                     menu_tree = JSON.stringify(list_data);
 
-                    console.log($form_filled)
+                    $.post({
+                        url: $("#add-formMenu").attr("action"),
+                        data: formdata ? formdata : form.serialize(),
+                        type: "POST",
+                        dataType: "json",
+                        contentType: false,
+                        cache: false,
+                        processData: false,
+                    })
+                        .done((response) => {
+                            // console.log(response);
 
-                    // $.post({
-                    //     url: $("#add-formMenu").attr("action"),
-                    //     data: formdata ? formdata : form.serialize(),
-                    //     type: "POST",
-                    //     dataType: "json",
-                    //     contentType: false,
-                    //     cache: false,
-                    //     processData: false,
-                    // })
-                    //     .done((response) => {
-                    //         console.log(response);
-                    //         if (response.meta.code == 200) {
-                    //             swal.fire({
-                    //                 text: response.meta.message,
-                    //                 type: "success",
-                    //             }).then(function () {
-                    //                 $bootbox.modal("hide");
-                    //             });
-                    //         } else if (response.meta.code == 500) {
-                    //             swal.fire({
-                    //                 text: response.meta.message,
-                    //                 type: "error",
-                    //             });
-                    //         }
-                    //     })
-                    //     .fail((errors) => {
-                    //         if (errors.status == 422) {
-                    //             // console.log("Error:", errors.responseJSON.errors);
-                    //             loopErrors(errors.responseJSON.errors);
-                    //             return;
-                    //         }
-                    //     });
+                            if (response.meta.code == 200) {
+                                var nama_menu = $form_filled
+                                    .find('input[name="nama_menu"]')
+                                    .val();
+                                var id = $form_filled
+                                    .find('input[name="id"]')
+                                    .val();
+                                var use_icon = $form_filled
+                                    .find('select[name="use_icon"]')
+                                    .val();
+                                var icon_class = $form_filled
+                                    .find('input[name="icon_class"]')
+                                    .val();
+                                // console.log(id);
+
+                                if (id) {
+                                    $menu = $("#list-menu").find(
+                                        '[data-id="' + id + '"]'
+                                    );
+                                    $menu
+                                        .find(".menu-title:eq(0)")
+                                        .text(nama_menu);
+                                }
+
+                                // add
+                                else {
+                                    $menu_container =
+                                        $("#list_menu").children();
+                                    $menu = $menu_container
+                                        .children(":eq(0)")
+                                        .clone();
+                                    $menu.find("ol, ul").remove();
+                                    $menu
+                                        .find('[data-action="collapse"]')
+                                        .remove();
+                                    $menu
+                                        .find('[data-action="expand"]')
+                                        .remove();
+                                    $menu.attr(
+                                        "data-id",
+                                        response.result.data.id
+                                    );
+                                    $menu.find(".menu-title").text(nama_menu);
+                                }
+
+                                $handler = $menu.find(".dd-handle:eq(0)");
+                                $handler.find("i").remove();
+
+                                if (use_icon == 1) {
+                                    $handler.prepend(
+                                        '<i class="' + icon_class + '"></i>'
+                                    );
+                                }
+
+                                if (!id) {
+                                    $menu_container.prepend($menu);
+                                }
+
+                                swal.fire({
+                                    text: response.meta.message,
+                                    type: "success",
+                                }).then(function () {
+                                    $bootbox.modal("hide");
+                                    $(".menu-kategori-container")
+                                        .find(".list-group-item-primary")
+                                        .click();
+                                });
+                            } else if (response.meta.code == 500) {
+                                swal.fire({
+                                    text: response.meta.message,
+                                    type: "error",
+                                });
+                            }
+                        })
+                        .fail((errors) => {
+                            if (errors.status == 422) {
+                                // console.log("Error:", errors.responseJSON.errors);
+                                loopErrors(errors.responseJSON.errors);
+                                return;
+                            }
+                        });
                     return false;
                 },
             },
         },
     });
 
-
     var url = "/aplikasi/menu/create?id=" + id;
     $.get(url, function (result) {
         // $button.prop('disabled', false);
         $bootbox.find(".modal-body").html(result);
         // $('#parent_id').val(result.).trigger('change');
-        $('#parent_id').select2({theme: 'bootstrap-5', dropdownParent: $(".bootbox")});
-
-
+        $("#parent_id").select2({
+            theme: "bootstrap-5",
+            dropdownParent: $(".bootbox"),
+        });
     });
     return $bootbox;
 }
@@ -334,7 +382,7 @@ function showFormKategori(type = "add", id = "") {
                         processData: false,
                     })
                         .done((response) => {
-                            console.log(response);
+                            // console.log(response);
                             if (response.meta.code == 200) {
                                 swal.fire({
                                     text: response.meta.message,
@@ -368,101 +416,6 @@ function showFormKategori(type = "add", id = "") {
         $bootbox.find(".modal-body").html(result);
     });
     return $bootbox;
-}
-
-// function addFormMenu(url, title = "Tambah Menu") {
-//     $(modalMenu).modal("show");
-//     $(`${modalMenu} .modal-title`).text(title);
-//     $(`${modalMenu} form`).attr("action", url);
-//     $(`${modalMenu} [name=_method]`).val("post");
-
-//     // resetForm(`${modalMenu} form`);
-// }
-
-// functyion editFormMenu(type = "", id = "") {
-//     var url = "/aplikasi/menu/" + id;
-//     url = url.replace(":id", id);
-//     $.get("/aplikasi/menu/" + id + "/s-menu")
-//         .done((response) => {
-//             console.log(response.data);
-//             $(modalMenu).modal("show");
-//             $(`${modalMenu} .modal-title`).text(type);
-//             $(`${modalMenu} form`).attr("action", url);
-//             $(`${modalMenu} [name=_method]`).val("put");
-
-//             var options = new Option(
-//                 response.data.parent == null
-//                     ? "Tidak ada parent menu"
-//                     : response.data["parent"].nama_menu,
-//                 response.data.parent == null
-//                     ? "Tidak ada parent menu"
-//                     : response.data["parent"].id,
-//                 true,
-//                 true
-//             );
-//             $("#parent_id").append(options).change();
-
-//             var option = new Option(
-//                 response.data.class,
-//                 response.data.class,
-//                 true,
-//                 true
-//             );
-//             $("#icon_class").append(option).change();
-
-//             var aktif = $("input[name=aktif");
-//             if (response.data.aktif == "Y") {
-//                 aktif.attr("checked", "checked");
-//             } else {
-//                 aktif.removeAttr("checked", "checked");
-//             }
-
-//             $("#menu_status_id").val(response.data.menu_status_id).change();
-
-//             resetForm(`${modalMenu} form`);
-//             loopForm(response.data);
-//         })
-//         .fail((errors) => {
-//             alert("Tidak dapat menampilkan data");
-//             return;
-//         });
-// }
-
-function submitForm(originalForm) {
-    $.post({
-        url: $(originalForm).attr("action"),
-        data: new FormData(originalForm),
-        // type: 'POST',
-        dataType: "json",
-        contentType: false,
-        cache: false,
-        processData: false,
-    })
-        .done((response) => {
-            // console.log(response);
-            if (response.meta.code == 200) {
-                swal.fire({
-                    text: response.meta.message,
-                    type: "success",
-                }).then(function () {
-                    $(modalKategori).modal("hide");
-                    $(modalMenu).modal("hide");
-                    // table.ajax.reload();
-                });
-            } else if (response.meta.code == 500) {
-                swal.fire({
-                    text: response.meta.message,
-                    type: "error",
-                });
-            }
-        })
-        .fail((errors) => {
-            if (errors.status == 422) {
-                // console.log("Error:", errors.responseJSON.errors);
-                loopErrors(errors.responseJSON.errors);
-                return;
-            }
-        });
 }
 
 function resetForm(selector) {
