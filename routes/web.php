@@ -28,6 +28,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::resource('/dashboard', DashboardController::class);
     Route::name('aplikasi.')->prefix('aplikasi')->group(function () {
         //menu kategori
+        // Route::post('/menu/create/{id}',[menuKategori::class,'create']);
         Route::resource('/menuKategori', MenuKategoriController::class);
         //menu
         Route::get('/menu/kategori/{id}', [MenuController::class,'buildMenu']);

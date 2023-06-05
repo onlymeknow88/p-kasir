@@ -1,4 +1,4 @@
-        <form class="modal-form" id="add-form" action="{{route('aplikasi.menuKategori.store')}}">
+        <form class="modal-form" id="add-formKategori" action="{{route('aplikasi.menuKategori.store')}}">
             @method('post')
             @csrf
             <div class="mb-3 row">
@@ -13,7 +13,7 @@
                 <label for="deskripsi"
                     class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">Deskripsi</label>
                 <div class="col-sm-8">
-                    <textarea type="text" name="deskripsi" id="deskripsi" class="form-control"></textarea>
+                    <textarea type="text" name="deskripsi" id="deskripsi" class="form-control">{{ $menuKategori->deskripsi }}</textarea>
                 </div>
             </div>
             <div class="row mb-3">
@@ -21,8 +21,8 @@
                     class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">Aktif</label>
                 <div class="col-sm-8">
                     <select name="aktif" id="aktif" class="form-select">
-                        <option value="Y">Ya</option>
-                        <option value="N">Tidak</option>
+                        <option value="Y" {{ $menuKategori->aktif == 'Y' ? 'selected' : '' }}>Ya</option>
+                        <option value="N" {{ $menuKategori->aktif == 'N' ? 'selected' : '' }}>Tidak</option>
                     </select>
                 </div>
             </div>

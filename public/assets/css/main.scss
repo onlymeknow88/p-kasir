@@ -4062,3 +4062,16 @@ text.highcharts-credits {
   @keyframes s4{
     100%{transform: rotate(1turn)}
   }
+
+  .icon-preview {
+    padding: 0;
+    margin-left: 10px;
+    color: #4b4b4b;
+    cursor: pointer;
+    outline: none;
+	font-size: 1.2rem;
+    line-height: 2.2rem;
+    &:hover {
+        color: $egyptian_blue_50 !important;
+    }
+}

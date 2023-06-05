@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Setting;
 
 use App\Models\Menu;
+use App\Models\Role;
+use App\Models\MenuStatus;
 use App\Models\MenuKategori;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
@@ -18,16 +20,20 @@ class MenuController extends Controller
      */
     public function index(Request $request)
     {
-        $menuKategori = MenuKategori::all();
         //menu
+        $menuKategori = MenuKategori::all();
         $menus_kategori_list = Menu::where('menu_kategori_id', 1)->orderby('urut', 'asc')->get();
-        $menu = new Menu;
-        $menu = $menu->getHTML($menus_kategori_list);
-
-        $children_menu = Menu::all();
+        $menus = new Menu;
+        $list_menu = $menus->getHTML($menus_kategori_list);
 
 
-        return view('page.setting.menu.index', compact('menuKategori','menu','children_menu'));
+        $data = [
+            'kategori' => $menuKategori,
+            'list_menu' => $list_menu,
+
+        ];
+
+        return view('page.setting.menu.index', compact('data'));
     }
 
     public function buildMenu(Request $request)
@@ -39,7 +45,6 @@ class MenuController extends Controller
         $menu = $menu->buildMenu($menus);
 
         return response()->json($menu);
-
     }
 
     /**
@@ -47,9 +52,32 @@ class MenuController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        if (!$request->id) {
+            $menu = new Menu();
+        } else {
+            $menu = Menu::find($request->id);
+        }
+
+        $menus = Menu::all();
+        $menu_status = MenuStatus::all();
+        $menuKategori = MenuKategori::all();
+        $role = Role::all();
+
+        $data = [
+            'menu' => $menus,
+            'menu_status' => $menu_status,
+            'kategori' => $menuKategori,
+            'role' => $role
+        ];
+
+        if (!$request->id) {
+            $menu = new Menu();
+        } else {
+            $menu = Menu::find($request->id);
+        }
+        return view('page.setting.menu.form_menu', compact('menu', 'data'));
     }
 
     /**
@@ -60,52 +88,77 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
+        // $validator = Validator::make(
+        //     $request->all(),
+        //     [
+        //         'nama_menu' => ['required', 'string', 'max:255'],
+        //         'url' => ['required', 'string', 'max:255'],
+        //         // 'aktif' => ['required'],
+        //         // 'parent_id' => ['required'],
+        //         'use_icon' => ['required'],
+        //         'menu_kategori_id' => ['required'],
+        //         'role_id' => ['required'],
+        //     ],
+        //     [
+        //         'nama_menu.required' => 'Silahkan isi nama menu',
+        //         'url.required' => 'Silahkan isi url',
+        //         // 'aktif.required' => 'Silahkan pilih',
+        //         // 'parent_id.required' => 'Silahkan pilih',
+        //         'use_icon.required' => 'Silahkan pilih',
+        //         'menu_kategori_id.required' => 'Silahkan pilih',
+        //         'role_id.required' => 'Silahkan pilih',
+        //     ]
+        // );
+
+        // if ($validator->fails()) {
+        //     return response()->json(['errors' => $validator->errors()], 422);
+        // }
+
+        $id = $request->input('id');
+
+
+
+        // $menu->nama_menu = $request->input('nama_menu');
+        // $menu->url = $request->input('url');
+
+        // if (empty($request->input('aktif'))) {
+        //     $aktif = 'N';
+        // } else {
+        //     $aktif = 'Y';
+        // }
+
+        // $menu->aktif = $aktif;
+
+        // $menu->parent_id = $request->input('parent_id') ?: NULL;
+
+        // $menu->link = $request->input('parent_id') == NULL ? '#' : NULL;
+
+        // $menu->menu_status_id = $request->input('menu_status_id');
+
+        // $menu->class = $request->input('icon_class');
+
+        // if ($request->input('menu_kategori_id') == '') {
+        //     $menu_kategori_id = NULL;
+        // } else {
+        //     $menu_kategori_id = $request->input('menu_kategori_id');
+        // }
+        // $menu->menu_kategori_id = $menu_kategori_id;
+
+        $menu = Menu::updateOrCreate(
             [
-                'nama_menu' => ['required', 'string', 'max:255'],
-                'url' => ['required', 'string', 'max:255'],
-                // 'aktif' => ['required'],
-                // 'parent_id' => ['required'],
-                'use_icon' => ['required'],
-                'menu_kategori_id' => ['required'],
+                'id' => $id
             ],
             [
-                'nama_menu.required' => 'Silahkan isi nama menu',
-                'url.required' => 'Silahkan isi url',
-                // 'aktif.required' => 'Silahkan pilih',
-                // 'parent_id.required' => 'Silahkan pilih',
-                'use_icon.required' => 'Silahkan pilih',
-                'menu_kategori_id.required' => 'Silahkan pilih',
+                'nama_menu' => $request->input('nama_menu'),
+                'url' => $request->input('url'),
+                'aktif' => $request->input('aktif' ) == '' ? 'N' : 'Y',
+                'parent_id' => $request->input('parent_id') ?: NULL,
+                'link' => $request->input('parent_id') == NULL ? '#' : NULL,
+                'class' => $request->input('use_icon') == 1 ? $request->input('icon_class') : NULL,
+                'menu_status_id' => $request->input('menu_status_id'),
+                'menu_kategori_id' => $request->input('menu_kategori_id') == '' ? NULL : $request->input('menu_kategori_id'),
             ]
         );
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        $menu = new Menu();
-
-        $menu->nama_menu = $request->input('nama_menu');
-        $menu->url = $request->input('url');
-
-        if (empty($request->input('aktif'))) {
-            $aktif = 'N';
-        } else {
-            $aktif = 'Y';
-        }
-
-        $menu->aktif = $aktif;
-
-        $menu->parent_id = $request->input('parent_id') ?: NULL;
-        $menu->class = $request->input('icon_class');
-
-        if ($request->input('menu_kategori_id') == '') {
-            $menu_kategori_id = NULL;
-        } else {
-            $menu_kategori_id = $request->input('menu_kategori_id');
-        }
-        $menu->menu_kategori_id = $menu_kategori_id;
-        // $menu->save();
 
         return ResponseFormatter::success([
             'data' => $menu
@@ -127,6 +180,7 @@ class MenuController extends Controller
     public function showMenu($id)
     {
         $menu = Menu::with('parent')->find($id);
+        $menu['menu_status_id'] = $menu->menu_status->id;
         return response()->json(['data' => $menu]);
     }
 
@@ -138,7 +192,6 @@ class MenuController extends Controller
      */
     public function edit($id)
     {
-
     }
 
     /**
@@ -214,26 +267,26 @@ class MenuController extends Controller
         $menu->delete();
         return ResponseFormatter::success([
             'data' => null
-        ],'Menu Deleted');
+        ], 'Menu Deleted');
     }
 
     public function getParent(Request $request)
     {
         $search = $request->search;
 
-        if($search == ''){
-            $menus = Menu::orderby('nama_menu','asc')->select('id','nama_menu')->limit(5)->get();
-         }else{
-            $menus = Menu::orderby('nama_menu','asc')->select('id','nama_menu')->where('nama_menu', 'like', '%' .$search . '%')->limit(5)->get();
-         }
+        if ($search == '') {
+            $menus = Menu::orderby('nama_menu', 'asc')->select('id', 'nama_menu')->limit(5)->get();
+        } else {
+            $menus = Menu::orderby('nama_menu', 'asc')->select('id', 'nama_menu')->where('nama_menu', 'like', '%' . $search . '%')->limit(5)->get();
+        }
 
-         $response = array();
-         foreach($menus as $menu){
+        $response = array();
+        foreach ($menus as $menu) {
             $response[] = array(
-                 "id"=>$menu->id,
-                 "text"=>$menu->nama_menu
+                "id" => $menu->id,
+                "text" => $menu->nama_menu
             );
-         }
-         return response()->json($response);
+        }
+        return response()->json($response);
     }
 }

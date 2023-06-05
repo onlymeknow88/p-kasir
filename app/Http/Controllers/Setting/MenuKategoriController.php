@@ -25,9 +25,14 @@ class MenuKategoriController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $menuKategori = new MenuKategori();
+
+        if(!$request->id) {
+            $menuKategori = new MenuKategori();
+        } else {
+            $menuKategori = MenuKategori::find($request->id);
+        }
         return view('page.setting.menu.form_kategori', compact('menuKategori'));
     }
 
@@ -59,11 +64,23 @@ class MenuKategoriController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
         $data = $request->except('_method','_token');
-        $kategori = MenuKategori::create($data);
+
+        $id = $request->id;
+
+        if($id) {
+
+            $kategori = MenuKategori::find($id);
+        } else {
+
+            $kategori = MenuKategori::create($data);
+        }
+
 
         return ResponseFormatter::success([
             'data' => $kategori
         ], 'Menu Kategori Success');
+
+
     }
 
     /**
@@ -86,8 +103,6 @@ class MenuKategoriController extends Controller
      */
     public function edit($id)
     {
-        $menuKategori = MenuKategori::find($id);
-        return view('page.setting.menu.form_kategori', compact('menuKategori'));
     }
 
     /**

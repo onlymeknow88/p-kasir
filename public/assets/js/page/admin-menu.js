@@ -1,7 +1,7 @@
 let modalKategori = "#modalKategori";
 let modalMenu = "#modalMenu";
 
-$(function () {
+$(document).ready(function(){
     $("body").delegate("form", "submit", function (e) {
         e.preventDefault();
         return false;
@@ -41,11 +41,13 @@ $(function () {
 
     $(".kategori-container").delegate(".btn-edit", "click", function (e) {
         e.stopPropagation();
+        // console.log($(this).parents("li").eq(0).attr("data-kategori-id"));
         if ($(this).hasClass("disabled")) return false;
         showFormKategori(
             "edit",
-            $(this).parents("li").attr("data-kategori-id")
+            $(this).parents("li").eq(0).attr("data-kategori-id")
         );
+
         return false;
     });
 
@@ -107,7 +109,9 @@ $(function () {
             '<button data-action="collapse" class="fa fa-minus" type="button">Collapse</button>',
         editBtnCallback: function ($list) {
             // console.log($list.data('id'))
-            editFormMenu("Edit", $list.data("id"));
+            // editFormMenu("Edit", $list.data("id"));
+
+            $bootbox = showFormMenu("edit", $list.data("id"));
         },
         beforeRemove: function (item, plugin) {
             list_data = $("#list_menu").wdiMenuEditor("serialize");
@@ -170,69 +174,131 @@ $(function () {
         allowClear: true,
     });
 
-    $("#use_icon").on("change", function () {
-        var use_icon = $(this).val();
-        if (use_icon == "Y") {
-            $("#icon_class").removeClass("d-none");
+    $(document).on('change', 'select[name="use_icon"]', function(){
+        $this = $(this);
+        if (this.value == 1)
+		{
+            $icon_preview = $('.icon-preview').show();
+			$('.icon-preview').show().removeClass('d-none');
 
-            $("#icon_class").select2({
-                theme: "bootstrap-5",
-                placeholder: $(this).data("placeholder"),
-                containerCssClass: "use_icon",
-                dropdownParent: $("#modalMenu"),
-                ajax: {
-                    url: "{{ asset('assets/css/fontawesome/icons.json') }}",
-                    dataType: "json",
-                    delay: 250,
-                    processResults: function (data) {
-                        return {
-                            results: $.map(data, function (index, item) {
-                                if (index.styles == "solid") {
-                                    var icon_label = "fa";
-                                } else if (index.styles == "brands") {
-                                    var icon_label = "fab";
-                                } else if (index.styles[1] == "regular") {
-                                    var icon_label = "far";
-                                }
+			var calass_name = $icon_preview.find('i').attr('class');
+			$this.parent().find('[name="icon_class"]').val(calass_name);
+		} else {
+			$this.next().hide();
+		}
 
-                                return {
-                                    id: item,
-                                    text:
-                                        '<i class="' +
-                                        icon_label +
-                                        " fa-" +
-                                        item +
-                                        ' me-2"></i> ' +
-                                        item,
-                                };
-                            }),
-                        };
-                    },
-                    cache: true,
-                },
-                escapeMarkup: function (markup) {
-                    return markup;
-                },
-            });
-        } else if (use_icon == "N") {
-            $(".use_icon").addClass("d-none");
-        }
     });
+
+    $(document).on('click', '.icon-preview', function() {
+		$bootbox.hide();
+		$this = $(this);
+		fapicker({
+			iconUrl: '/assets/css/fontawesome/metadata/icons.yml',
+			onSelect: function (elm) {
+				$bootbox.show();
+				var icon_class = $(elm).data('icon');
+                // console.log(icon_class)
+				$this.find('i').removeAttr('class').addClass(icon_class);
+				$this.parent().find('[name="icon_class"]').val(icon_class);
+			},
+			onClose: function() {
+				$bootbox.show();
+			}
+		});
+	});
+
+
+
+    $("#add-kategori").click(function (e) {
+        e.preventDefault();
+        $bootbox = showFormKategori();
+    });
+
+    $("#add-menu").click(function (e) {
+        e.preventDefault();
+        $bootbox = showFormMenu('add');
+    });
+
 });
 
-// function addFormKategori(url, title = 'Tambah Kategori') {
-// $(modalKategori).modal('show');
-// $(`${modalKategori} .modal-title`).text(title);
-// $(`${modalKategori} form`).attr('action', url);
-// $(`${modalKategori} [name=_method]`).val('post');
 
-// resetForm(`${modalKategori} form`);
-// }
 
-$("#add-kategori").click(function (e) {
-    e.preventDefault();
-    $bootbox = showFormKategori();
-});
+
+function showFormMenu(type = "add", id = "") {
+    $bootbox = bootbox.dialog({
+        title: type == "edit" ? "Edit Menu" : "Tambah Menu",
+        message:
+            '<div class="text-center"><div class="spinner-border text-secondary" role="status"></div>',
+        buttons: {
+            cancel: {
+                label: "Cancel",
+                className: "btn-link",
+            },
+            success: {
+                label: "Submit",
+                className: "btn-primary submit",
+                callback: function () {
+                    $form_filled = $bootbox.find("form");
+                    var formdata = false;
+                    if (window.FormData) {
+                        formdata = new FormData($form_filled[0]);
+                    }
+
+                    list_data = $('#list_menu').wdiMenuEditor('serialize');
+                    menu_tree = JSON.stringify(list_data);
+
+                    console.log($form_filled)
+
+                    // $.post({
+                    //     url: $("#add-formMenu").attr("action"),
+                    //     data: formdata ? formdata : form.serialize(),
+                    //     type: "POST",
+                    //     dataType: "json",
+                    //     contentType: false,
+                    //     cache: false,
+                    //     processData: false,
+                    // })
+                    //     .done((response) => {
+                    //         console.log(response);
+                    //         if (response.meta.code == 200) {
+                    //             swal.fire({
+                    //                 text: response.meta.message,
+                    //                 type: "success",
+                    //             }).then(function () {
+                    //                 $bootbox.modal("hide");
+                    //             });
+                    //         } else if (response.meta.code == 500) {
+                    //             swal.fire({
+                    //                 text: response.meta.message,
+                    //                 type: "error",
+                    //             });
+                    //         }
+                    //     })
+                    //     .fail((errors) => {
+                    //         if (errors.status == 422) {
+                    //             // console.log("Error:", errors.responseJSON.errors);
+                    //             loopErrors(errors.responseJSON.errors);
+                    //             return;
+                    //         }
+                    //     });
+                    return false;
+                },
+            },
+        },
+    });
+
+
+    var url = "/aplikasi/menu/create?id=" + id;
+    $.get(url, function (result) {
+        // $button.prop('disabled', false);
+        $bootbox.find(".modal-body").html(result);
+        // $('#parent_id').val(result.).trigger('change');
+        $('#parent_id').select2({theme: 'bootstrap-5', dropdownParent: $(".bootbox")});
+
+
+    });
+    return $bootbox;
+}
 
 function showFormKategori(type = "add", id = "") {
     var $button = "";
@@ -259,9 +325,9 @@ function showFormKategori(type = "add", id = "") {
                     }
 
                     $.post({
-                        url: $('#add-form').attr("action"),
+                        url: $("#add-formKategori").attr("action"),
                         data: formdata ? formdata : form.serialize(),
-                        type: 'POST',
+                        type: "POST",
                         dataType: "json",
                         contentType: false,
                         cache: false,
@@ -274,7 +340,7 @@ function showFormKategori(type = "add", id = "") {
                                     text: response.meta.message,
                                     type: "success",
                                 }).then(function () {
-                                    $bootbox.modal('hide');
+                                    $bootbox.modal("hide");
                                 });
                             } else if (response.meta.code == 500) {
                                 swal.fire({
@@ -295,94 +361,72 @@ function showFormKategori(type = "add", id = "") {
             },
         },
     });
-    if(id) {
-        var url = $("#add-kategori").attr("href");
-    } else {
-        var url = '/aplikasi/menukategori/'+id+'/edit';
-    }
+
+    var url = "/aplikasi/menuKategori/create?id=" + id;
     $.get(url, function (result) {
-        // console.log()
         // $button.prop('disabled', false);
         $bootbox.find(".modal-body").html(result);
     });
     return $bootbox;
 }
 
-function addFormMenu(url, title = "Tambah Menu") {
-    $(modalMenu).modal("show");
-    $(`${modalMenu} .modal-title`).text(title);
-    $(`${modalMenu} form`).attr("action", url);
-    $(`${modalMenu} [name=_method]`).val("post");
+// function addFormMenu(url, title = "Tambah Menu") {
+//     $(modalMenu).modal("show");
+//     $(`${modalMenu} .modal-title`).text(title);
+//     $(`${modalMenu} form`).attr("action", url);
+//     $(`${modalMenu} [name=_method]`).val("post");
 
-    // resetForm(`${modalMenu} form`);
-}
+//     // resetForm(`${modalMenu} form`);
+// }
 
-function editFormKategori(type, id = "") {
-    console.log(id);
+// functyion editFormMenu(type = "", id = "") {
+//     var url = "/aplikasi/menu/" + id;
+//     url = url.replace(":id", id);
+//     $.get("/aplikasi/menu/" + id + "/s-menu")
+//         .done((response) => {
+//             console.log(response.data);
+//             $(modalMenu).modal("show");
+//             $(`${modalMenu} .modal-title`).text(type);
+//             $(`${modalMenu} form`).attr("action", url);
+//             $(`${modalMenu} [name=_method]`).val("put");
 
-    var title = type == "edit" ? "Edit Menu" : "Tambah Menu";
+//             var options = new Option(
+//                 response.data.parent == null
+//                     ? "Tidak ada parent menu"
+//                     : response.data["parent"].nama_menu,
+//                 response.data.parent == null
+//                     ? "Tidak ada parent menu"
+//                     : response.data["parent"].id,
+//                 true,
+//                 true
+//             );
+//             $("#parent_id").append(options).change();
 
-    $.get("/aplikasi/menu/" + id)
-        .done((response) => {
-            $(modalKategori).modal("show");
-            $(`${modalKategori} .modal-title`).text(title);
-            $(`${modalKategori} form`).attr("action", url);
-            $(`${modalKategori} [name=_method]`).val("put");
+//             var option = new Option(
+//                 response.data.class,
+//                 response.data.class,
+//                 true,
+//                 true
+//             );
+//             $("#icon_class").append(option).change();
 
-            // resetForm(`${modal} form`);
-            loopForm(response.data);
-        })
-        .fail((errors) => {
-            alert("Tidak dapat menampilkan data");
-            return;
-        });
-}
+//             var aktif = $("input[name=aktif");
+//             if (response.data.aktif == "Y") {
+//                 aktif.attr("checked", "checked");
+//             } else {
+//                 aktif.removeAttr("checked", "checked");
+//             }
 
-function editFormMenu(type = "", id = "") {
-    var url = "/aplikasi/menu/" + id;
-    url = url.replace(":id", id);
-    $.get("/aplikasi/menu/" + id + "/s-menu")
-        .done((response) => {
-            $(modalMenu).modal("show");
-            $(`${modalMenu} .modal-title`).text(type);
-            $(`${modalMenu} form`).attr("action", url);
-            $(`${modalMenu} [name=_method]`).val("put");
+//             $("#menu_status_id").val(response.data.menu_status_id).change();
 
-            var options = new Option(
-                response.data.parent == null
-                    ? "Tidak ada parent menu"
-                    : response.data["parent"].nama_menu,
-                response.data.parent == null
-                    ? "Tidak ada parent menu"
-                    : response.data["parent"].id,
-                true,
-                true
-            );
-            $("#parent_id").append(options).change();
-
-            var option = new Option(
-                response.data.class,
-                response.data.class,
-                true,
-                true
-            );
-            $("#icon_class").append(option).change();
-
-            var aktif = $("input[name=aktif");
-            if (response.data.aktif == "Y") {
-                aktif.attr("checked", "checked");
-            } else {
-                aktif.removeAttr("checked", "checked");
-            }
-
-            resetForm(`${modalMenu} form`);
-            loopForm(response.data);
-        })
-        .fail((errors) => {
-            alert("Tidak dapat menampilkan data");
-            return;
-        });
-}
+//             resetForm(`${modalMenu} form`);
+//             loopForm(response.data);
+//         })
+//         .fail((errors) => {
+//             alert("Tidak dapat menampilkan data");
+//             return;
+//         });
+// }
 
 function submitForm(originalForm) {
     $.post({
