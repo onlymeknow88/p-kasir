@@ -14,4 +14,9 @@ class Permission extends Model
     protected $fillable = [
         'role_id', 'menu_id', 'akses', 'tambah', 'edit', 'view', 'hapus'
     ];
+
+    public function menus()
+    {
+        return $this->belongsToMany(Menu::class,'menu_id')->orderBy('order');
+    }
 }

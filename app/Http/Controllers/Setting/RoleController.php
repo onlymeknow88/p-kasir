@@ -156,14 +156,16 @@ class RoleController extends Controller
 
         $list_permission = Permission::where('role_id', $id)->get();
 
-        foreach ($list_permission as $list) {
-            $akses = $request['akses' . $list->id] ? 'Y' : 'N';
-            $view = $request['view' . $list->id] ? 'Y' : 'N';
-            $tambah = $request['tambah' . $list->id] ? 'Y' : 'N';
-            $edit = $request['edit' . $list->id] ? 'Y' : 'N';
-            $hapus = $request['hapus' . $list->id] ? 'Y' : 'N';
+        foreach ($request->raw as $key => $count) {
 
-            $data = Permission::find($list->id);
+            $menu_id    = $request['menu_id'.$count];
+            $akses      = $request['akses'.$count] == 'on' ? 'Y':'N';
+            $tambah     = $request['tambah'.$count] == 'on' ? 'Y':'N';
+            $edit       = $request['edit'.$count] == 'on' ? 'Y':'N';
+            $hapus      = $request['hapus'.$count] == 'on' ? 'Y':'N';
+            $view       = $request['view'.$count] == 'on' ? 'Y':'N';
+
+            $data = Permission::where('menu_id',$menu_id)->first();
             $data->akses = $akses;
             $data->view = $view;
             $data->tambah = $tambah;
@@ -171,13 +173,6 @@ class RoleController extends Controller
             $data->hapus = $hapus;
             $data->save();
 
-            $menu = Menu::find($list->menu_id);
-            if ($akses == 'N') {
-                $menu->aktif = 'N';
-            } elseif ($akses == 'Y') {
-                $menu->aktif = 'Y';
-            }
-            $menu->save();
         }
 
         $data = $request->all();
@@ -185,7 +180,7 @@ class RoleController extends Controller
         $role->update($data);
 
         return ResponseFormatter::success([
-            'data' => $role
+            'data' => $data
         ], 'Role Success');
     }
 
@@ -234,18 +229,25 @@ class RoleController extends Controller
             }
 
 
-            $menus = ResponseFormatter::menu($request->role_id);
+            $menus = Menu::with('children')->whereNull('parent_id')->where('aktif', 'Y')->get();
 
             foreach ($menus as $key => $ms) {
-                $akses = $ms->akses == 'Y' ? 'checked' : '';
-                $view = $ms->view == 'Y' ? 'checked' : '';
-                $tambah = $ms->tambah == 'Y' ? 'checked' : '';
-                $edit = $ms->edit == 'Y' ? 'checked' : '';
-                $hapus = $ms->hapus == 'Y' ? 'checked' : '';
 
-                if ($ms->parent_id == $request->parent_id) {
-                    if ($ms->link == '#') {
-                        $data .= '<tr>
+                $role = Permission::where('menu_id', '=', $ms->id)->get();
+                if (count($role)) {
+                    foreach ($role as $r) {
+                        $akses = $r->akses == 'Y' ? 'checked' : '';
+                        $view = $r->view == 'Y' ? 'checked' : '';
+                        $tambah = $r->tambah == 'Y' ? 'checked' : '';
+                        $edit = $r->edit == 'Y' ? 'checked' : '';
+                        $hapus = $r->hapus == 'Y' ? 'checked' : '';
+                    }
+                }
+
+                if ($ms->link == '#') {
+                    $data .= '<tr>
+                                    <input type="hidden" name="menu_id'.$ms->id.'" id="menu_id'.$ms->id.'" value="'.$ms->id.'">
+                                    <input type="hidden" name="raw[]" value="'.$ms->id.'">
                                     <td class="fw-bold">' . $ms->nama_menu . '</td>
                                     <td>
                                             <div class="custom-control">
@@ -259,9 +261,97 @@ class RoleController extends Controller
                                         <td></td>
                                         <td></td>
                                     </tr>';
-                    } else {
-                        $data .= '<tr>
-                                        <td class="fw-bold">' . $ms->nama_menu . '</td>
+                    if (count($ms->children)) {
+                        $child = $ms->children;
+                        $data .= $this->submenu($child);
+                    }
+                } else {
+                    $data .= '<tr>
+                                    <input type="hidden" name="menu_id'.$ms->id.'" id="menu_id'.$ms->id.'" value="'.$ms->id.'">
+                                    <input type="hidden" name="raw[]" value="'.$ms->id.'">
+                                            <td class="fw-bold">' . $ms->nama_menu . '</td>
+                                            <td>
+                                                <div class="custom-control">
+                                                    <input name="akses' . $ms->id . '" type="checkbox" class="custom-control-input main"
+                                                    id="customSwitch akses' . $ms->id . '" ' . $akses . '>
+                                                    <label class="custom-control-label" for="customSwitch akses' . $ms->id . '"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control">
+                                                    <input name="view' . $ms->id . '" type="checkbox" class="custom-control-input main"
+                                                    id="customSwitch view' . $ms->id . '" ' . $view . '>
+                                                    <label class="custom-control-label" for="customSwitch view' . $ms->id . '"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control">
+                                                    <input name="tambah' . $ms->id . '" type="checkbox" class="custom-control-input sub"
+                                                    id="customSwitch tambah' . $ms->id . '" ' . $tambah . '>
+                                                    <label class="custom-control-label" for="customSwitch tambah' . $ms->id . '"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control">
+                                                    <input name="edit' . $ms->id . '" type="checkbox" class="custom-control-input sub"
+                                                    id="customSwitch edit' . $ms->id . '" ' . $edit . '>
+                                                    <label class="custom-control-label" for="customSwitch edit' . $ms->id . '"></label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="custom-control">
+                                                    <input name="hapus' . $ms->id . '" type="checkbox" class="custom-control-input sub"
+                                                    id="customSwitch hapus' . $ms->id . '" ' . $hapus . '>
+                                                    <label class="custom-control-label" for="customSwitch hapus' . $ms->id . '"></label>
+                                                </div>
+                                            </td>
+                                        </tr>';
+                }
+            }
+        }
+
+        return response()->json($data);
+    }
+
+    private function submenu($child)
+    {
+
+        $data = '';
+        foreach ($child as $key => $ms) {
+
+            $role = Permission::where('menu_id', '=', $ms->id)->get();
+            if (count($role)) {
+                foreach ($role as $r) {
+                    $akses = $r->akses == 'Y' ? 'checked' : '';
+                    $view = $r->view == 'Y' ? 'checked' : '';
+                    $tambah = $r->tambah == 'Y' ? 'checked' : '';
+                    $edit = $r->edit == 'Y' ? 'checked' : '';
+                    $hapus = $r->hapus == 'Y' ? 'checked' : '';
+                }
+            }
+
+            if ($ms->link == '#') {
+                $data .= '<tr>
+                <input type="hidden" name="menu_id'.$ms->id.'" id="menu_id'.$ms->id.'" value="'.$ms->id.'">
+                                    <input type="hidden" name="raw[]" value="'.$ms->id.'">
+                                <td>' . $ms->nama_menu . '</td>
+                                <td>
+                                        <div class="custom-control">
+                                            <input name="akses' . $ms->id . '" type="checkbox" class="custom-control-input main"
+                                            id="customSwitch akses' . $ms->id . '" ' . $akses . '>
+                                            <label class="custom-control-label" for="customSwitch akses' . $ms->id . '"></label>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>';
+            } else {
+                $data .= '<tr>
+                <input type="hidden" name="menu_id'.$ms->id.'" id="menu_id'.$ms->id.'" value="'.$ms->id.'">
+                                    <input type="hidden" name="raw[]" value="'.$ms->id.'">
+                                        <td><span class="ml-15">' . $ms->nama_menu . '</span></td>
                                         <td>
                                             <div class="custom-control">
                                                 <input name="akses' . $ms->id . '" type="checkbox" class="custom-control-input main"
@@ -298,50 +388,9 @@ class RoleController extends Controller
                                             </div>
                                         </td>
                                     </tr>';
-                    }
-                } else {
-                    $data .= '<tr>
-                                    <td><span class="ml-15">' . $ms->nama_menu . '</span></td>
-                                    <td>
-                                        <div class="custom-control">
-                                            <input name="akses' . $ms->id . '" type="checkbox" class="custom-control-input main"
-                                            id="customSwitch akses' . $ms->id . '" ' . $akses . '>
-                                            <label class="custom-control-label" for="customSwitch akses' . $ms->id . '"></label>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="custom-control">
-                                            <input name="view' . $ms->id . '" type="checkbox" class="custom-control-input main"
-                                            id="customSwitch view' . $ms->id . '" ' . $view . '>
-                                            <label class="custom-control-label" for="customSwitch view' . $ms->id . '"></label>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="custom-control">
-                                            <input name="tambah' . $ms->id . '" type="checkbox" class="custom-control-input sub"
-                                            id="customSwitch tambah' . $ms->id . '" ' . $tambah . '>
-                                            <label class="custom-control-label" for="customSwitch tambah' . $ms->id . '"></label>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="custom-control">
-                                            <input name="edit' . $ms->id . '" type="checkbox" class="custom-control-input sub"
-                                            id="customSwitch edit' . $ms->id . '" ' . $edit . '>
-                                            <label class="custom-control-label" for="customSwitch edit' . $ms->id . '"></label>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="custom-control">
-                                            <input name="hapus' . $ms->id . '" type="checkbox" class="custom-control-input sub"
-                                            id="customSwitch hapus' . $ms->id . '" ' . $hapus . '>
-                                            <label class="custom-control-label" for="customSwitch hapus' . $ms->id . '"></label>
-                                        </div>
-                                    </td>
-                                </tr>';
-                }
             }
         }
 
-        return response()->json($data);
+        return $data;
     }
 }

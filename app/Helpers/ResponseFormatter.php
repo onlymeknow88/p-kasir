@@ -144,14 +144,15 @@ class ResponseFormatter
         return $menu;
     }
 
-    public static function menu($id){
+    public static function menu($roleid)
+    {
         $menu = DB::table('menu')
-        ->join('permission','permission.menu_id','=','menu.id')
-        ->select('permission.*','menu.nama_menu','menu.parent_id','menu.urut','menu.link','menu.menu_kategori_id')
-        ->where('permission.role_id',$id)
-        // ->where('menu.aktif','N')
-        ->orderBy('menu.urut')
-        ->get();
+            ->join('permission', 'permission.menu_id', '=', 'menu.id')
+            ->select('permission.*', 'menu.nama_menu', 'menu.parent_id', 'menu.aktif', 'menu.urut', 'menu.link', 'menu.menu_kategori_id')
+            ->where('permission.role_id', $roleid)
+            // ->where('menu.aktif','N')
+            ->orderBy('menu.urut')
+            ->get();
 
         return $menu;
     }
@@ -302,7 +303,7 @@ class ResponseFormatter
             }
 
             $active_link = Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'active' : '';
-            $show_collapse = Request::is($urlParent .'/'.$val->url. '/*') ? 'show' : '';;
+            $show_collapse = Request::is($urlParent . '/' . $val->url . '/*') ? 'show' : '';;
 
             if ($val->aktif == 'Y') {
                 // $route_url = route($urlParent.'.'.$val->url.'.index');
@@ -332,7 +333,7 @@ class ResponseFormatter
                                     </a>
                                 </div>';
 
-                                $result .= $buildsubMenu;
+                    $result .= $buildsubMenu;
                 }
             }
         }
