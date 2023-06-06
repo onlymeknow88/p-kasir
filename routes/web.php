@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
@@ -26,9 +27,13 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
 
     Route::resource('/dashboard', DashboardController::class);
+
+    //user
+    Route::resource('/user', UserController::class);
+
+
     Route::name('aplikasi.')->prefix('aplikasi')->group(function () {
         //menu kategori
-        // Route::post('/menu/create/{id}',[menuKategori::class,'create']);
         Route::resource('/menuKategori', MenuKategoriController::class);
         //menu
         Route::post('/menu/u-menu', [MenuController::class,'ajaxUpdateUrut']);
@@ -45,7 +50,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     });
     Route::name('setting.')->prefix('setting')->group(function () {
-
         Route::resource('/app', SettingController::class);
     });
 

@@ -4,12 +4,12 @@
     <div class="content-header" id="content-header">
         <div class="sub-items-left">
             <div class="item-breadcumb active">
-                <a href="#">Role</a>
+                <a href="#">User</a>
             </div>
         </div>
         <div class="sub-items-right">
             <div class="item-button">
-                <a href="{{ route('role.create') }}"
+                {{-- <a href="{{ route('role.create') }}"
                     class="btn btn-primary color-blue d-flex align-items-center justify-content-between">
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -17,7 +17,7 @@
                             fill="white" />
                     </svg>
                     <span class="ml-10">Add New</span>
-                </a>
+                </a> --}}
             </div>
         </div>
     </div>
@@ -31,41 +31,7 @@
     @include('layouts.partials.js')
 
     <script>
-        var datatable = $('.table').DataTable({
-            ajax: {
-                url: '{{ url()->current() }}',
-            },
-            columns: [{
-                    data: 'nama_role',
-                    name: 'nama_role'
-                },
-                {
-                    data: 'judul_role',
-                    name: 'judul_role'
-                },
-                {
-                    data: 'keterangan',
-                    name: 'keterangan'
-                },
-                {
-                    data: 'aksi',
-                    searchable: false,
-                    sortable: false
-                },
-            ],
-            // responsive: true,
-            autoWidth: false,
-            scrollX: true,
-            scrollCollapse: true,
-            language: {
-                paginate: {
-                    next: '>', // or '→'
-                    previous: '<' // or '←'
-                }
-            },
-        });
     </script>
-    <script src="{{ asset('assets/js/script.js') }}"></script>
 @endpush
 
 @section('content')
@@ -73,11 +39,11 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-title">
-                    <h6>All Role</h6>
+                    <h6>User</h6>
                 </div>
                 <div class="table-responsive">
-                    
-                    <table class="table" width="100%">
+
+                    {{-- <table class="table" width="100%">
                         <thead>
                             <tr>
                                 <th>Nama Role</th>
@@ -86,7 +52,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                    </table>
+                    </table> --}}
                 </div>
             </div>
         </div>
