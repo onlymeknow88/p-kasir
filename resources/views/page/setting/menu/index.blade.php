@@ -27,7 +27,7 @@
 
 @push('script')
     @include('layouts.partials.js')
-    
+
     <script src="{{ asset('assets/js/page/admin-menu.js') }}"></script>
     <script src="{{ asset('assets/js/js-yaml/js-yaml.min.js') }}"></script>
 @endpush
@@ -77,6 +77,18 @@
                                             </div>
                                         </li>
                                     @endforeach
+                                    <li data-kategori-id="" class="kategori-item list-group-item list-group-item-action" id="kategori-item-template" style="display:none">
+                                        <span class="text"></span>
+                                        <div class="toolbox">
+                                            <a href="javascript:void(0)" class="btn-edit"><i
+                                                    class="fas fa-pen mx-2 text-green "></i></a>
+                                            <a href="javascript:void(0)" class="btn-remove"><i
+                                                    class="fas fa-times mx-2 text-red"></i></a>
+                                        </div>
+                                    </li>
+                                    <li data-kategori-id="" class="kategori-item list-group-item list-group-item-action list-group-item-secondary uncategorized">
+                                        <span class="text">Uncategorized</span>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

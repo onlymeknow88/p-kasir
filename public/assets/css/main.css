@@ -1391,12 +1391,9 @@ select.form-select:focus-within {
   background-color: #fafafa !important;
 }
 .main-wrapper .content .home-two-column #primary .grid .content-main .card .card-body table.table-hover tbody tr:hover td {
-  transition-duration: 0.5s;
   background-color: #0a1c57 !important;
   color: #ffffff !important;
-}
-.main-wrapper .content .home-two-column #primary .grid .content-main .card .card-body table.table-hover tbody tr:hover td a {
-  transition-duration: 0.5s;
+  cursor: pointer;
 }
 .main-wrapper .content .home-two-column #primary .grid .content-main .card .card-body table tbody td a {
   text-decoration: none;

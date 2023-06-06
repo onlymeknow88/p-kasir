@@ -144,41 +144,41 @@ class ResponseFormatter
         return $menu;
     }
 
-    // public static function menu($id){
-    //     $menu = DB::table('menu')
-    //     ->join('permission','permission.menu_id','=','menu.id')
-    //     ->select('permission.*','menu.nama_menu','menu.urut','menu.link')
-    //     // ->where('permission.role_id',$id)
-    //     // ->where('menu.aktif','N')
-    //     // ->orderBy('menu.no_urut')
-    //     ->get();
+    public static function menu($id){
+        $menu = DB::table('menu')
+        ->join('permission','permission.menu_id','=','menu.id')
+        ->select('permission.*','menu.nama_menu','menu.parent_id','menu.urut','menu.link','menu.menu_kategori_id')
+        ->where('permission.role_id',$id)
+        // ->where('menu.aktif','N')
+        ->orderBy('menu.urut')
+        ->get();
 
-    //     return $menu;
+        return $menu;
+    }
+
+    // public static function main_menu()
+    // {
+    //     $main_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
+    //         ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
+    //         // ->where('permission.role_id', Auth::user()->role_id)
+    //         ->where('menu.aktif', 'Y')
+    //         // ->where('menu.parent_id', '=', null)
+    //         ->orderBy('menu.urut', 'ASC')->get();
+
+    //     return $main_menu;
     // }
 
-    public static function main_menu()
-    {
-        $main_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
-            ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
-            // ->where('permission.role_id', Auth::user()->role_id)
-            ->where('menu.aktif', 'Y')
-            // ->where('menu.parent_id', '=', null)
-            ->orderBy('menu.urut', 'ASC')->get();
+    // public static function sub_menu()
+    // {
+    //     $sub_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
+    //         ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
+    //         // ->where('permission.role_id', Auth::user()->role_id)
+    //         ->where('menu.aktif', 'Y')
+    //         ->where('menu.parent_id', '!=', null)
+    //         ->orderBy('menu.urut', 'ASC')->get();
 
-        return $main_menu;
-    }
-
-    public static function sub_menu()
-    {
-        $sub_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
-            ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
-            // ->where('permission.role_id', Auth::user()->role_id)
-            ->where('menu.aktif', 'Y')
-            ->where('menu.parent_id', '!=', null)
-            ->orderBy('menu.urut', 'ASC')->get();
-
-        return $sub_menu;
-    }
+    //     return $sub_menu;
+    // }
 
 
     public static function tanggal_indonesia($tgl, $tampil_hari = false)
@@ -242,7 +242,7 @@ class ResponseFormatter
     public static function build_menu($currentPage, $menuKategoriId, $parentid = 0)
     {
         $result = "\n" . '<div class="menu-item accordion" id="menu">' . "\r\n";
-        $arr = Menu::where('aktif', 'Y')->get();
+        $arr = Menu::where('aktif', 'Y')->orderBy('urut')->get();
         foreach ($arr as $key => $val) {
 
             // Menu icon
@@ -250,7 +250,7 @@ class ResponseFormatter
             if ($val->class) {
                 $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
             }
-            $active_link = Request::is($val->url . '/*') ? 'active' : '';
+            $active_link = Request::is($val->url) || Request::is($val->url . '/*') ? 'active' : '';
             $active_collpase = Request::is($val->url . '/*') ? 'true' : 'false';
 
             // menu link

@@ -25,7 +25,7 @@ class Menu extends Model
 
     public function children()
     {
-        return $this->hasMany(Menu::class, 'parent_id');
+        return $this->hasMany(Menu::class, 'parent_id')->orderBy('urut');
     }
 
     public function buildMenu($menu, $parentid = 0)
@@ -49,4 +49,7 @@ class Menu extends Model
     {
         return $this->buildMenu($items);
     }
+
+
+
 }

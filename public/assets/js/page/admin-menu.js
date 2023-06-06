@@ -161,6 +161,30 @@ $(document).ready(function () {
                 }
             );
         },
+
+        // Drag end
+		onChange: function(el) {
+			list_data = $('#list_menu').wdiMenuEditor('serialize');
+			data = JSON.stringify(list_data) + '&menu_kategori_id=' + $('.list-group-item-primary').attr('data-kategori-id');
+
+            $.ajax({
+				url: '/aplikasi/menu/u-menu',
+				type: 'post',
+				dataType: 'json',
+				data: 'data=' + data,
+				success: function(result) {
+                    // console.log(result.meta.code)
+					if (result.meta.code != '200') {
+                        alert('gagal');
+						// show_alert('Error !!!', data.message, 'error');
+					}
+				},
+				error: function (xhr) {
+					// show_alert('Error !!!', 'Ajax error, untuk detailnya bisa di cek di console browser', 'error');
+					console.log(xhr);
+				}
+			});
+		}
     });
 
     $("#parent_id").select2({
@@ -366,10 +390,10 @@ function showFormKategori(type = "add", id = "") {
                 label: "Submit",
                 className: "btn-primary submit",
                 callback: function () {
-                    var form = $bootbox.find("form");
+                    var $form_filled = $bootbox.find("form");
                     var formdata = false;
                     if (window.FormData) {
-                        formdata = new FormData(form[0]);
+                        formdata = new FormData($form_filled[0]);
                     }
 
                     $.post({
@@ -384,6 +408,20 @@ function showFormKategori(type = "add", id = "") {
                         .done((response) => {
                             // console.log(response);
                             if (response.meta.code == 200) {
+                                nama_kategori = $form_filled.find('[name="nama_kategori"]').val();
+
+                                if (type == 'edit') {
+                                    $('#list-kategori').find('li[data-kategori-id="' + id + '"]').find('.text').html(nama_kategori);
+                                    // show_alert('Sukses !!!', data.message, 'success');
+                                } else {
+                                    $template = $('#kategori-item-template').clone();
+                                    $template.removeAttr('id');
+                                    $template.attr('data-kategori-id', response.result.data.id);
+                                    $template.find('.text').html(nama_kategori);
+                                    $template.insertBefore('.uncategorized');
+                                    $template.fadeIn('fast');
+                                }
+
                                 swal.fire({
                                     text: response.meta.message,
                                     type: "success",

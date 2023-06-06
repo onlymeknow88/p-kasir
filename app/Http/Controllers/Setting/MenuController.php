@@ -30,7 +30,6 @@ class MenuController extends Controller
         $data = [
             'kategori' => $menuKategori,
             'list_menu' => $list_menu,
-
         ];
 
         return view('page.setting.menu.index', compact('data'));
@@ -88,61 +87,33 @@ class MenuController extends Controller
      */
     public function store(Request $request)
     {
-        // $validator = Validator::make(
-        //     $request->all(),
-        //     [
-        //         'nama_menu' => ['required', 'string', 'max:255'],
-        //         'url' => ['required', 'string', 'max:255'],
-        //         // 'aktif' => ['required'],
-        //         // 'parent_id' => ['required'],
-        //         'use_icon' => ['required'],
-        //         'menu_kategori_id' => ['required'],
-        //         'role_id' => ['required'],
-        //     ],
-        //     [
-        //         'nama_menu.required' => 'Silahkan isi nama menu',
-        //         'url.required' => 'Silahkan isi url',
-        //         // 'aktif.required' => 'Silahkan pilih',
-        //         // 'parent_id.required' => 'Silahkan pilih',
-        //         'use_icon.required' => 'Silahkan pilih',
-        //         'menu_kategori_id.required' => 'Silahkan pilih',
-        //         'role_id.required' => 'Silahkan pilih',
-        //     ]
-        // );
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_menu' => ['required', 'string', 'max:255'],
+                'url' => ['required', 'string', 'max:255'],
+                // 'aktif' => ['required'],
+                // 'parent_id' => ['required'],
+                'use_icon' => ['required'],
+                'menu_kategori_id' => ['required'],
+                'role_id' => ['required'],
+            ],
+            [
+                'nama_menu.required' => 'Silahkan isi nama menu',
+                'url.required' => 'Silahkan isi url',
+                // 'aktif.required' => 'Silahkan pilih',
+                // 'parent_id.required' => 'Silahkan pilih',
+                'use_icon.required' => 'Silahkan pilih',
+                'menu_kategori_id.required' => 'Silahkan pilih',
+                'role_id.required' => 'Silahkan pilih',
+            ]
+        );
 
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $id = $request->input('id');
-
-
-
-        // $menu->nama_menu = $request->input('nama_menu');
-        // $menu->url = $request->input('url');
-
-        // if (empty($request->input('aktif'))) {
-        //     $aktif = 'N';
-        // } else {
-        //     $aktif = 'Y';
-        // }
-
-        // $menu->aktif = $aktif;
-
-        // $menu->parent_id = $request->input('parent_id') ?: NULL;
-
-        // $menu->link = $request->input('parent_id') == NULL ? '#' : NULL;
-
-        // $menu->menu_status_id = $request->input('menu_status_id');
-
-        // $menu->class = $request->input('icon_class');
-
-        // if ($request->input('menu_kategori_id') == '') {
-        //     $menu_kategori_id = NULL;
-        // } else {
-        //     $menu_kategori_id = $request->input('menu_kategori_id');
-        // }
-        // $menu->menu_kategori_id = $menu_kategori_id;
 
         $menu = Menu::updateOrCreate(
             [
@@ -151,7 +122,7 @@ class MenuController extends Controller
             [
                 'nama_menu' => $request->input('nama_menu'),
                 'url' => $request->input('url'),
-                'aktif' => $request->input('aktif' ) == '' ? 'N' : 'Y',
+                'aktif' => $request->input('aktif') == '' ? 'N' : 'Y',
                 'parent_id' => $request->input('parent_id') ?: NULL,
                 'link' => $request->input('parent_id') == NULL ? '#' : NULL,
                 'class' => $request->input('use_icon') == 1 ? $request->input('icon_class') : NULL,
@@ -203,56 +174,6 @@ class MenuController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'nama_menu' => ['required', 'string', 'max:255'],
-                'url' => ['required', 'string', 'max:255'],
-                'aktif' => ['required'],
-                // 'parent_id' => ['required'],
-                'use_icon' => ['required'],
-                'menu_kategori_id' => ['required'],
-            ],
-            [
-                'nama_menu.required' => 'Silahkan isi nama menu',
-                'url.required' => 'Silahkan isi url',
-                'aktif.required' => 'Silahkan pilih',
-                // 'parent_id.required' => 'Silahkan pilih',
-                'use_icon.required' => 'Silahkan pilih',
-                'menu_kategori_id.required' => 'Silahkan pilih',
-            ]
-        );
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        $menu = new Menu();
-
-        $menu->nama_menu = $request->input('nama_menu');
-        $menu->url = $request->input('url');
-
-        if (empty($request->input('aktif'))) {
-            $aktif = 'N';
-        } else {
-            $aktif = 'Y';
-        }
-
-        $menu->aktif = $aktif;
-
-        $menu->parent_id = $request->input('parent_id');
-        $menu->class = $request->input('icon_class');
-
-        if ($request->input('menu_kategori_id') == '') {
-            $menu_kategori_id = NULL;
-        } else {
-            $menu_kategori_id = $request->input('menu_kategori_id');
-        }
-        $menu->menu_kategori_id = $menu_kategori_id;
-        // $menu->save();
-
-        return ResponseFormatter::success([
-            'data' => $menu
-        ], 'Menu Success');
     }
 
     /**
@@ -288,5 +209,38 @@ class MenuController extends Controller
             );
         }
         return response()->json($response);
+    }
+
+    public function ajaxUpdateUrut(Request $request)
+    {
+        $menuItems = $request->data;
+
+        $json = json_decode(trim($menuItems), true);
+
+        $result = $this->updateMenuItemsOrder($json, null, $request->menu_kategori_id);
+
+        return ResponseFormatter::success(['data', null], 'Menu Update Urutan Success');
+
+    }
+
+    private function updateMenuItemsOrder($menuItems, $parentID, $menuKategoriId)
+    {
+
+        if (empty($menuKategoriId)) {
+            $where_id_menu_kategori = '';
+        } else {
+            $where_id_menu_kategori = $menuKategoriId;
+        }
+
+        foreach ($menuItems as $index => $menuItem) {
+            $menu = Menu::where('id', $menuItem['id'])->where('menu_kategori_id', $where_id_menu_kategori)->first();
+            $menu->urut = $index + 1;
+            $menu->parent_id = $parentID;
+            $menu->save();
+
+            if (isset($menuItem['children']) && count($menuItem['children']) > 0) {
+                $this->updateMenuItemsOrder($menuItem['children'], $menu['id'], $menuKategoriId);
+            }
+        }
     }
 }

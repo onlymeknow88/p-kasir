@@ -2095,14 +2095,15 @@ select {
                                         tbody tr {
                                             &:hover {
                                                 td {
-                                                    transition-duration: 0.5s;
+                                                    // transition-duration: 0.5s;
                                                     background-color: $egyptian_blue_70 !important;
                                                     color: $nero_white !important;
+                                                    cursor: pointer;
 
-                                                    a {
-                                                        transition-duration: 0.5s;
-                                                        // color: $nero_white !important;
-                                                    }
+                                                    // a {
+                                                    //     transition-duration: 0.5s;
+                                                    //     // color: $nero_white !important;
+                                                    // }
                                                 }
                                             }
                                         }

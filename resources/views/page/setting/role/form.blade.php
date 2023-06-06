@@ -31,35 +31,37 @@
                 $('#keterangan').val(response.data.keterangan);
                 $('#menu_id').val(response.data.menu_id).change();
 
-                // $.ajax({
-                //         url: "/setting/role/get-menu",
-                //         type: "POST",
-                //         dataType: 'json',
-                //         data:{
-                //             role_id: response.data.id,
-                //             _token: `{{ csrf_token() }}`,
-                //         },
-                //         success: function (data){
-                //             $('#menu').html(data);
-                //         }
-                //     });
+                $.ajax({
+                    url: "/aplikasi/role/get-menu",
+                    type: "POST",
+                    dataType: 'json',
+                    data: {
+                        role_id: response.data.id,
+                        menu_kategori_id: response.data.menu_kategori_id,
+                        parent_id: response.data.parent_id,
+                        // _token: `{{ csrf_token() }}`,
+                    },
+                    success: function(data) {
+                        $('#permission_list').html(data);
+                    }
+                });
             });
         }
 
-        if(id) {
+        if (id) {
             getData();
         }
 
-        // $('.table').DataTable({
-        //     // scrollY: '225px',
-        //     // scrollCollapse: false,
-        //     paging: false,
-        //     bPaginate: false,
-        //     bInfo : false,
-        //     bFilter: false,
-        //     pageLength: 20,
-        //     ordering: false
-        // });
+        $('.table').DataTable({
+            // scrollY: '225px',
+            // scrollCollapse: false,
+            paging: false,
+            bPaginate: false,
+            bInfo: false,
+            bFilter: false,
+            pageLength: 20,
+            ordering: false
+        });
 
         // $('#role_name').keyup(function(e){
         //     var str = $('#role_name').val();
@@ -171,7 +173,7 @@
                             Role</h6>
                     </div>
                     <div class="horizontal-line my-3"></div>
-                    <a class="btn btn-primary" title="Add" href="{{ route('aplikasi.role.index') }}">
+                    <a class="btn btn-link color-softgray-5" title="Add" href="{{ route('aplikasi.role.index') }}">
                         {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
                         <i class="fas fa-arrow-left me-2"></i>
                         back
@@ -215,6 +217,27 @@
                                     Pastikan role memiliki permission pada halaman yang dipilih</em></span>
                         </div>
                     </div>
+                    @if ($role->id)
+                        <div class="mb-3 row">
+                            <label for="list-permission"
+                                class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Permission</label>
+                            <div class="col-sm-7">
+                                <table class="table table-hover" width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Menu</th>
+                                            <th>Access</th>
+                                            <th>Create</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                            <th>View</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="permission_list"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    @endif
                     <div class="horizontal-line color-shadow"></div>
                     <div class="card-footer mb-10">
                         <div class="col-md-4">

@@ -28,7 +28,7 @@ class MenuKategoriController extends Controller
     public function create(Request $request)
     {
 
-        if(!$request->id) {
+        if (!$request->id) {
             $menuKategori = new MenuKategori();
         } else {
             $menuKategori = MenuKategori::find($request->id);
@@ -63,12 +63,13 @@ class MenuKategoriController extends Controller
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        $data = $request->except('_method','_token');
-
+        $menuKategori = MenuKategori::latest()->first();
+        $data = $request->except('_method', '_token', 'urut');
+        $data['urut'] = $menuKategori->urut + 1;
         $id = $request->id;
 
-        if($id) {
 
+        if ($id) {
             $kategori = MenuKategori::find($id);
         } else {
 
@@ -79,8 +80,6 @@ class MenuKategoriController extends Controller
         return ResponseFormatter::success([
             'data' => $kategori
         ], 'Menu Kategori Success');
-
-
     }
 
     /**
@@ -154,6 +153,6 @@ class MenuKategoriController extends Controller
         $menu->delete();
         return ResponseFormatter::success([
             'data' => null
-        ],'Menu Kategori Deleted');
+        ], 'Menu Kategori Deleted');
     }
 }

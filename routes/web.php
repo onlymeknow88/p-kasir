@@ -31,11 +31,13 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         // Route::post('/menu/create/{id}',[menuKategori::class,'create']);
         Route::resource('/menuKategori', MenuKategoriController::class);
         //menu
+        Route::post('/menu/u-menu', [MenuController::class,'ajaxUpdateUrut']);
         Route::get('/menu/kategori/{id}', [MenuController::class,'buildMenu']);
         Route::get('/menu/{id}/s-menu', [MenuController::class,'showMenu']);
         Route::post('/menu/get-pMenu', [MenuController::class,'getParent']);
         Route::resource('/menu', MenuController::class);
         //role
+        Route::post('/role/get-menu', [RoleController::class, 'list_menu'])->name('getListMenu');
         Route::resource('/role', RoleController::class);
         //setting
 
