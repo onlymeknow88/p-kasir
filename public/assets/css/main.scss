@@ -2531,12 +2531,12 @@ select {
 /*Thead Color*/
 table.dataTable thead {
     // background-color: $green_haze_50;
-    font-size: 12px;
+    font-size: 13px;
     color: $nero_black_90;
 }
 
 table.dataTable tbody {
-    font-size: 12px;
+    font-size: 13px;
 
     a {
         font-weight: map-get($font-weights, medium);
@@ -2608,7 +2608,7 @@ table.dataTable > tbody > tr.child ul.dtr-details > li {
         }
     }
 
-    font-size: 12px !important;
+    font-size: 13px !important;
 
     margin-top: 10px !important;
     /*border border-transparent*/
@@ -2628,7 +2628,7 @@ table.dataTable > tbody > tr.child ul.dtr-details > li {
     /*bg-indigo-500*/
     border: 1px solid transparent !important;
 
-    font-size: 12px !important;
+    font-size: 13px !important;
 
     margin-top: 10px !important;
 
@@ -2653,7 +2653,7 @@ table.dataTable > tbody > tr.child ul.dtr-details > li {
     /*bg-indigo-500*/
     border: 1px solid transparent !important;
 
-    font-size: 12px !important;
+    font-size: 13px !important;
 
     margin-top: 10px !important;
 

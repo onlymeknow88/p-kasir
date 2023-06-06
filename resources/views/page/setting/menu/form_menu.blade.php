@@ -24,7 +24,7 @@
                 <div class="col-sm-8">
                     <div class="form-check-sm form-switch">
                         <input class="form-check-input" name="aktif" id="aktif" type="checkbox" value="1"
-                            id="switch-aktif" {{ $menu->aktif ? 'checked="checked"' : '' }}>
+                            id="switch-aktif" {{ $menu->aktif == 'Y' ? 'checked="checked"' : '' }}>
                         <label class="form-check-label" for="switch-aktif"></label>
                     </div>
                     <span class="form-text-12 fw-light text-muted"><em>Jika tidak aktif, semua children tidak

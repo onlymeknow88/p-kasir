@@ -144,43 +144,18 @@ class ResponseFormatter
         return $menu;
     }
 
-    public static function menu($roleid)
-    {
-        $menu = DB::table('menu')
-            ->join('permission', 'permission.menu_id', '=', 'menu.id')
-            ->select('permission.*', 'menu.nama_menu', 'menu.parent_id', 'menu.aktif', 'menu.urut', 'menu.link', 'menu.menu_kategori_id')
-            ->where('permission.role_id', $roleid)
-            // ->where('menu.aktif','N')
-            ->orderBy('menu.urut')
-            ->get();
-
-        return $menu;
-    }
-
-    // public static function main_menu()
+    // public static function menu($roleid)
     // {
-    //     $main_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
-    //         ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
-    //         // ->where('permission.role_id', Auth::user()->role_id)
-    //         ->where('menu.aktif', 'Y')
-    //         // ->where('menu.parent_id', '=', null)
-    //         ->orderBy('menu.urut', 'ASC')->get();
+    //     $menu = DB::table('menu')
+    //         ->join('permission', 'permission.menu_id', '=', 'menu.id')
+    //         ->select('permission.*', 'menu.nama_menu', 'menu.parent_id', 'menu.aktif', 'menu.urut', 'menu.link', 'menu.menu_kategori_id')
+    //         ->where('permission.role_id', $roleid)
+    //         // ->where('menu.aktif','N')
+    //         ->orderBy('menu.urut')
+    //         ->get();
 
-    //     return $main_menu;
+    //     return $menu;
     // }
-
-    // public static function sub_menu()
-    // {
-    //     $sub_menu = DB::table('permission')->join('menu', 'menu.id', '=', 'permission.menu_id')
-    //         ->select('menu.*', 'permission.akses', 'permission.tambah', 'permission.edit', 'permission.hapus')
-    //         // ->where('permission.role_id', Auth::user()->role_id)
-    //         ->where('menu.aktif', 'Y')
-    //         ->where('menu.parent_id', '!=', null)
-    //         ->orderBy('menu.urut', 'ASC')->get();
-
-    //     return $sub_menu;
-    // }
-
 
     public static function tanggal_indonesia($tgl, $tampil_hari = false)
     {

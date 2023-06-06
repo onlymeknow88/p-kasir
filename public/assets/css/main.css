@@ -1716,12 +1716,12 @@ select.form-select:focus-within {
 
 /*Thead Color*/
 table.dataTable thead {
-  font-size: 12px;
+  font-size: 13px;
   color: #000000;
 }
 
 table.dataTable tbody {
-  font-size: 12px;
+  font-size: 13px;
 }
 table.dataTable tbody a {
   font-weight: 500;
@@ -1759,7 +1759,7 @@ table.dataTable > tbody > tr.child ul.dtr-details > li {
   border-radius: 0.25rem;
   /*rounded*/
   border: 1px solid transparent;
-  font-size: 12px !important;
+  font-size: 13px !important;
   margin-top: 10px !important;
   /*border border-transparent*/
 }
@@ -1780,7 +1780,7 @@ table.dataTable > tbody > tr.child ul.dtr-details > li {
   background: #0a1c57 !important;
   /*bg-indigo-500*/
   border: 1px solid transparent !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
   margin-top: 10px !important;
   /*border border-transparent*/
 }
@@ -1801,7 +1801,7 @@ table.dataTable > tbody > tr.child ul.dtr-details > li {
   background: #0a1c57 !important;
   /*bg-indigo-500*/
   border: 1px solid transparent !important;
-  font-size: 12px !important;
+  font-size: 13px !important;
   margin-top: 10px !important;
   /*border border-transparent*/
 }
