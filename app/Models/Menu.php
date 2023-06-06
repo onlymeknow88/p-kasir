@@ -30,7 +30,6 @@ class Menu extends Model
 
     public function buildMenu($menu, $parentid = 0)
     {
-
         $result = null;
         foreach ($menu as $item)
             if ($item->parent_id == $parentid) {

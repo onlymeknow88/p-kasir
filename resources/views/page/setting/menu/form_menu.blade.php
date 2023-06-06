@@ -92,8 +92,8 @@
                     class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">Kategori</label>
                 <div class="col-sm-8">
                     <select name="menu_kategori_id" id="menu_kategori_id" class="form-select">
-                        @foreach ($data['kategori'] as $item)
-                            <option value="{{ $item->id }}">{{ $item->nama_kategori }}</option>
+                        @foreach ($data['kategori'] as $val)
+                            <option value="{{ $val->id }}" {{ $val->id === $menu->menu_kategori_id ? 'selected' : '' }}>{{ $val->nama_kategori }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -103,8 +103,8 @@
                     class="col-sm-3 col-form-label form-text-12 text-black text-right mtext-left fw-bold">Role</label>
                 <div class="col-sm-8">
                     <select name="role_id" id="role_id" class="form-select">
-                        @foreach ($data['role'] as $item)
-                            <option value="{{ $item->id }}">{{ $item->nama_role }}</option>
+                        @foreach ($data['role'] as $val)
+                            <option value="{{ $val->id }}">{{ $val->nama_role }}  </option>
                         @endforeach
                     </select>
                 </div>
