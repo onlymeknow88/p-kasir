@@ -22,7 +22,6 @@
 
 @push('css')
     @include('layouts.partials.css')
-
 @endpush
 
 @push('script')
@@ -52,50 +51,66 @@
                 </div>
                 <div class="horizontal-line my-3"></div>
 
-                <div class="col-auto d-flex flex-row">
-                    <div class="col-md-5 col-sm-4">
-                        <a href="{{ route('aplikasi.menuKategori.create') }}" class="btn btn-primary" title="Add" id="add-kategori">
-                        {{-- <a class="btn btn-primary d-flex align-items-center" title="Add" href="#"
+                <div class="row menu-container">
+                    <div class="col-sm-5 col-12 kategori-container">
+                        <a href="{{ route('aplikasi.menuKategori.create') }}" class="btn btn-primary" title="Add"
+                            id="add-kategori">
+                            {{-- <a class="btn btn-primary d-flex align-items-center" title="Add" href="#"
                             onclick="addFormKategori('{{ route('aplikasi.menuKategori.store') }}')"> --}}
                             {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
                             <i class="fa fa-plus me-2"></i>
                             Tambah Kategori
                         </a>
                         <div class="horizontal-line my-4"></div>
-                        <div class="kategori-container">
-                            <div class="list-kategori">
-                                <ul class="list-group menu-kategori-container" id="list-kategori-container">
-                                    @foreach ($data['kategori'] as $index => $item)
-                                        <li class="list-group-item kategori-item {{ $index == 0 ? 'list-group-item-primary' : '' }}"
-                                            data-kategori-id="{{ $item->id }}">
-                                            {{ $item->nama_kategori }}
-                                            <div class="toolbox">
+                        <div id="list-kategori">
+                            <ul class="list-group menu-kategori-container" id="list-kategori-container">
+                                @foreach ($data['kategori'] as $index => $item)
+                                    <li class="kategori-item list-group-item list-group-item-action {{ $index == 0 ? 'list-group-item-primary' : '' }}"
+                                        data-kategori-id="{{ $item->id }}">
+                                        <span class="text">{{ $item->nama_kategori }}</span>
+                                        <ul class="toolbox">
+                                            <li>
                                                 <a href="javascript:void(0)" class="btn-edit"><i
-                                                        class="fas fa-pen mx-2 text-green "></i></a>
+                                                        class="fas fa-pen text-green "></i></a>
+                                            </li>
+                                            <li>
                                                 <a href="javascript:void(0)" class="btn-remove"><i
-                                                        class="fas fa-times mx-2 text-red"></i></a>
-                                            </div>
+                                                        class="fas fa-times text-red"></i></a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                @endforeach
+                                <li data-kategori-id="" class="kategori-item list-group-item list-group-item-action"
+                                    id="kategori-item-template" style="display:none">
+                                    <span class="text"></span>
+                                    <ul class="toolbox">
+                                        <li>
+                                            <a href="javascript:void(0)" class="btn-edit"><i
+                                                    class="fas fa-pen mx-2 text-green "></i></a>
                                         </li>
-                                    @endforeach
-                                    <li data-kategori-id="" class="kategori-item list-group-item list-group-item-action" id="kategori-item-template" style="display:none">
-                                        <span class="text"></span>
-                                        <div class="toolbox">
+                                        <li>
+                                            <a href="javascript:void(0)" class="btn-remove"><i
+                                                    class="fas fa-times mx-2 text-red"></i></a>
+                                        </li>
+                                    </ul>
+                                    {{-- <div class="toolbox">
                                             <a href="javascript:void(0)" class="btn-edit"><i
                                                     class="fas fa-pen mx-2 text-green "></i></a>
                                             <a href="javascript:void(0)" class="btn-remove"><i
                                                     class="fas fa-times mx-2 text-red"></i></a>
-                                        </div>
-                                    </li>
-                                    <li data-kategori-id="" class="kategori-item list-group-item list-group-item-action list-group-item-secondary uncategorized">
-                                        <span class="text">Uncategorized</span>
-                                    </li>
-                                </ul>
-                            </div>
+                                        </div> --}}
+                                </li>
+                                <li data-kategori-id=""
+                                    class="kategori-item list-group-item list-group-item-action list-group-item-secondary uncategorized">
+                                    <span class="text">Uncategorized</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
 
-                    <div class="col-sm-6 col-md-7 ps-4">
-                        <a class="btn btn-primary btn-green"  id="add-menu" title="Add" href="{{ route('aplikasi.menu.store') }}">
+                    <div class="col-sm-7 col-12 mmt-20">
+                        <a class="btn btn-primary btn-green" id="add-menu" title="Add"
+                            href="{{ route('aplikasi.menu.store') }}">
                             <i class="fa fa-plus me-2"></i>
                             Tambah Menu
                         </a>

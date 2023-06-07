@@ -24,9 +24,9 @@ class RoleController extends Controller
             $query = Role::query();
 
             return DataTables::of($query)
-                ->addColumn('menu_id', function ($item) {
-                    return '<i class="' . $item->menu->class . ' me-2"></i>' . $item->menu->nama_menu;
-                })
+            ->addColumn('menu_id', function ($item) {
+                return '<span class="d-flex align-items-center"><i class="' . $item->menu->class . ' me-2"></i>' . $item->menu->nama_menu.'</span>';
+            })
                 ->addColumn('aksi', function ($item) {
                     return '
                     <div class="d-flex justify-content-start">

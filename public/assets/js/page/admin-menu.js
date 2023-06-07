@@ -163,28 +163,31 @@ $(document).ready(function () {
         },
 
         // Drag end
-		onChange: function(el) {
-			list_data = $('#list_menu').wdiMenuEditor('serialize');
-			data = JSON.stringify(list_data) + '&menu_kategori_id=' + $('.list-group-item-primary').attr('data-kategori-id');
+        onChange: function (el) {
+            list_data = $("#list_menu").wdiMenuEditor("serialize");
+            data =
+                JSON.stringify(list_data) +
+                "&menu_kategori_id=" +
+                $(".list-group-item-primary").attr("data-kategori-id");
 
             $.ajax({
-				url: '/aplikasi/menu/u-menu',
-				type: 'post',
-				dataType: 'json',
-				data: 'data=' + data,
-				success: function(result) {
+                url: "/aplikasi/menu/u-menu",
+                type: "post",
+                dataType: "json",
+                data: "data=" + data,
+                success: function (result) {
                     // console.log(result.meta.code)
-					if (result.meta.code != '200') {
-                        alert('gagal');
-						// show_alert('Error !!!', data.message, 'error');
-					}
-				},
-				error: function (xhr) {
-					// show_alert('Error !!!', 'Ajax error, untuk detailnya bisa di cek di console browser', 'error');
-					console.log(xhr);
-				}
-			});
-		}
+                    if (result.meta.code != "200") {
+                        alert("gagal");
+                        // show_alert('Error !!!', data.message, 'error');
+                    }
+                },
+                error: function (xhr) {
+                    // show_alert('Error !!!', 'Ajax error, untuk detailnya bisa di cek di console browser', 'error');
+                    console.log(xhr);
+                },
+            });
+        },
     });
 
     $("#parent_id").select2({
@@ -234,6 +237,49 @@ $(document).ready(function () {
     $("#add-menu").click(function (e) {
         e.preventDefault();
         $bootbox = showFormMenu("add");
+    });
+
+    //-- Kategori
+
+    dragKategori = dragula(
+        [document.getElementById("list-kategori-container")],
+        {
+            accepts: function (el, target, source, sibling) {
+                if (!sibling) return false;
+                return true;
+            },
+            moves: function (el, container, handle) {
+                return !el.classList.contains("uncategorized");
+            },
+        }
+    );
+
+    dragKategori.on("dragend", function (el) {
+        urut = [];
+        $("#list-kategori")
+            .find("li")
+            .each(function (i, el) {
+                id_kategori = $(el).attr("data-kategori-id");
+                if (id_kategori) {
+                    urut.push(id_kategori);
+                }
+            });
+
+        $.ajax({
+            type: "POST",
+            url: '/aplikasi/menuKategori/u-kategori',
+            data: "id=" + JSON.stringify(urut),
+            dataType: "json",
+            success: function (data) {
+                // if (data.status == "error") {
+                //     show_alert("Error !!!", data.message, "error");
+                // }
+            },
+            error: function (xhr) {
+                // show_alert("Error !!!", xhr.responseText, "error");
+                console.log(xhr.responseText);
+            },
+        });
     });
 });
 
@@ -408,18 +454,30 @@ function showFormKategori(type = "add", id = "") {
                         .done((response) => {
                             // console.log(response);
                             if (response.meta.code == 200) {
-                                nama_kategori = $form_filled.find('[name="nama_kategori"]').val();
+                                nama_kategori = $form_filled
+                                    .find('[name="nama_kategori"]')
+                                    .val();
 
-                                if (type == 'edit') {
-                                    $('#list-kategori').find('li[data-kategori-id="' + id + '"]').find('.text').html(nama_kategori);
+                                if (type == "edit") {
+                                    $("#list-kategori")
+                                        .find(
+                                            'li[data-kategori-id="' + id + '"]'
+                                        )
+                                        .find(".text")
+                                        .html(nama_kategori);
                                     // show_alert('Sukses !!!', data.message, 'success');
                                 } else {
-                                    $template = $('#kategori-item-template').clone();
-                                    $template.removeAttr('id');
-                                    $template.attr('data-kategori-id', response.result.data.id);
-                                    $template.find('.text').html(nama_kategori);
-                                    $template.insertBefore('.uncategorized');
-                                    $template.fadeIn('fast');
+                                    $template = $(
+                                        "#kategori-item-template"
+                                    ).clone();
+                                    $template.removeAttr("id");
+                                    $template.attr(
+                                        "data-kategori-id",
+                                        response.result.data.id
+                                    );
+                                    $template.find(".text").html(nama_kategori);
+                                    $template.insertBefore(".uncategorized");
+                                    $template.fadeIn("fast");
                                 }
 
                                 swal.fire({

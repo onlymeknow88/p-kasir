@@ -8,6 +8,7 @@
 <script src="{{ asset('assets/js/jquery-nestable/jquery.nestable.js') }}"></script>
 <script src="{{ asset('assets/js/jquery-nestable/jquery.wdi-menueditor.js') }}"></script>
 <script src="{{ asset('assets/js/bootbox/bootbox.min.js') }}"></script>
+<script src="{{ asset('assets/js/dragula/dragula.min.js') }}"></script>
 
 <!-- Resources -->
 <script src="{{ asset('assets/js/highcharts.js') }}"></script>

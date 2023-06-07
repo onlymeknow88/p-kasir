@@ -21,11 +21,10 @@ class MenuController extends Controller
     public function index(Request $request)
     {
         //menu
-        $menuKategori = MenuKategori::all();
-        $menus_kategori_list = Menu::where('menu_kategori_id', 1)->orderby('urut', 'asc')->get();
+        $menuKategori = MenuKategori::orderby('urut')->get();
+        $menus_kategori_list = Menu::where('menu_kategori_id', 1)->orderby('urut')->get();
         $menus = new Menu;
         $list_menu = $menus->getHTML($menus_kategori_list);
-
 
         $data = [
             'kategori' => $menuKategori,

@@ -10,6 +10,8 @@
 <link href="{{ asset('assets/css/fontawesome/css/all.css') }}" rel="stylesheet">
 {{-- nestable --}}
 <link href="{{ asset('assets/js/jquery-nestable/jquery.nestable.min.css') }}" rel="stylesheet">
+{{-- dragula --}}
+<link href="{{ asset('assets/js/dragula/dragula.min.css') }}" rel="stylesheet">
 {{-- fapicker --}}
 <link href="{{ asset('assets/js/wdi/wdi-modal.css') }}" rel="stylesheet">
 <link href="{{ asset('assets/js/wdi/wdi-fapicker.css') }}" rel="stylesheet">

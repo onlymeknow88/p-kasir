@@ -4,15 +4,18 @@ var table = $('.table').DataTable({
     },
     columns: [{
             data: 'nama_role',
-            name: 'nama_role'
+            name: 'nama_role',
+            width: '20%'
         },
         {
             data: 'judul_role',
-            name: 'judul_role'
+            name: 'judul_role',
+            width: '20%'
         },
         {
             data: 'menu_id',
-            name: 'menu_id'
+            name: 'menu_id',
+            width: '20%'
         },
         {
             data: 'keterangan',
@@ -24,7 +27,7 @@ var table = $('.table').DataTable({
             sortable: false
         },
     ],
-    // responsive: true,
+    responsive: true,
     autoWidth: false,
     scrollX: true,
     scrollCollapse: true,

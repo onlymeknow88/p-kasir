@@ -155,4 +155,20 @@ class MenuKategoriController extends Controller
             'data' => null
         ], 'Menu Kategori Deleted');
     }
+
+    public function ajaxUpdateKategoriUrut(Request $request)
+    {
+        $updated = $this->updateKategoriUrut(json_decode($request->id, true));
+
+    }
+
+    private function updateKategoriUrut($list_kategori)
+    {
+        $urut = 1;
+		foreach ($list_kategori as $id_kategori) {
+			$menuKategori = MenuKategori::find($id_kategori);
+            $menuKategori->update(['urut' => $urut]);
+			$urut++;
+		}
+    }
 }

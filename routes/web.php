@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::name('aplikasi.')->prefix('aplikasi')->group(function () {
         //menu kategori
+        Route::post('/menuKategori/u-kategori', [MenuKategoriController::class,'ajaxUpdateKategoriUrut']);
         Route::resource('/menuKategori', MenuKategoriController::class);
         //menu
         Route::post('/menu/u-menu', [MenuController::class,'ajaxUpdateUrut']);
