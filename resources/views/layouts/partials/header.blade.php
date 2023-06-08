@@ -16,7 +16,7 @@
             <div class="logo">
                 <a href="#">
                     <div class="top-logo">
-                        {{-- <img src="/assets/img/logo-adaro-mining.png" alt="" width="100"> --}}
+                        <img src="{{ asset('assets/img/' . Helper::settingApp()['logo_app']) }}">
                         <h4>Koperasi</h4>
                     </div>
                 </a>
@@ -33,9 +33,9 @@
                                 <img src="{{ Storage::disk('public')->url('avatars/' . Auth::user()->avatar) }}"
                                     class="rounded-circle" width="40" height="40" alt="">
                             @else
-                            {{-- <img src="{{ Helper::getProfilePicture(Auth::user()->name) }}"
+                                {{-- <img src="{{ Helper::getProfilePicture(Auth::user()->name) }}"
                                     class="rounded-circle" width="40" height="40" alt="{{ Auth::user()->name }}"> --}}
-                            {{-- <img src="data:image/png;base64,{{ Helper::getProfilePicture(Auth::user()->name) }}" alt="{{ Auth::user()->name }}"> --}}
+                                {{-- <img src="data:image/png;base64,{{ Helper::getProfilePicture(Auth::user()->name) }}" alt="{{ Auth::user()->name }}"> --}}
                                 {{-- <img src="{{ Helper::getProfilePicture(Auth::user()->name) }}" alt="Profile Picture"> --}}
                             @endif
                         </a>

@@ -10,6 +10,7 @@ use Milon\Barcode\DNS1D;
 use App\Models\Accessory;
 use App\Models\ActionLog;
 use App\Models\Component;
+use App\Models\SettingApp;
 use LdapRecord\Connection;
 use App\Models\LicenseSeat;
 use Illuminate\Support\Str;
@@ -65,28 +66,28 @@ class ResponseFormatter
     // public static function connectLdap()
     // {
     //     $connection = new Connection([
-    //         'hosts'    => ['ptadaro.com'],
+    //         'hosts'    => [''],
     //         'port'     => 389,
-    //         'username' => 'ptadaro\fwivindi',
-    //         'password' => 'Suzuran#222',
+    //         'username' => '',
+    //         'password' => '',
     //     ]);
 
     //     return $connection;
     // }
 
-    public static function upload($image, $directory, $file, $filename = "")
-    {
-        $extensi  = strtolower($file->getClientOriginalExtension());
-        $filename = "{$filename}_" . Str::random(10) . ".{$extensi}";
+    // public static function upload($image, $directory, $file, $filename = "")
+    // {
+    //     $extensi  = strtolower($file->getClientOriginalExtension());
+    //     $filename = "{$filename}_" . Str::random(10) . ".{$extensi}";
 
-        Storage::disk('public')->putFileAs("/$directory", $file, $filename);
+    //     Storage::disk('public')->putFileAs("/$directory", $file, $filename);
 
-        if (Storage::disk('public')->exists('/' . $directory . '/' . $image)) {
-            Storage::disk('public')->delete('/' . $directory . '/' . $image);
-        }
+    //     if (Storage::disk('public')->exists('/' . $directory . '/' . $image)) {
+    //         Storage::disk('public')->delete('/' . $directory . '/' . $image);
+    //     }
 
-        return "$filename";
-    }
+    //     return "$filename";
+    // }
 
     // public static function downloader($filename, $disk = 'default')
     // {
@@ -255,14 +256,13 @@ class ResponseFormatter
                         </div>';
 
                 if (!$val->children->isEmpty()) {
-
                     $result .= ResponseFormatter::build_submenu($currentPage, $val->children, $val->id, $val->url, 'menu');
                 }
             }
         }
 
-        $result .= "</div>\n";
-        return $result;
+        // $result .= "</div>\n";
+        return $result ? "\n<div class='menu-item accordion' id='menu'>\n$result</div>\n" : null;
     }
 
     public static function build_submenu($currentPage, $arr, $parentid = 0, $urlParent, $submenu = false)
@@ -277,8 +277,9 @@ class ResponseFormatter
                 $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
             }
 
-            $active_link = Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'active' : '';
-            $show_collapse = Request::is($urlParent . '/' . $val->url . '/*') ? 'show' : '';;
+            $active_link        = Request::is($val->url . '/*')  || Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'active' : '';
+            $active_collpase    = Request::is($val->url . '/*') || Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'true' : 'false';
+            $show_collapse      =  Request::is($val->url . '/*') || Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'show' : '';;
 
             if ($val->aktif == 'Y') {
                 // $route_url = route($urlParent.'.'.$val->url.'.index');
@@ -286,7 +287,7 @@ class ResponseFormatter
                 if ($val->link == '#') {
                     $link = $val->link;
                     $route_url = $link . '' . $val->url;
-                    $collapse = 'data-bs-toggle="collapse" aria-expanded="false"';
+                    $collapse = 'data-bs-toggle="collapse" aria-expanded="'.$active_collpase.'"';
                     $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $val->children, $val->id, $val->url, 'submenu');
                 } else {
                     $link = '';
@@ -316,4 +317,71 @@ class ResponseFormatter
         // return $result;
         return $result ? "\n<div class='accordion-collapse collapse {$show_collapse}' id='{$urlParent}' data-bs-parent='#{$submenu}'>\n$result</div>\n" : null;
     }
+
+    public static function settingApp()
+    {
+        $data = [];
+        $setting_app = SettingApp::where('type','app')->get()->toArray();
+
+        foreach($setting_app as $val) {
+            $data[$val['param']] = $val['value'];
+        }
+
+        return $data;
+    }
+
+    public static function get_filename($file_name, $path)
+    {
+        $file_name_path = public_path($path, $file_name);
+        // echo '-' . $file_name_path . '-';
+        if ($file_name != "" && file_exists($file_name_path))
+        {
+            $file_ext = strrchr($file_name, '.');
+            $file_basename = substr($file_name, 0, strripos($file_name, '.'));
+            $num = 1;
+            while (file_exists($file_name_path)){
+                $file_name = $file_basename."_$num".$file_ext;
+                $num++;
+                $file_name_path = $path . $file_name;
+            }
+
+            return $file_name;
+        }
+        return $file_name;
+    }
+
+    public static function upload_file($path, $file)
+    {
+        $new_name =  ResponseFormatter::get_filename(stripslashes($file->getClientOriginalName()), $path);
+        $move = $file->move($path, $new_name);
+        if ($move)
+            return $new_name;
+        else
+            return false;
+    }
+
+    public static function set_value($field_name, $default = '')
+	{
+		$request = array_merge($_GET, $_POST);
+		$search = $field_name;
+
+		// If Array
+		$is_array = false;
+		if (strpos($search, '[')) {
+			$is_array = true;
+			$exp = explode('[', $field_name);
+			$field_name = $exp[0];
+
+		}
+
+		if (isset($request[$field_name])) {
+			if ($is_array) {
+				$exp_close = explode(']', $exp[1]);
+				$index = $exp_close[0];
+				return $request[$field_name][$index];
+			}
+			return $request[$field_name];
+		}
+		return $default;
+	}
 }

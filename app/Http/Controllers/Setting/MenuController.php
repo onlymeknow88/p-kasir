@@ -31,7 +31,7 @@ class MenuController extends Controller
             'list_menu' => $list_menu,
         ];
 
-        return view('page.setting.menu.index', compact('data'));
+        return view('page.aplikasi.menu.index', compact('data'));
     }
 
     public function buildMenu(Request $request)
@@ -75,7 +75,7 @@ class MenuController extends Controller
         } else {
             $menu = Menu::find($request->id);
         }
-        return view('page.setting.menu.form_menu', compact('menu', 'data'));
+        return view('page.aplikasi.menu.form_menu', compact('menu', 'data'));
     }
 
     /**

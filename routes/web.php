@@ -5,7 +5,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
-use App\Http\Controllers\Setting\SettingController;
+use App\Http\Controllers\Setting\PermissionController;
+use App\Http\Controllers\Setting\SettingAppController;
 use App\Http\Controllers\Setting\MenuKategoriController;
 
 /*
@@ -46,12 +47,14 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::post('/role/get-menu', [RoleController::class, 'list_menu'])->name('getListMenu');
         Route::resource('/role', RoleController::class);
         //setting
+        Route::resource('/menu-role', PermissionController::class);
 
 
 
     });
     Route::name('setting.')->prefix('setting')->group(function () {
-        Route::resource('/app', SettingController::class);
+        Route::post('/setting-app', [SettingAppController::class,'store'])->name('setting-app.store');
+        Route::get('/setting-app', [SettingAppController::class,'index'])->name('setting-app.index');
     });
 
 

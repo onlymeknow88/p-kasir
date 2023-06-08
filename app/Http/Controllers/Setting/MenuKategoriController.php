@@ -33,7 +33,7 @@ class MenuKategoriController extends Controller
         } else {
             $menuKategori = MenuKategori::find($request->id);
         }
-        return view('page.setting.menu.form_kategori', compact('menuKategori'));
+        return view('page.aplikasi.menu.form_kategori', compact('menuKategori'));
     }
 
     /**

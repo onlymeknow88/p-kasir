@@ -20,6 +20,13 @@
                                      {!! Helper::build_menu(Route::current()->getName(), $mk->id) !!}
                                  @endforeach
                              </div>
+                             <hr />
+                             <div class="form-text-14 text-center text-muted">
+                                 @php
+                                     $footer = str_replace('{{YEAR}}', date('Y'), Helper::settingApp()['footer_app']);
+                                 @endphp
+                                 {!! html_entity_decode($footer) !!}
+                             </div>
                          </div>
                      </div>
                  </div>

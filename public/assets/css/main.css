@@ -3042,7 +3042,6 @@ text.highcharts-credits {
   position: absolute;
   right: 10px;
   top: 7px;
-  z-index: 999999;
   width: auto;
 }
 
@@ -3058,4 +3057,8 @@ text.highcharts-credits {
   line-height: 25px;
   border: 0;
   touch-action: none;
+}
+
+.edit-logo-login-container {
+  padding: 25px;
 }/*# sourceMappingURL=main.css.map */

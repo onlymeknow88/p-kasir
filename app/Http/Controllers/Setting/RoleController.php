@@ -47,7 +47,7 @@ class RoleController extends Controller
         }
 
 
-        return view('page.setting.role.index');
+        return view('page.aplikasi.role.index');
     }
 
     /**
@@ -59,7 +59,7 @@ class RoleController extends Controller
     {
         $role = new Role();
         $menu = Menu::with('menu_status')->get();
-        return view('page.setting.role.form', compact('role', 'menu'));
+        return view('page.aplikasi.role.form', compact('role', 'menu'));
     }
 
     /**
@@ -122,7 +122,7 @@ class RoleController extends Controller
     {
         $role = Role::findorfail($id);
         $menu = Menu::with('menu_status')->get();
-        return view('page.setting.role.form', compact('role', 'menu'));
+        return view('page.aplikasi.role.form', compact('role', 'menu'));
     }
 
     /**

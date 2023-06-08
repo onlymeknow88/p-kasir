@@ -5,8 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'CSMS') }}</title>
-
+        <title>{{ config('app.name', 'Koperasi') }} | {{ Helper::set_value('judul_web',@Helper::SettingApp()['judul_web']) }}</title>
+        <link rel="shortcut icon" href="{{ asset('assets/img/'.Helper::set_value('favicon',@Helper::SettingApp()['favicon'])) }}" />
         @stack('css')
 
         <!-- Bootstrap CSS -->
