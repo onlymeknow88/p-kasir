@@ -232,12 +232,6 @@ class ResponseFormatter
 
             $hasChildren = self::hasChildren($val['children'], $val->id);
             $isOpen = self::isChildActive($val['children'], $val->item, $currentPage) ? 'tree-open' : '';
-            // dd($a);
-
-            $class_li = [];
-
-            // dd($currentPage);]
-
 
 
             if ($val->parent_id == $parentId && $val->menu_kategori_id == $menuKategori) {
@@ -256,21 +250,20 @@ class ResponseFormatter
                     $url =  url($val->url);
                 }
 
-                    if ($currentPage && url($val->url) === $currentPage) {
-                        $class_li[] = 'highlight';
-                    }
+                //active tree-open highlight current page
+                $class_li = [];
 
                 if ($currentPage && url($val->url) === $currentPage) {
                     $class_li[] = 'highlight';
                 }
 
-                if($val->link == '#'){
-                    if (Request::is($val->url.'/*') || Request::is('aplikasi/setting/*')) {
+                $currentRouteUrl = substr(str_replace('.','/', Route::currentRouteName()),0,17);
+
+                if ($val->link == '#') {
+                    if (Request::is($val->url . '/*') || Request::is($currentRouteUrl.'*')) {
                         $class_li[] = 'active tree-open';
                     }
                 }
-
-
 
                 if ($class_li) {
                     $class_li = ' class="' . join(' ', $class_li) . '"';
@@ -278,7 +271,7 @@ class ResponseFormatter
                     $class_li = '';
                 }
 
-
+                //class has children for active
                 $class_a = ['depth-' . $val['id']];
                 if ($has_child) {
                     $class_a[] = 'has-children';

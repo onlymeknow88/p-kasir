@@ -54,7 +54,7 @@
                                          </div>
                                          <div class="horizontal-line my-2 px-4"></div>
                                      @endif
-                                     {!! Helper::build_menu(Helper::menu(),url()->current(), $mk->id) !!}
+                                     {!! Helper::build_menu(Helper::menu(), url()->current(), $mk->id) !!}
                                  @endforeach
 
                                  <div class="horizontal-line my-2 px-4"></div>
