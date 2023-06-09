@@ -17,6 +17,23 @@ const showMenu = (headerToggle, sidebarId, subheaderId, mainId) => {
     }
 };
 
+$('.has-children').mouseenter(function(){
+    $(this).children('ul').stop(true, true).fadeIn('fast');
+}).mouseleave(function(){
+    $(this).children('ul').stop(true, true).fadeOut('fast');
+});
+
+$('.has-children').click(function(){
+    var $this = $(this);
+
+    $(this).next().stop(true, true).slideToggle('fast', function(){
+        $this.parent().toggleClass('tree-open');
+    });
+    return false;
+});
+
+// $('.sidebar').overlayScrollbars({scrollbars : {autoHide: 'leave', autoHideDelay: 100} });
+
 showMenu("header-toggle", "sidebar", "app-wrapper", "content-header");
 
 //preloader spninner

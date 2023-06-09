@@ -20,7 +20,7 @@ class Menu extends Model
 
     public function parent()
     {
-        return $this->belongsTo(Menu::class, 'parent_id', 'id');
+        return $this->belongsTo(Menu::class, 'parent_id');
     }
 
     public function children()
@@ -28,7 +28,12 @@ class Menu extends Model
         return $this->hasMany(Menu::class, 'parent_id')->orderBy('urut');
     }
 
-    
+    public function kategoris()
+    {
+        return $this->belongsTo(MenuKategori::class, 'menu_kategori_id')->orderBy('urut');
+    }
+
+
 
     public function buildMenu($menu, $parentid = 0)
     {

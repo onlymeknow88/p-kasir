@@ -1,6 +1,6 @@
 var table = $('.table').DataTable({
     ajax: {
-        url: '/aplikasi/role',
+        url: '/role',
     },
     columns: [{
             data: 'nama_role',

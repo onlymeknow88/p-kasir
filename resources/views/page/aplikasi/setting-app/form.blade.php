@@ -54,7 +54,7 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
-                <form id="form" action="{{ route('setting.setting-app.store') }}" method="post" enctype="multipart/form-data">
+                <form id="form" action="{{ route('aplikasi.setting.setting-app.store') }}" method="post" enctype="multipart/form-data">
                     @csrf
                     @method('post')
                     <div class="card-title">

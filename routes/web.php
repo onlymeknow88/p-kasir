@@ -46,15 +46,15 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         //role
         Route::post('/role/get-menu', [RoleController::class, 'list_menu'])->name('getListMenu');
         Route::resource('/role', RoleController::class);
-        //setting
         Route::resource('/menu-role', PermissionController::class);
 
 
 
-    });
-    Route::name('setting.')->prefix('setting')->group(function () {
-        Route::post('/setting-app', [SettingAppController::class,'store'])->name('setting-app.store');
-        Route::get('/setting-app', [SettingAppController::class,'index'])->name('setting-app.index');
+        Route::name('setting.')->prefix('setting')->group(function () {
+            // setting
+            Route::post('/setting-app', [SettingAppController::class,'store'])->name('setting-app.store');
+            Route::get('/setting-app', [SettingAppController::class,'index'])->name('setting-app.index');
+        });
     });
 
 

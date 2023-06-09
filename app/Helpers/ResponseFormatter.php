@@ -19,7 +19,9 @@ use App\Models\MenuKategori;
 use Illuminate\Support\Facades\DB;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
@@ -145,6 +147,13 @@ class ResponseFormatter
         return $menu;
     }
 
+    public static function menu()
+    {
+        $arr = Menu::whereNull('parent_id')->with('children')->where('aktif', 'Y')->orderBy('urut')->get();
+
+        return $arr;
+    }
+
     // public static function menu($roleid)
     // {
     //     $menu = DB::table('menu')
@@ -198,132 +207,138 @@ class ResponseFormatter
         if ($angka < 12) { // 0 - 11
             $terbilang = ' ' . $baca[$angka];
         } elseif ($angka < 20) { // 12 - 19
-            $terbilang = ResponseFormatter::terbilang($angka - 10) . ' belas';
+            $terbilang = self::terbilang($angka - 10) . ' belas';
         } elseif ($angka < 100) { // 20 - 99
-            $terbilang = ResponseFormatter::terbilang($angka / 10) . ' puluh' . ResponseFormatter::terbilang($angka % 10);
+            $terbilang = self::terbilang($angka / 10) . ' puluh' . self::terbilang($angka % 10);
         } elseif ($angka < 200) { // 100 - 199
-            $terbilang = ' seratus' . ResponseFormatter::terbilang($angka - 100);
+            $terbilang = ' seratus' . self::terbilang($angka - 100);
         } elseif ($angka < 1000) { // 200 - 999
-            $terbilang = ResponseFormatter::terbilang($angka / 100) . ' ratus' . ResponseFormatter::terbilang($angka % 100);
+            $terbilang = self::terbilang($angka / 100) . ' ratus' . self::terbilang($angka % 100);
         } elseif ($angka < 2000) { // 1.000 - 1.999
-            $terbilang = ' seribu' . ResponseFormatter::terbilang($angka - 1000);
+            $terbilang = ' seribu' . self::terbilang($angka - 1000);
         } elseif ($angka < 1000000) { // 2.000 - 999.999
-            $terbilang = ResponseFormatter::terbilang($angka / 1000) . ' ribu' . ResponseFormatter::terbilang($angka % 1000);
+            $terbilang = self::terbilang($angka / 1000) . ' ribu' . self::terbilang($angka % 1000);
         } elseif ($angka < 1000000000) { // 1000000 - 999.999.990
-            $terbilang = ResponseFormatter::terbilang($angka / 1000000) . ' juta' . ResponseFormatter::terbilang($angka % 1000000);
+            $terbilang = self::terbilang($angka / 1000000) . ' juta' . self::terbilang($angka % 1000000);
         }
 
         return $terbilang;
     }
 
-    public static function build_menu($currentPage, $menuKategoriId, $parentid = 0)
+    public static function build_menu($arr, $currentPage, $menuKategori = null, $parentId = 0, $submenu = false)
     {
-        $result = "\n" . '<div class="menu-item accordion" id="menu">' . "\r\n";
-        $arr = Menu::where('aktif', 'Y')->orderBy('urut')->get();
+        $menu = "\n" . '<ul' . $submenu . '>' . "\r\n";
         foreach ($arr as $key => $val) {
 
-            // Menu icon
-            $menu_icon = '';
-            if ($val->class) {
-                $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
-            }
-            $active_link = Request::is($val->url) || Request::is($val->url . '/*') ? 'active' : '';
-            $active_collpase = Request::is($val->url . '/*') ? 'true' : 'false';
+            $hasChildren = self::hasChildren($val['children'], $val->id);
+            $isOpen = self::isChildActive($val['children'], $val->item, $currentPage) ? 'tree-open' : '';
+            // dd($a);
 
-            // menu link
-            if ($val->link == '#') {
-                $link = $val->link;
-                $url = $link . '' . $val->url;
-                $collapse = 'data-bs-toggle="collapse" aria-expanded="' . $active_collpase . '"';
-                // $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $children, $val->id, $val->url, 'menu');
-            } else {
-                $link = '';
-                $url = '/' . $val->url;
-                $collapse = '';
-                // $buildsubMenu = '';
-            }
+            $class_li = [];
 
-            if ($val->parent_id == $parentid && $val->menu_kategori_id == $menuKategoriId) {
-                $result .= '<div class="accordion-item">
-                            <a href="' . $url . '" class="item-link ' . $active_link . '" ' . $collapse . '>
-                                <div class="item-icon">
-                                    ' . $menu_icon . '
-                                </div>
-                                <div class="item-title">
-                                    ' . $val->nama_menu . '
-                                </div>
-                            </a>
-                        </div>';
+            // dd($currentPage);]
 
-                if (!$val->children->isEmpty()) {
-                    $result .= ResponseFormatter::build_submenu($currentPage, $val->children, $val->id, $val->url, 'menu');
+
+
+            if ($val->parent_id == $parentId && $val->menu_kategori_id == $menuKategori) {
+
+                $has_child = $hasChildren ? 'has-children' : '';
+
+                $arrow = $hasChildren ? '<span class="pull-right-container">
+                        <i class="fa fa-angle-left arrow"></i>
+                    </span>' : '';
+
+                if ($has_child) {
+                    $url = '#';
+                    $onClick = ' onclick="javascript:void(0)"';
+                } else {
+                    $onClick = '';
+                    $url =  url($val->url);
                 }
+
+                    if ($currentPage && url($val->url) === $currentPage) {
+                        $class_li[] = 'highlight';
+                    }
+
+                if ($currentPage && url($val->url) === $currentPage) {
+                    $class_li[] = 'highlight';
+                }
+
+                if($val->link == '#'){
+                    if (Request::is($val->url.'/*') || Request::is('aplikasi/setting/*')) {
+                        $class_li[] = 'active tree-open';
+                    }
+                }
+
+
+
+                if ($class_li) {
+                    $class_li = ' class="' . join(' ', $class_li) . '"';
+                } else {
+                    $class_li = '';
+                }
+
+
+                $class_a = ['depth-' . $val['id']];
+                if ($has_child) {
+                    $class_a[] = 'has-children';
+                }
+
+                $class_a = ' class="' . join(' ', $class_a) . '"';
+
+                $menu_icon = '';
+                if ($val->class) {
+                    $menu_icon = '<i class="sidebar-menu-icon ' . $val->class . '"></i>';
+                }
+
+                $menu .= '<li' . $class_li . '>
+                            <a ' . $class_a . ' href="' . $url . '"' . $onClick . '>' .
+                    '<span class="menu-item">' .
+                    $menu_icon .
+                    '<span class="text">' . $val->nama_menu . '</span>' .
+                    '</span>' .
+                    $arrow .
+                    '</a>';
+                if ($hasChildren) {
+                    $menu .= self::build_menu($val['children'], $currentPage,  $menuKategori, $val->id, ' class="submenu"');
+                }
+                $menu .= "</li>\n";
             }
         }
-
-        // $result .= "</div>\n";
-        return $result ? "\n<div class='menu-item accordion' id='menu'>\n$result</div>\n" : null;
+        $menu .= "</ul>\n";
+        return $menu;
     }
 
-    public static function build_submenu($currentPage, $arr, $parentid = 0, $urlParent, $submenu = false)
+    function hasChildren($menuItems, $parentId)
     {
-        $result = null;
-
-        foreach ($arr as $key => $val) {
-
-            // Menu icon
-            $menu_icon = '';
-            if ($val->class) {
-                $menu_icon = '<i class="' . $val->class . ' text-black me-2"></i>';
-            }
-
-            $active_link        = Request::is($val->url . '/*')  || Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'active' : '';
-            $active_collpase    = Request::is($val->url . '/*') || Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'true' : 'false';
-            $show_collapse      =  Request::is($val->url . '/*') || Request::is($urlParent . '/' . $val->url) || Request::is($urlParent . '/' . $val->url . '/*') ? 'show' : '';;
-
-            if ($val->aktif == 'Y') {
-                // $route_url = route($urlParent.'.'.$val->url.'.index');
-
-                if ($val->link == '#') {
-                    $link = $val->link;
-                    $route_url = $link . '' . $val->url;
-                    $collapse = 'data-bs-toggle="collapse" aria-expanded="'.$active_collpase.'"';
-                    $buildsubMenu = ResponseFormatter::build_submenu($currentPage, $val->children, $val->id, $val->url, 'submenu');
-                } else {
-                    $link = '';
-                    $route_url = route($urlParent . '.' . $val->url . '.index');
-                    $collapse = '';
-                    $buildsubMenu = '';
-                }
-
-                if ($val->parent_id == $parentid) {
-
-                    $result .= '<div class="menu-item" id="submenu">
-                                    <a href="' . $route_url . '" class="item-link ' . $active_link . '" ' . $collapse . '>
-                                        <div class="item-icon">
-                                            ' . $menu_icon . '
-                                        </div>
-                                        <div class="item-title">
-                                            ' . $val->nama_menu . '
-                                        </div>
-                                    </a>
-                                </div>';
-
-                    $result .= $buildsubMenu;
-                }
+        foreach ($menuItems as $menuItem) {
+            if ($menuItem['parent_id'] == $parentId) {
+                return true;
             }
         }
+        return false;
+    }
 
-        // return $result;
-        return $result ? "\n<div class='accordion-collapse collapse {$show_collapse}' id='{$urlParent}' data-bs-parent='#{$submenu}'>\n$result</div>\n" : null;
+    function isChildActive($menuItems, $parentId, $activeUrl)
+    {
+        foreach ($menuItems as $menuItem) {
+
+            if ($menuItem['parent_id'] == $parentId && url($menuItem['url']) == $activeUrl) {
+                return true;
+            }
+            if (self::hasChildren($menuItems, $menuItem['id']) && self::isChildActive($menuItems, $menuItem['id'], $activeUrl)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static function settingApp()
     {
         $data = [];
-        $setting_app = SettingApp::where('type','app')->get()->toArray();
+        $setting_app = SettingApp::where('type', 'app')->get()->toArray();
 
-        foreach($setting_app as $val) {
+        foreach ($setting_app as $val) {
             $data[$val['param']] = $val['value'];
         }
 
@@ -334,13 +349,12 @@ class ResponseFormatter
     {
         $file_name_path = public_path($path, $file_name);
         // echo '-' . $file_name_path . '-';
-        if ($file_name != "" && file_exists($file_name_path))
-        {
+        if ($file_name != "" && file_exists($file_name_path)) {
             $file_ext = strrchr($file_name, '.');
             $file_basename = substr($file_name, 0, strripos($file_name, '.'));
             $num = 1;
-            while (file_exists($file_name_path)){
-                $file_name = $file_basename."_$num".$file_ext;
+            while (file_exists($file_name_path)) {
+                $file_name = $file_basename . "_$num" . $file_ext;
                 $num++;
                 $file_name_path = $path . $file_name;
             }
@@ -352,7 +366,7 @@ class ResponseFormatter
 
     public static function upload_file($path, $file)
     {
-        $new_name =  ResponseFormatter::get_filename(stripslashes($file->getClientOriginalName()), $path);
+        $new_name =  self::get_filename(stripslashes($file->getClientOriginalName()), $path);
         $move = $file->move($path, $new_name);
         if ($move)
             return $new_name;
@@ -361,27 +375,26 @@ class ResponseFormatter
     }
 
     public static function set_value($field_name, $default = '')
-	{
-		$request = array_merge($_GET, $_POST);
-		$search = $field_name;
+    {
+        $request = array_merge($_GET, $_POST);
+        $search = $field_name;
 
-		// If Array
-		$is_array = false;
-		if (strpos($search, '[')) {
-			$is_array = true;
-			$exp = explode('[', $field_name);
-			$field_name = $exp[0];
+        // If Array
+        $is_array = false;
+        if (strpos($search, '[')) {
+            $is_array = true;
+            $exp = explode('[', $field_name);
+            $field_name = $exp[0];
+        }
 
-		}
-
-		if (isset($request[$field_name])) {
-			if ($is_array) {
-				$exp_close = explode(']', $exp[1]);
-				$index = $exp_close[0];
-				return $request[$field_name][$index];
-			}
-			return $request[$field_name];
-		}
-		return $default;
-	}
+        if (isset($request[$field_name])) {
+            if ($is_array) {
+                $exp_close = explode(']', $exp[1]);
+                $index = $exp_close[0];
+                return $request[$field_name][$index];
+            }
+            return $request[$field_name];
+        }
+        return $default;
+    }
 }

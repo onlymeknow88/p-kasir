@@ -45,8 +45,8 @@
                     <table class="table table-hover table-striped" width="100%">
                         <thead>
                             <tr>
-                                <th>Nama Role</th>
-                                <th>Judul Role</th>
+                                <th>Menu</th>
+                                <th>Url</th>
                                 <th>Default Menu</th>
                                 <th>Keterangan</th>
                                 <th>Action</th>
