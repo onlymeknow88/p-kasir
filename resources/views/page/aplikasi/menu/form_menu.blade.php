@@ -39,7 +39,7 @@
                         <option value="">Tidak Ada Menu Parent</option>
                         @foreach ($data['menu'] as $key => $val)
                             <option value="{{ $val->id }}" {{ $val->id === $menu->parent_id ? 'selected' : '' }}>
-                                {{ $val->nama_menu }}
+                                {{ $val->nama_menu }} | ({{ $val->kategoris->nama_kategori }})
                                 ({{ $val->menu_status->nama_status }})
                             </option>
                         @endforeach

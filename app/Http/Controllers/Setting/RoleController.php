@@ -90,7 +90,6 @@ class RoleController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-
         $data = $request->except('urut');
 
         $role = Role::create($data);

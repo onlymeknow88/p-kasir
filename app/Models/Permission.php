@@ -17,6 +17,11 @@ class Permission extends Model
 
     public function menus()
     {
-        return $this->belongsToMany(Menu::class,'menu_id')->orderBy('order');
+        return $this->belongsTo(Menu::class,'menu_id');
+    }
+
+    public function roles()
+    {
+        return $this->belongsTo(Role::class,'role_id');
     }
 }

@@ -1,5 +1,6 @@
 <!-- Datatables -->
 <script src="{{ asset('assets/js/dataTables.min.js') }}"></script>
+<script src="{{ asset('assets/js/image-upload.js') }}"></script>
 <script src="{{ asset('assets/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('assets/js/select2.full.min.js') }}"></script>
 <script src="{{ asset('assets/js/sweetalert2.js') }}"></script>

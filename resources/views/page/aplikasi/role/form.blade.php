@@ -240,9 +240,9 @@
                     @endif
                     <div class="horizontal-line color-shadow"></div>
                     <div class="card-footer mb-10">
-                        <div class="col-md-4">
+                        <div class="col-md-4 col-12 button-group">
                             <button type="button" class="btn btn-primary color-blue" id="submit"
-                                onclick="submitForm(`{{ $role->id ? route('aplikasi.role.update', $role->id) : route('aplikasi.role.store') }}`)">Save</button>
+                                onclick="submitForm(`{{ $role->id ? route('aplikasi.role.update', $role->id) : route('aplikasi.role.store') }}`)">Submit</button>
                             <button type="button" class="btn btn-link" onclick="resetForm(this.form)">Reset</button>
                         </div>
                     </div>

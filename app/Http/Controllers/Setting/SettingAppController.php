@@ -80,7 +80,6 @@ class SettingAppController extends Controller
             $data_db[] = ['type' => 'app', 'param' => 'logo_login', 'value' => $logo_login];
             $data_db[] = ['type' => 'app', 'param' => 'logo_app', 'value' => $logo_app];
             $data_db[] = ['type' => 'app', 'param' => 'footer_login', 'value' => htmlentities($request->footer_login)];
-			// $data_db[] = ['type' => 'app', 'param' => 'btn_login', 'value' => $_POST['btn_login']];
 			$data_db[] = ['type' => 'app', 'param' => 'footer_app', 'value' => htmlentities($request->footer_app)];
 			$data_db[] = ['type' => 'app', 'param' => 'background_logo', 'value' => $request->background_logo];
 			$data_db[] = ['type' => 'app', 'param' => 'judul_web', 'value' => $request->judul_web];
@@ -91,6 +90,5 @@ class SettingAppController extends Controller
 
         SettingApp::where('type', 'app')->delete();
         SettingApp::insert($data_db);
-        // dd($logo_login);
     }
 }

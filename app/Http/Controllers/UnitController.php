@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Setting;
+namespace App\Http\Controllers;
 
-use App\Models\Permission;
+use App\Models\Unit;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
-class PermissionController extends Controller
+class UnitController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,40 +16,29 @@ class PermissionController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Permission::query();
+            $query = Unit::query();
 
             return DataTables::of($query)
-                ->addColumn('menu_id', function ($item) {
-                    return '<span class="d-flex align-items-center"><i class="' . $item->menus->class . ' me-2"></i>' . $item->menus->nama_menu . '</span>';
-                })
-                ->addColumn('role_id', function ($item) {
-                    return '<span class="badge bg-secondary form-text-12 badge-role px-3 py-2 me-1 mb-1 pe-3">'.$item->roles->judul_role.'</span>';
-                })
-                ->addColumn('url', function ($item) {
-                    return $item->menus->url;
-                })
-                ->addColumn('link', function ($item) {
-                    return $item->menus->link ? '#' : '';
-                })
+                ->addIndexColumn()
                 ->addColumn('aksi', function ($item) {
                     return '
                     <div class="d-flex justify-content-start">
-                        <a class="btn btn-icon color-yellow mr-6 px-2" title="Edit" href="' . route('aplikasi.menu-role.edit', $item->id) . '">
+                        <a class="btn btn-icon color-yellow mr-6 px-2" title="Edit" href="' . route('refrensi.unit.edit', $item->id) . '">
                             <i class="far fa-edit"></i>
                             <span class="form-text-12 fw-bold">Edit</span>
                         </a>
-                        <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('aplikasi.menu-role.destroy', $item->id) . '`)">
+                        <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('refrensi.unit.destroy', $item->id) . '`)">
                             <i class="far fa-trash-alt text-white"></i>
                             <span class="text-white form-text-12 fw-bold">Hapus</span>
                         </button>
                     </div>
                     ';
                 })
-                ->rawColumns(['aksi','url','link'])
+                ->rawColumns(['aksi'])
                 ->escapeColumns([])
                 ->make(true);
         }
-        return view('page.aplikasi.menu-role.index');
+        return view('page.unit.index');
     }
 
     /**
@@ -60,6 +48,7 @@ class PermissionController extends Controller
      */
     public function create()
     {
+        //
     }
 
     /**

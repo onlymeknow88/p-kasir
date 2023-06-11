@@ -3,19 +3,10 @@
 namespace App\Helpers;
 
 use App\Models\Menu;
-use App\Models\Asset;
-use App\Models\Company;
-use App\Models\General;
-use Milon\Barcode\DNS1D;
-use App\Models\Accessory;
-use App\Models\ActionLog;
-use App\Models\Component;
 use App\Models\SettingApp;
 use LdapRecord\Connection;
-use App\Models\LicenseSeat;
 use Illuminate\Support\Str;
 use Laravolt\Avatar\Avatar;
-use App\Models\MenuKategori;
 use Illuminate\Support\Facades\DB;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -231,8 +222,6 @@ class ResponseFormatter
         foreach ($arr as $key => $val) {
 
             $hasChildren = self::hasChildren($val['children'], $val->id);
-            $isOpen = self::isChildActive($val['children'], $val->item, $currentPage) ? 'tree-open' : '';
-
 
             if ($val->parent_id == $parentId && $val->menu_kategori_id == $menuKategori) {
 
@@ -257,13 +246,21 @@ class ResponseFormatter
                     $class_li[] = 'highlight';
                 }
 
-                $currentRouteUrl = substr(str_replace('.','/', Route::currentRouteName()),0,17);
-
+                $currentRouteUrl = substr(str_replace('.','/', Route::currentRouteName()),0,16);
+                // dd($currentRouteUrl);
                 if ($val->link == '#') {
-                    if (Request::is($val->url . '/*') || Request::is($currentRouteUrl.'*')) {
+                    if (Request::is($val->url.'/*') || Request::is($currentRouteUrl.'/*')) {
                         $class_li[] = 'active tree-open';
+                    } elseif(!Request::is($currentRouteUrl.'*')) {
+                        $class_li[] = '';
+                    }
+                } else {
+                    if (Request::is($val->url.'/*') ) {
+                        $class_li[] = 'active';
                     }
                 }
+
+
 
                 if ($class_li) {
                     $class_li = ' class="' . join(' ', $class_li) . '"';
@@ -340,8 +337,7 @@ class ResponseFormatter
 
     public static function get_filename($file_name, $path)
     {
-        $file_name_path = public_path($path, $file_name);
-        // echo '-' . $file_name_path . '-';
+        $file_name_path = base_path($path, $file_name);
         if ($file_name != "" && file_exists($file_name_path)) {
             $file_ext = strrchr($file_name, '.');
             $file_basename = substr($file_name, 0, strripos($file_name, '.'));

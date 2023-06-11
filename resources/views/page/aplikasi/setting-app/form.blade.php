@@ -63,6 +63,12 @@
                             Setting App</h6>
                     </div>
                     <div class="horizontal-line my-3"></div>
+                    <a class="btn btn-link color-softgray-5" title="Back" href="/dashboard">
+                        {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
+                        <i class="fas fa-arrow-left me-2"></i>
+                        back
+                    </a>
+                    <div class="horizontal-line my-3"></div>
                     <div class="color-softgray-5 pt-2 pb-1 ps-4">
                         <h5 class="fw-bold">Login</h5>
                     </div>

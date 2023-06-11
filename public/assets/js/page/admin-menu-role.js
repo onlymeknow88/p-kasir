@@ -1,25 +1,27 @@
 var table = $('.table').DataTable({
     ajax: {
-        url: '/aplikasi/role',
+        url: '/aplikasi/menu-role',
     },
-    columns: [{
-            data: 'nama_role',
-            name: 'nama_role',
-            width: '20%'
-        },
+    columns: [
         {
-            data: 'judul_role',
-            name: 'judul_role',
-            width: '20%'
+            data: 'link',
+            name: 'link',
+            searchable: false,
+            sortable: false
         },
         {
             data: 'menu_id',
             name: 'menu_id',
-            width: '20%'
         },
         {
-            data: 'keterangan',
-            name: 'keterangan'
+            data: 'url',
+            name: 'url',
+        },
+        {
+            data: 'role_id',
+            name: 'role_id',
+            searchable: false,
+            sortable: false
         },
         {
             data: 'aksi',
@@ -31,6 +33,7 @@ var table = $('.table').DataTable({
     autoWidth: false,
     scrollX: true,
     scrollCollapse: true,
+    order: [[1, 'asc']],
     language: {
         paginate: {
             next: '>', // or '→'

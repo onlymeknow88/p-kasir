@@ -30,7 +30,7 @@
                             id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                             <span class="text-black">Hi, {{ Auth::user()->name }}</span>
                             @if (Auth::user()->avatar != null)
-                                <img src="{{ Storage::disk('public')->url('avatars/' . Auth::user()->avatar) }}"
+                                <img src="{{ asset('assets/img/user/'.Auth::user()->avatar) }}"
                                     class="rounded-circle" width="40" height="40" alt="">
                             @else
                                 {{-- <img src="{{ Helper::getProfilePicture(Auth::user()->name) }}"
