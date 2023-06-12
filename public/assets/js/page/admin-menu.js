@@ -1,5 +1,5 @@
-let modalKategori = "#modalKategori";
-let modalMenu = "#modalMenu";
+// let modalKategori = "#modalKategori";
+// let modalMenu = "#modalMenu";
 
 $(document).ready(function () {
     $("body").delegate("form", "submit", function (e) {
@@ -27,6 +27,7 @@ $(document).ready(function () {
 
         $.get("/aplikasi/menu/kategori/" + id_kategori, function (data) {
             $loader.remove();
+            console.log(data)
             if (data) {
                 $("#list_menu").html(data);
             } else {
@@ -171,7 +172,7 @@ $(document).ready(function () {
                 $(".list-group-item-primary").attr("data-kategori-id");
 
             $.ajax({
-                url: "/aplikasi/menu/u-menu",
+                url: "/refrensi/kategori/u-barangkategori",
                 type: "post",
                 dataType: "json",
                 data: "data=" + data,

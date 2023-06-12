@@ -70,11 +70,11 @@ class MenuController extends Controller
             'role' => $role
         ];
 
-        if (!$request->id) {
-            $menu = new Menu();
-        } else {
-            $menu = Menu::find($request->id);
-        }
+        // if (!$request->id) {
+        //     $menu = new Menu();
+        // } else {
+        //     $menu = Menu::find($request->id);
+        // }
         return view('page.aplikasi.menu.form_menu', compact('menu', 'data'));
     }
 
@@ -123,7 +123,7 @@ class MenuController extends Controller
                 'url' => $request->input('url'),
                 'aktif' => $request->input('aktif') == '' ? 'N' : 'Y',
                 'parent_id' => $request->input('parent_id') ?: NULL,
-                'link' => $request->input('parent_id') == NULL ? '#' : NULL,
+                'link' => empty($request->input('parent_id')) == NULL ? '#' : NULL,
                 'class' => $request->input('use_icon') == 1 ? $request->input('icon_class') : NULL,
                 'menu_status_id' => $request->input('menu_status_id'),
                 'menu_kategori_id' => $request->input('menu_kategori_id') == '' ? NULL : $request->input('menu_kategori_id'),
@@ -212,6 +212,7 @@ class MenuController extends Controller
 
     public function ajaxUpdateUrut(Request $request)
     {
+        dd($request->data);
         $menuItems = $request->data;
 
         $json = json_decode(trim($menuItems), true);

@@ -4,7 +4,7 @@
     <div class="content-header" id="content-header">
         <div class="sub-items-left">
             <div class="item-breadcumb active">
-                <a href="#">Unit</a>
+                <a href="#">Kategori</a>
             </div>
         </div>
         <div class="sub-items-right">
@@ -29,10 +29,9 @@
 
 @push('script')
     @include('layouts.partials.js')
+    <script src="{{ asset('assets/js/js-yaml/js-yaml.min.js') }}"></script>
 
-
-
-    <script src="{{ asset('assets/js/page/unit.js') }}"></script>
+    <script src="{{ asset('assets/js/page/barang-kategori.js') }}"></script>
 @endpush
 
 @section('content')
@@ -41,7 +40,7 @@
             <div class="card-body">
                 <div class="card-title">
                     <div class="col-12 item-title">
-                        <h6>Data Unit</h6>
+                        <h6>Data Kategori</h6>
                         {{-- <button class="btn btn-icon" title="Add" href="#"
                     onclick="addForm('')">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -54,24 +53,15 @@
                     </div>
                 </div>
                 <div class="horizontal-line my-3"></div>
-                <a class="btn btn-primary" id="add-unit" title="Add" href="{{ route('refrensi.unit.create') }}">
+                <a class="btn btn-primary" id="add-kategori" title="Add" href="{{ route('refrensi.kategori.create') }}">
                     {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
                     <i class="fa fa-plus me-2"></i>
-                    Tambah Unit
+                    Tambah Kategori
                 </a>
 
                 <div class="horizontal-line my-3"></div>
-                <div class="table-responsive col-md-6">
-                    <table class="table table-hover table-striped" width="100%">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>Nama satuan</th>
-                                <th>Satuan</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                    </table>
+                <div class="dd" id="list_menu">
+                    {!! $list_kategori !!}
                 </div>
             </div>
         </div>

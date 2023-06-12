@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
-use App\Http\Controllers\Setting\PermissionController;
 use App\Http\Controllers\Setting\SettingAppController;
 use App\Http\Controllers\Setting\MenuKategoriController;
 
@@ -35,9 +35,13 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/check-email', [UserController::class,'checkEmail']);
     Route::resource('/user', UserController::class);
 
+
     //refrensi group
     Route::name('refrensi.')->prefix('refrensi')->group(function () {
         Route::resource('/unit', UnitController::class);
+
+        Route::post('/kategori/u-kategori', [KategoriController::class, 'ajaxUpdateKategoriUrut']);
+        Route::resource('/kategori', KategoriController::class);
     });
 
     //mainmenu aplikasi

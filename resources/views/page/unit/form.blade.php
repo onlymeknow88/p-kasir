@@ -1,4 +1,4 @@
-<form class="modal-form" id="add-formKategori" action="{{route('aplikasi.menuKategori.store')}}">
+<form class="modal-form" id="add-formUnit" action="{{route('refrensi.unit.store')}}">
     @method('post')
     @csrf
     <div class="mb-3 row">
@@ -16,5 +16,5 @@
             <input type="text" name="satuan" id="satuan" class="form-control" value="{{ $unit->satuan }}">
         </div>
     </div>
-    <input type="hidden" name="id" value="{{ $menuKategori->id }}"/>
+    <input type="hidden" name="id" value="{{ $unit->id }}"/>
 </form>
