@@ -2,7 +2,7 @@ var dataTable;
 
 dataTable = $(".table").DataTable({
     ajax: {
-        url: "/unit",
+        url: "/jenis-harga",
     },
     columns: [
         {
@@ -12,12 +12,12 @@ dataTable = $(".table").DataTable({
             searchable: false,
         },
         {
-            data: "nama_satuan",
-            name: "nama_satuan",
+            data: "nama_jenis_harga",
+            name: "nama_jenis_harga",
         },
         {
-            data: "satuan",
-            name: "satuan",
+            data: "deskripsi",
+            name: "deskripsi",
         },
         {
             data: "aksi",
@@ -37,23 +37,32 @@ dataTable = $(".table").DataTable({
     },
 });
 
-$(document).ready(function () {
-    $("body").delegate("form", "submit", function (e) {
+$(document).ready(function() {
+
+    $("body").delegate("form", "submit", function(e) {
         e.preventDefault();
         return false;
     });
 
-    $("#add-unit").click(function (e) {
+    $("#add-jenis-harga").click(function(e) {
         e.preventDefault();
         $bootbox = showForm("add");
     });
+
+    $("#form").on("keyup keypress", function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
 });
 
 function showForm(type = "add", id = "") {
     $bootbox = bootbox.dialog({
-        title: type == "edit" ? "Edit Unit" : "Tambah Unit",
-        message:
-            '<div class="text-center"><div class="spinner-border text-secondary" role="status"></div>',
+        title: type == "edit" ? "Edit Kategori" : "Tambah Kategori",
+        message: '<div class="text-center"><div class="spinner-border text-secondary" role="status"></div>',
         buttons: {
             cancel: {
                 label: "Cancel",
@@ -62,31 +71,35 @@ function showForm(type = "add", id = "") {
             success: {
                 label: "Submit",
                 className: "btn-primary submit",
-                callback: function () {
+                callback: function() {
                     $form_filled = $bootbox.find("form");
                     var formdata = false;
                     if (window.FormData) {
                         formdata = new FormData($form_filled[0]);
                     }
 
-                    $.post({
-                        url: $("#add-formUnit").attr("action"),
-                        data: formdata ? formdata : form.serialize(),
-                        type: "POST",
-                        dataType: "json",
-                        contentType: false,
-                        cache: false,
-                        processData: false,
-                    })
-                        .done((response) => {
-                            if (response.meta.code == 200) {
+                    list_data = $("#list_menu").wdiMenuEditor("serialize");
+                    kategori_tree = JSON.stringify(list_data);
 
+                    $.post({
+                            url: $("#add-form").attr("action"),
+                            data: formdata ? formdata : form.serialize(),
+                            type: "POST",
+                            dataType: "json",
+                            contentType: false,
+                            cache: false,
+                            processData: false,
+                        })
+                        .done((response) => {
+                            // console.log(response);
+
+                            if (response.meta.code == 200) {
                                 swal.fire({
                                     text: response.meta.message,
                                     type: "success",
-                                }).then(function () {
-                                    $bootbox.modal("hide");
+                                }).then(function() {
                                     dataTable.ajax.reload();
+                                    $bootbox.modal("hide");
                                 });
                             } else if (response.meta.code == 500) {
                                 swal.fire({
@@ -95,10 +108,10 @@ function showForm(type = "add", id = "") {
                                 });
                             }
                         })
-                        .fail((xhr, status, error) => {
-                            if (xhr.status == 422) {
+                        .fail((errors) => {
+                            if (errors.status == 422) {
                                 // console.log("Error:", errors.responseJSON.errors);
-                                loopErrors(xhr.responseJSON.errors);
+                                loopErrors(errors.responseJSON.errors);
                                 return;
                             }
                         });
@@ -108,8 +121,8 @@ function showForm(type = "add", id = "") {
         },
     });
 
-    var url = "/unit/create?id=" + id;
-    $.get(url, function (result) {
+    var url = "/jenis-harga/create?id=" + id;
+    $.get(url, function(result) {
         // $button.prop('disabled', false);
         $bootbox.find(".modal-body").html(result);
     });
@@ -134,7 +147,7 @@ function deleteData(url) {
           })
             .done((response) => {
               console.log(response);
-              if (response.meta.message == "Unit Deleted") {
+              if (response.meta.message == "Deleted") {
                 // window.location.href = location.pathname;
                 dataTable.ajax.reload();
               }
@@ -156,6 +169,7 @@ function deleteData(url) {
       }
     );
   }
+
 
 function loopErrors(errors) {
     $(".invalid-feedback").remove();

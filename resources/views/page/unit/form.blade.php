@@ -1,4 +1,4 @@
-<form class="modal-form" id="add-formUnit" action="{{route('refrensi.unit.store')}}">
+<form class="modal-form" id="add-formUnit" action="{{route('unit.store')}}">
     @method('post')
     @csrf
     <div class="mb-3 row">

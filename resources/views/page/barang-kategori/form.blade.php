@@ -1,4 +1,4 @@
-<form class="modal-form" id="add-formKategori" action="{{ route('refrensi.kategori.store') }}">
+<form class="modal-form" id="add-formKategori" action="{{ route('kategori.store') }}">
     @method('post')
     @csrf
     <div class="mb-3 row">

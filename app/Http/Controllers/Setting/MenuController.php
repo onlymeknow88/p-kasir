@@ -212,7 +212,6 @@ class MenuController extends Controller
 
     public function ajaxUpdateUrut(Request $request)
     {
-        dd($request->data);
         $menuItems = $request->data;
 
         $json = json_decode(trim($menuItems), true);

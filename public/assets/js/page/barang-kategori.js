@@ -31,7 +31,7 @@ $(document).ready(function() {
             }).then(
                 function(e) {
                     if (e.value === true) {
-                        $.post("/refrensi/kategori/" + item.attr("data-id"), {
+                        $.post("/kategori/" + item.attr("data-id"), {
                                 _method: "delete",
                             })
                             .done((response) => {
@@ -73,7 +73,7 @@ $(document).ready(function() {
 
             // console.log(data);
             $.ajax({
-                url: "/refrensi/kategori/u-kategori",
+                url: "/kategori/u-kategori",
                 type: "post",
                 dataType: "json",
                 data: "data=" + data,
@@ -250,7 +250,7 @@ function showForm(type = "add", id = "") {
         },
     });
 
-    var url = "/refrensi/kategori/create?id=" + id;
+    var url = "/kategori/create?id=" + id;
     $.get(url, function(result) {
         // $button.prop('disabled', false);
         $bootbox.find(".modal-body").html(result);

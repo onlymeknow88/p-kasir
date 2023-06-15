@@ -90,5 +90,7 @@ class SettingAppController extends Controller
 
         SettingApp::where('type', 'app')->delete();
         SettingApp::insert($data_db);
+
+        return redirect()->back();
     }
 }

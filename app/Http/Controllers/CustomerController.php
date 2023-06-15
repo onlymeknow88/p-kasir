@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unit;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
-class UnitController extends Controller
+class CustomerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,18 +18,18 @@ class UnitController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Unit::query();
+            $query = Customer::query();
 
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('aksi', function ($item) {
                     return '
                     <div class="d-flex justify-content-start">
-                        <button onclick="showForm(\'edit\','.$item->id.')" class="btn btn-icon color-yellow mr-6 px-2" title="Edit" >
+                        <a href="' . route('customer.edit', $item->id) . '" class="btn btn-icon color-yellow mr-6 px-2" title="Edit" >
                             <i class="far fa-edit"></i>
                             <span class="form-text-12 fw-bold">Edit</span>
-                        </button>
-                        <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('unit.destroy', $item->id) . '`)">
+                        </a>
+                        <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('customer.destroy', $item->id) . '`)">
                             <i class="far fa-trash-alt text-white"></i>
                             <span class="text-white form-text-12 fw-bold">Hapus</span>
                         </button>
@@ -40,7 +40,7 @@ class UnitController extends Controller
                 ->escapeColumns([])
                 ->make(true);
         }
-        return view('page.unit.index');
+        return view('page.customer.index');
     }
 
     /**
@@ -48,14 +48,10 @@ class UnitController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-        if (!$request->id) {
-            $unit = new Unit();
-        } else {
-            $unit = Unit::find($request->id);
-        }
-        return view('page.unit.form', compact('unit'));
+        $customer = new Customer();
+        return view('page.customer.form', compact('customer'));
     }
 
     /**
@@ -69,12 +65,14 @@ class UnitController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_satuan' => ['required', 'string', 'max:255'],
-                'satuan' => ['required', 'string', 'max:255'],
+                'nama_customer' => ['required', 'string', 'max:255'],
+                'alamat_customer' => ['required', 'string', 'max:255'],
+                'no_telp' => ['required', 'string', 'max:255'],
             ],
             [
-                'nama_satuan.required' => 'Silahkan isi nama satuan',
-                'satuan.required' => 'Silahkan isi satuan',
+                'nama_customer.required' => 'Silahkan isi nama customer',
+                'alamat_customer.required' => 'Silahkan isi alamat customer',
+                'no_telp.required' => 'Silahkan isi no telp',
             ]
         );
 
@@ -82,21 +80,13 @@ class UnitController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $id = $request->input('id');
+        $data = $request->all();
 
-        $unit = Unit::updateOrCreate(
-            [
-                'id' => $id
-            ],
-            [
-                'nama_satuan' => $request->input('nama_satuan'),
-                'satuan' => $request->input('satuan'),
-            ]
-        );
+        $customer = Customer::create($data);
 
         return ResponseFormatter::success([
-            'data' => $unit
-        ], 'Menu Success');
+            'data' => $customer
+        ], 'Success');
     }
 
     /**
@@ -118,7 +108,8 @@ class UnitController extends Controller
      */
     public function edit($id)
     {
-        //
+        $customer = Customer::find($id);
+        return view('page.customer.form', compact('customer'));
     }
 
     /**
@@ -130,7 +121,32 @@ class UnitController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'nama_customer' => ['required', 'string', 'max:255'],
+                'alamat_customer' => ['required', 'string', 'max:255'],
+                'no_telp' => ['required', 'string', 'max:255'],
+            ],
+            [
+                'nama_customer.required' => 'Silahkan isi nama customer',
+                'alamat_customer.required' => 'Silahkan isi alamat customer',
+                'no_telp.required' => 'Silahkan isi no telp',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $data = $request->all();
+
+        $customer = Customer::find($id);
+        $customer->update($data);
+
+        return ResponseFormatter::success([
+            'data' => $customer
+        ], 'Success');
     }
 
     /**
@@ -141,10 +157,10 @@ class UnitController extends Controller
      */
     public function destroy($id)
     {
-        $unit = Unit::find($id);
-        $unit->delete();
+        $customer = Customer::find($id);
+        $customer->delete();
         return ResponseFormatter::success([
             'data' => null
-        ], 'Unit Deleted');
+        ], 'Deleted');
     }
 }

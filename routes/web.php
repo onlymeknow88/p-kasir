@@ -3,10 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\JenisHargaController;
 use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
+use App\Http\Controllers\SettingPajakController;
+use App\Http\Controllers\SettingInvoiceController;
 use App\Http\Controllers\Setting\SettingAppController;
 use App\Http\Controllers\Setting\MenuKategoriController;
 
@@ -27,7 +32,6 @@ Route::get('/', function () {
 
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
-
     Route::resource('/dashboard', DashboardController::class);
 
     //user
@@ -35,14 +39,22 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('/check-email', [UserController::class,'checkEmail']);
     Route::resource('/user', UserController::class);
 
+    //setting group
+    Route::resource('/jenis-harga', JenisHargaController::class);
+    Route::resource('/invoice', SettingInvoiceController::class)->only('index','store');
+    Route::resource('/pajak', SettingPajakController::class)->only('index','store');
+
+    //supplier
+    Route::resource('/supplier', SupplierController::class);
+    //customer
+    Route::resource('/customer', CustomerController::class);
+
+
 
     //refrensi group
-    Route::name('refrensi.')->prefix('refrensi')->group(function () {
-        Route::resource('/unit', UnitController::class);
-
-        Route::post('/kategori/u-kategori', [KategoriController::class, 'ajaxUpdateKategoriUrut']);
-        Route::resource('/kategori', KategoriController::class);
-    });
+    Route::resource('/unit', UnitController::class);
+    Route::post('/kategori/u-kategori', [KategoriController::class, 'ajaxUpdateKategoriUrut']);
+    Route::resource('/kategori', KategoriController::class);
 
     //mainmenu aplikasi
     Route::name('aplikasi.')->prefix('aplikasi')->group(function () {

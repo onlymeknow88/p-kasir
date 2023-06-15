@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Unit;
+use App\Models\JenisHarga;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
-class UnitController extends Controller
+class JenisHargaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,7 +18,7 @@ class UnitController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Unit::query();
+            $query = JenisHarga::query();
 
             return DataTables::of($query)
                 ->addIndexColumn()
@@ -29,7 +29,7 @@ class UnitController extends Controller
                             <i class="far fa-edit"></i>
                             <span class="form-text-12 fw-bold">Edit</span>
                         </button>
-                        <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('unit.destroy', $item->id) . '`)">
+                        <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('jenis-harga.destroy', $item->id) . '`)">
                             <i class="far fa-trash-alt text-white"></i>
                             <span class="text-white form-text-12 fw-bold">Hapus</span>
                         </button>
@@ -40,7 +40,8 @@ class UnitController extends Controller
                 ->escapeColumns([])
                 ->make(true);
         }
-        return view('page.unit.index');
+
+        return view('page.jenis-harga.index');
     }
 
     /**
@@ -51,11 +52,12 @@ class UnitController extends Controller
     public function create(Request $request)
     {
         if (!$request->id) {
-            $unit = new Unit();
+            $jenisharga = new JenisHarga();
         } else {
-            $unit = Unit::find($request->id);
+            $jenisharga = JenisHarga::find($request->id);
         }
-        return view('page.unit.form', compact('unit'));
+
+        return view('page.jenis-harga.form',compact('jenisharga'));
     }
 
     /**
@@ -69,12 +71,12 @@ class UnitController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'nama_satuan' => ['required', 'string', 'max:255'],
-                'satuan' => ['required', 'string', 'max:255'],
+                'nama_jenis_harga' => ['required', 'string', 'max:255'],
+                'deskripsi' => ['required', 'string', 'max:255'],
             ],
             [
-                'nama_satuan.required' => 'Silahkan isi nama satuan',
-                'satuan.required' => 'Silahkan isi satuan',
+                'nama_jenis_harga.required' => 'Silahkan isi nama jenis harga',
+                'deskripsi.required' => 'Silahkan isi deskripsi',
             ]
         );
 
@@ -84,19 +86,19 @@ class UnitController extends Controller
 
         $id = $request->input('id');
 
-        $unit = Unit::updateOrCreate(
+        $unit = JenisHarga::updateOrCreate(
             [
                 'id' => $id
             ],
             [
-                'nama_satuan' => $request->input('nama_satuan'),
-                'satuan' => $request->input('satuan'),
+                'nama_jenis_harga' => $request->input('nama_jenis_harga'),
+                'deskripsi' => $request->input('deskripsi'),
             ]
         );
 
         return ResponseFormatter::success([
             'data' => $unit
-        ], 'Menu Success');
+        ], 'Jenis Harga Success');
     }
 
     /**
@@ -141,10 +143,10 @@ class UnitController extends Controller
      */
     public function destroy($id)
     {
-        $unit = Unit::find($id);
-        $unit->delete();
+        $jenisharga = JenisHarga::find($id);
+        $jenisharga->delete();
         return ResponseFormatter::success([
             'data' => null
-        ], 'Unit Deleted');
+        ], 'Deleted');
     }
 }

@@ -222,19 +222,21 @@
                             <label for="list-permission"
                                 class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Permission</label>
                             <div class="col-sm-7">
-                                <table class="table table-hover" width="100%">
-                                    <thead>
-                                        <tr>
-                                            <th>Nama Menu</th>
-                                            <th>Access</th>
-                                            <th>Create</th>
-                                            <th>Edit</th>
-                                            <th>Delete</th>
-                                            <th>View</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="permission_list"></tbody>
-                                </table>
+                                <div class="table-responsive">
+                                    <table class="table table-hover" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Nama Menu</th>
+                                                <th>Access</th>
+                                                <th>Create</th>
+                                                <th>Edit</th>
+                                                <th>Delete</th>
+                                                <th>View</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="permission_list"></tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     @endif

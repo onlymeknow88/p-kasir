@@ -4,7 +4,7 @@
     <div class="content-header" id="content-header">
         <div class="sub-items-left">
             <div class="item-breadcumb active">
-                <a href="#">Unit</a>
+                <a href="#">Jenis Harga</a>
             </div>
         </div>
         <div class="sub-items-right">
@@ -32,7 +32,7 @@
 
 
 
-    <script src="{{ asset('assets/js/page/unit.js') }}"></script>
+    <script src="{{ asset('assets/js/page/jenis-harga.js') }}"></script>
 @endpush
 
 @section('content')
@@ -41,7 +41,7 @@
             <div class="card-body">
                 <div class="card-title">
                     <div class="col-12 item-title">
-                        <h6>Data Unit</h6>
+                        <h6>Data Jenis Harga</h6>
                         {{-- <button class="btn btn-icon" title="Add" href="#"
                     onclick="addForm('')">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -54,10 +54,10 @@
                     </div>
                 </div>
                 <div class="horizontal-line my-3"></div>
-                <a class="btn btn-primary" id="add-unit" title="Add" href="{{ route('unit.create') }}">
+                <a class="btn btn-primary" id="add-jenis-harga" title="Add" href="{{ route('jenis-harga.create') }}">
                     {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
                     <i class="fa fa-plus me-2"></i>
-                    Tambah Unit
+                    Tambah Jenis Harga
                 </a>
 
                 <div class="horizontal-line my-3"></div>
@@ -66,9 +66,9 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama satuan</th>
-                                <th>Satuan</th>
-                                <th>Aksi</th>
+                                <th>Jenis Harga</th>
+                                <th>Deskripsi</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                     </table>

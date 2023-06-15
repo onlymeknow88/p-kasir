@@ -172,7 +172,7 @@ $(document).ready(function () {
                 $(".list-group-item-primary").attr("data-kategori-id");
 
             $.ajax({
-                url: "/refrensi/kategori/u-barangkategori",
+                url: "/aplikasi/menu/u-menu",
                 type: "post",
                 dataType: "json",
                 data: "data=" + data,

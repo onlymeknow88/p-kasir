@@ -32,8 +32,12 @@ $('.has-children').click(function(){
     return false;
 });
 
-// $('.sidebar').overlayScrollbars({scrollbars : {autoHide: 'leave', autoHideDelay: 100} });
+bootbox.setDefaults({
+    animate: false,
+    centerVertical : true
+});
 
+$('.sidebar').overlayScrollbars({scrollbars : {autoHide: 'leave', autoHideDelay: 100} });
 showMenu("header-toggle", "sidebar", "app-wrapper", "content-header");
 
 //preloader spninner
@@ -44,6 +48,3 @@ showMenu("header-toggle", "sidebar", "app-wrapper", "content-header");
 // });
 
 
-// $('#header-toggle').click( function () {
-
-// });

@@ -53,7 +53,7 @@
                     </div>
                 </div>
                 <div class="horizontal-line my-3"></div>
-                <a class="btn btn-primary" id="add-kategori" title="Add" href="{{ route('refrensi.kategori.create') }}">
+                <a class="btn btn-primary" id="add-kategori" title="Add" href="{{ route('kategori.create') }}">
                     {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
                     <i class="fa fa-plus me-2"></i>
                     Tambah Kategori

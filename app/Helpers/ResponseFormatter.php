@@ -246,21 +246,7 @@ class ResponseFormatter
                     $class_li[] = 'highlight';
                 }
 
-                $currentRouteUrl = substr(str_replace('.','/', Route::currentRouteName()),0,16);
-                // dd($currentRouteUrl);
-                if ($val->link == '#') {
-                    if (Request::is($val->url.'/*') || Request::is($currentRouteUrl.'/*')) {
-                        $class_li[] = 'active tree-open';
-                    } elseif(!Request::is($currentRouteUrl.'*')) {
-                        $class_li[] = '';
-                    }
-                } else {
-                    if (Request::is($val->url.'/*') ) {
-                        $class_li[] = 'active';
-                    }
-                }
-
-
+                $class_li[] = self::setActiveMenu(url($val->url),$val->children);
 
                 if ($class_li) {
                     $class_li = ' class="' . join(' ', $class_li) . '"';
@@ -297,6 +283,39 @@ class ResponseFormatter
         }
         $menu .= "</ul>\n";
         return $menu;
+    }
+
+    function setActiveMenu($url, $children)
+    {
+        $currentUrl = request()->url();
+
+        // Check if the current URL is an exact match
+        if ($currentUrl === $url) {
+            return 'active';
+        }
+
+        // Check if the current URL starts with the given URL
+        if (Str::startsWith($currentUrl, $url)) {
+            return 'active tree-open';
+        }
+
+        // Check if any child menu item is active
+        if ($children && self::hasActiveChild($children)) {
+            return 'active tree-open';
+        }
+
+        return '';
+    }
+
+    function hasActiveChild($children)
+    {
+        foreach ($children as $child) {
+            if (self::setActiveMenu(url($child['url']), $child['children'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     function hasChildren($menuItems, $parentId)
