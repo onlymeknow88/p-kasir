@@ -380,6 +380,22 @@ select {
     }
 }
 
+.input-group {
+    .form-control {
+        height: 32px;
+    }
+
+    button {
+        padding: 0 12px !important;
+        font-size: 13px !important;
+    }
+
+    .input-group-text {
+        padding: 0 12px !important;
+        font-size: 13px !important;
+    }
+}
+
 .invalid-feedback {
     font-size: 12px;
 }
@@ -729,11 +745,12 @@ select {
     // height: calc(100vh - 60px);
     width: 280px;
     overflow: scroll;
-    -webkit-box-shadow: -4px 0 6px -2px rgba(0, 0, 0, 0.1), 4px 0 6px -2px rgba(0, 0, 0, 0.1);
-    box-shadow: -4px 0 6px -2px rgba(0, 0, 0, 0.1), 4px 0 6px -2px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid $nero_black_5;
+    // -webkit-box-shadow: -4px 0 6px -2px rgba(0, 0, 0, 0.1), 4px 0 6px -2px rgba(0, 0, 0, 0.1);
+    // box-shadow: -4px 0 6px -2px rgba(0, 0, 0, 0.1), 4px 0 6px -2px rgba(0, 0, 0, 0.1);
 
     &::-webkit-scrollbar {
-        width: 16px;
+        width: 14px;
     }
 
     &::-webkit-scrollbar-thumb {
@@ -944,7 +961,7 @@ select {
                                                 }
 
                                                 & > a i.arrow {
-                                                    transform: rotate(-90deg);
+                                                    transform: rotate(90deg);
                                                 }
                                             }
 
@@ -968,7 +985,7 @@ select {
                                                     align-items: center;
 
                                                     i {
-                                                        width: 24px;
+                                                        width: 18px;
                                                         margin-right: 13px;
                                                         font-size: 105%;
                                                     }
@@ -1560,7 +1577,7 @@ select {
                                 display: flex;
                                 align-items: center;
                                 flex-wrap: nowrap;
-                                width: calc(100vw - 276px);
+                                width: 100vw;
                                 justify-content: space-between;
                                 transition-duration: 0.3s;
 

@@ -228,7 +228,7 @@ class ResponseFormatter
                 $has_child = $hasChildren ? 'has-children' : '';
 
                 $arrow = $hasChildren ? '<span class="pull-right-container">
-                        <i class="fa fa-angle-left arrow"></i>
+                        <i class="fa fa-angle-right arrow"></i>
                     </span>' : '';
 
                 if ($has_child) {
@@ -405,4 +405,7 @@ class ResponseFormatter
         }
         return $default;
     }
+
+    
+
 }

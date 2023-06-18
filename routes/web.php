@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BarangController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
@@ -33,6 +34,11 @@ Route::get('/', function () {
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::resource('/dashboard', DashboardController::class);
+
+    //barang
+    Route::get('/barang/GenerateBarcodeNumber', [BarangController::class,'ajaxGenerateBarcodeNumber']);
+    Route::resource('/barang', BarangController::class);
+
 
     //user
     Route::post('/check-username', [UserController::class,'checkUsername']);
