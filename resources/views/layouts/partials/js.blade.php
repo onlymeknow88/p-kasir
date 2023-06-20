@@ -11,6 +11,7 @@
 <script src="{{ asset('assets/js/bootbox/bootbox.min.js') }}"></script>
 <script src="{{ asset('assets/js/dragula/dragula.min.js') }}"></script>
 <script src="{{ asset('assets/js/overlayscrollbars/jquery.overlayScrollbars.min.js') }}"></script>
+<script src="{{ asset('assets/js/functions.js') }}"></script>
 
 <!-- Resources -->
 <script src="{{ asset('assets/js/highcharts.js') }}"></script>

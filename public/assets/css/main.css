@@ -1783,7 +1783,6 @@ td .form-select {
 }
 
 .select2-container {
-  width: 100% !important;
   z-index: inherit;
 }
 

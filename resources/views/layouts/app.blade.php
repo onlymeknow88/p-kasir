@@ -51,7 +51,7 @@
 
 
         <!-- jquery -->
-        <script src="{{ asset('assets/js/jquery-3.5.1.js') }}"></script>
+        <script src="{{ asset('assets/js/jquery/jquery.min.js') }}"></script>
 
          <!-- Option 1: Bootstrap Bundle with Popper -->
         <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"

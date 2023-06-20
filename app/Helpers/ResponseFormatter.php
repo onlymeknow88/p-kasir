@@ -406,6 +406,28 @@ class ResponseFormatter
         return $default;
     }
 
-    
+    public static function options(array $attributes, array $options)
+    {
+        $html = '<select style="width:60px !important;"';
+        foreach ($attributes as $name => $value) {
+            $html .= ' ' . $name . '="' . e($value) . '"';
+        }
+        $html .= '>';
+
+        foreach ($options as $value => $label) {
+            $html .= '<option value="' . e($value) . '">' . e($label) . '</option>';
+        }
+
+        $html .= '</select>';
+
+        return $html;
+    }
+
+    public static function format_ribuan($value) {
+        if (!$value)
+            return 0;
+        return number_format((float) $value, 0, ',', '.');
+    }
+
 
 }

@@ -61,102 +61,211 @@
                     <div class="horizontal-line my-3"></div>
                     <input type="hidden" id="id" value="{{ $barang->id }}">
 
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Nama
-                            Barang</label>
-                        <div class="col-sm-8 col-md-6 col-lg-4">
-                            <input class="form-control " type="text" name="nama_barang"
-                                value="{{ $barang->nama_barang }}" placeholder="" />
+                    <div class="color-softgray-5 pt-2 pb-1 ps-4">
+                        <h5 class="fw-bold">Barang</h5>
+                    </div>
+                    <hr>
+                    <div class="ps-3">
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Nama
+                                Barang</label>
+                            <div class="col-sm-8 col-md-6 col-lg-4">
+                                <input class="form-control " type="text" name="nama_barang"
+                                    value="{{ $barang->nama_barang }}" placeholder="" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Kode
+                                Barang</label>
+                            <div class="col-sm-8 col-md-6 col-lg-4">
+                                <input class="form-control" type="text" name="kode_barang"
+                                    value="{{ $barang->kode_barang }}" placeholder="" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label
+                                class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Barcode</label>
+                            <div class="col-sm-4" style="position:relative">
+                                <div class="input-group">
+                                    <input class="form-control barcode" type="text" name="barcode"
+                                        value="{{ $barang->barcode }}" />
+                                    <button class="btn btn-secondary color-darkgray generate-barcode"
+                                        type="button">Generate</button>
+                                </div>
+                                <div class="spinner-border spinner text-secondary spinner-border-sm"
+                                    style="display:none; position:absolute; top:8px; right:110px"></div>
+                                <small class="text-muted form-text-12"><span class="jml-digit">0</span> digit | 13 digit,
+                                    Misal
+                                    8993053131130. 899 adalah kode negara Indonesia</small>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label
+                                class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Deskripsi</label>
+                            <div class="col-sm-4">
+                                <textarea class="form-control" name="deskripsi">{{ $barang->deskripsi }}</textarea>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label
+                                class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Kategori</label>
+                            <div class="col-sm-8 col-md-6 col-lg-4">
+                                <select class="form-select" id="list-kategori" type="text" name="kategori_id">
+                                    @foreach ($list_kategori as $key => $node)
+                                        <option value="{{ $key }}"
+                                            {{ isset($node['disabled']) ? 'disabled' : '' }}
+                                            data-parent="{{ $node['attr']['data-parent'] }}"
+                                            data-icon="{{ $node['attr']['data-icon'] }}"
+                                            data-new="{{ $node['attr']['data-new'] }}"
+                                            {{ $barang->kategori_id == $key ? 'selected' : '' }}>{{ $node['text'] }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Satuan</label>
+                            <div class="col-sm-8 col-md-6 col-lg-4">
+                                <select class="form-select" type="text" name="unit_id">
+                                    @foreach ($satuan_unit as $val)
+                                        <option value="{{ $val->id }}"
+                                            {{ $barang->unit_id == $val->id ? 'selected' : '' }}>
+                                            {{ $val->nama_satuan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Berat</label>
+                            <div class="col-sm-4">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control number" name="berat"
+                                        value="{{ Helper::format_ribuan($barang->berat) }}">
+                                    <span class="input-group-text" id="basic-addon2">Gram</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Kode
-                            Barang</label>
-                        <div class="col-sm-8 col-md-6 col-lg-4">
-                            <input class="form-control " type="text" name="kode_barang"
-                                value="{{ $barang->kode_barang }}" placeholder="" />
-                        </div>
+                    <div class="color-softgray-5 pt-2 pb-1 ps-4">
+                        <h5 class="fw-bold">Stok</h5>
                     </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Barcode</label>
-                        <div class="col-sm-4" style="position:relative">
-                            <div class="input-group">
-                                <input class="form-control barcode" type="text" name="barcode" />
-                                <button class="btn btn-secondary color-darkgray generate-barcode"
-                                    type="button">Generate</button>
+                    <hr>
+                    {{-- <div class="ps-3"> --}}
 
-                            </div>
-                            <div class="spinner-border spinner text-secondary spinner-border-sm"
-                                style="display:none; position:absolute; top:8px; right:110px"></div>
-                            <small class="text-muted form-text-12"><span class="jml-digit">0</span> digit | 13 digit, Misal
-                                8993053131130. 899 adalah kode negara Indonesia</small>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Deskripsi</label>
-                        <div class="col-sm-4">
-                            <textarea class="form-control" name="deskripsi"></textarea>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Kategori</label>
-                        <div class="col-sm-8 col-md-6 col-lg-4">
-                            <select class="form-select" id="list-kategori" type="text" name="kategori_id">
-                                @foreach ($list_kategori as $key => $node)
-                                    <option value="{{ $key }}" {{ isset($node['disabled']) ? 'disabled' : '' }}
-                                        data-parent="{{ $node['attr']['data-parent'] }}"
-                                        data-icon="{{ $node['attr']['data-icon'] }}"
-                                        data-new="{{ $node['attr']['data-new'] }}">{{ $node['text'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Satuan</label>
-                        <div class="col-sm-8 col-md-6 col-lg-4">
-                            <select class="form-select" type="text" name="unit_id">
-                                @foreach ($satuan_unit as $key => $val)
-                                    <option value="{{ $key }}" {{ $key == $barang->unit_id ? 'selected' : '' }}>
-                                        {{ $val->nama_satuan }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Berat</label>
-                        <div class="col-sm-4">
-                            <div class="input-group mb-3">
-                                <input type="text" class="form-control number" name="berat">
-                                <span class="input-group-text" id="basic-addon2">Gram</span>
-                            </div>
-                        </div>
-                    </div>
-                    {{-- <div class="row mb-3">
-                        <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Verified</label>
-                        <div class="col-sm-8 col-md-6 col-lg-4">
+                        @foreach ($gudang as $key => $val)
                             @php
-                                $options = collect([
-                                    1 => 'Ya',
-                                    2 => 'Tidak',
-                                ]);
+                                $total_stok = 0;
+                                if (key_exists($val->id, $stok)) {
+                                    $total_stok = $stok[$val->id]->total_stok;
+                                }
                             @endphp
-                            <select class="form-select" type="text" name="verified">
-                                @foreach ($options as $key => $val)
-                                    <option value="{{ $key }}" {{ $key == $barang->verified ? 'selected' : '' }}>
-                                        {{ $val }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="stok-container">
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Nama
+                                        Gudang</label>
+                                    <div class="col-sm-5 stok form-text-13 d-flex align-items-center">
+                                        {{ $val->nama_gudang }}</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label
+                                        class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Adjusment</label>
+                                    <div class="col-sm-5 stok-number">
+                                        <div class="d-flex flex-start">
+                                            {!! Helper::options(
+                                                ['name' => 'operator[]', 'class' => 'form-select operator me-2'],
+                                                ['plus' => '+', 'minus' => '-'],
+                                            ) !!}
+                                            <div class="input-group" style="width:130px">
+                                                <button type="button"
+                                                    class="color-softgray-5 input-group-text decrement">-</button>
+                                                <input type="text" size="2" value=""
+                                                    class="form-control text-end stok">
+                                                <button type="button"
+                                                    class="color-softgray-5 input-group-text increment">+</button>
+                                            </div>
+                                        </div>
+                                        <div class="text-muted form-text-12 adjusment fst-italic">
+                                            Stok Awal: <span class="stok-awal"></span>,
+                                            Adjusment: <span class="stok-adjusment">0</span>, Stok Akhir: <span
+                                                class="stok-akhir"></span>
+                                            <input type="hidden" name="gudang_id[]" value="{{ $val->id }}" />
+                                            <input type="hidden" name="adjusment[]" value="0" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if ($key + 1 < count($stok))
+                                <hr />
+                            @endif
+                        @endforeach
+
+                        <div class="color-softgray-5 pt-2 pb-1 ps-4">
+                            <h5 class="fw-bold">Harga Pokok</h5>
                         </div>
-                    </div> --}}
+                        <hr>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Harga
+                                pokok</label>
+                            <div class="col-sm-4">
+                                <input name="harga_pokok" class="form-control number harga-pokok"
+                                    value="{{ Helper::format_ribuan($harga_pokok) }}" />
+                                <div class="text-muted form-text-12 adjusment fst-italic">
+                                    Harga awal: <span
+                                        class="harga-pokok-awal">{{ Helper::format_ribuan($harga_pokok) }}</span>,
+                                    Adjusment: <span class="adjusment-harga-pokok">0</span>
+                                </div>
+                                <input type="hidden" name="adjusment_harga_pokok" value="0" />
+                            </div>
+                        </div>
+                    {{-- </div> --}}
+                    <div class="color-softgray-5 pt-2 pb-1 ps-4">
+                        <h5 class="fw-bold">Harga Jual</h5>
+                    </div>
+                    <hr>
+                    <div class="ps-3">
+                        @foreach ($harga_jual as $index => $val)
+                            <div class="stok-container">
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Nama
+                                        Harga</label>
+                                    <div class="col-sm-5 stok form-text-13 d-flex align-items-center">
+                                        {{ $val->nama_jenis_harga }}</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Harga
+                                        Jual</label>
+                                    <div class="col-sm-5 stok-number">
+                                        <div class="input-group" style="width:170px">
+                                            <button type="button"
+                                                class="color-softgray-5 input-group-text decrement">-</button>
+                                            <input type="text" size="2" name="harga_jual[]"
+                                                value="{{ Helper::format_ribuan($val->harga) }}"
+                                                class="form-control text-end number harga-jual">
+                                            <button type="button"
+                                                class="color-softgray-5 input-group-text increment">+</button>
+                                        </div>
+                                        <div class="text-muted form-text-12 adjusment fst-italic">
+                                            Harga Awal: <span
+                                                class="harga-jual-awal">{{ Helper::format_ribuan($val->harga) }}</span>,
+                                            Adjusment: <span class="adjusment-harga-jual">0</span>
+                                            <input type="hidden" name="jenis_harga_id[]"
+                                                value="{{ $val->id }}" />
+                                            <input type="hidden" name="harga_awal[]" value="{{ $val->harga }}" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                     <div class="horizontal-line color-shadow"></div>
                     <div class="card-footer mb-10">
                         <div class="col-md-4 col-12 button-group">
                             <button type="button"
                                 onclick="submitForm(`{{ $barang->id ? route('barang.update', $barang->id) : route('barang.store') }}`)"
                                 class="btn btn-primary color-blue" id="submit">Submit</button>
-                            <button type="button" class="btn btn-link mx-2" onclick="resetForm(this.form)">Reset</button>
+                            <button type="button" class="btn btn-link mx-2"
+                                onclick="resetForm(this.form)">Reset</button>
                         </div>
                     </div>
                 </form>

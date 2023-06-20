@@ -25,13 +25,13 @@ class Barang extends Model
             ->leftJoin('gudang', 'tabel.gudang_id', '=', 'gudang.id')
             ->groupBy('tabel.barang_id', 'tabel.gudang_id', 'tabel.saldo_stok')
             ->select('*', DB::raw('SUM(tabel.saldo_stok) AS total_stok'))
-            ->get();
+            ->get()->toArray();
 
 
         return $result;
     }
 
-   
+
 
 
 
