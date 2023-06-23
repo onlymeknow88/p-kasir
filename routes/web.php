@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\BarangController;
+use App\Models\TransferGudang;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\GudangController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
 use App\Http\Controllers\SettingPajakController;
 use App\Http\Controllers\SettingInvoiceController;
+use App\Http\Controllers\TransferBarangController;
 use App\Http\Controllers\Setting\SettingAppController;
 use App\Http\Controllers\Setting\MenuKategoriController;
 
@@ -35,10 +38,16 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::resource('/dashboard', DashboardController::class);
 
+    //gudang
+    Route::resource('/list-gudang', GudangController::class);
+    Route::get('/transfer-barang/ajaxGetBarangByBarcode', [TransferBarangController::class,'ajaxGetBarangByBarcode']);
+    Route::get('/transfer-barang/getDataDTListBarang', [TransferBarangController::class,'getDataDTListBarang']);
+    Route::post('/transfer-barang/getDataBarang', [TransferBarangController::class,'getDataBarang']);
+    Route::resource('/transfer-barang', TransferBarangController::class);
+
     //barang
     Route::get('/barang/GenerateBarcodeNumber', [BarangController::class,'ajaxGenerateBarcodeNumber']);
     Route::resource('/barang', BarangController::class);
-
 
     //user
     Route::post('/check-username', [UserController::class,'checkUsername']);
@@ -54,8 +63,6 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::resource('/supplier', SupplierController::class);
     //customer
     Route::resource('/customer', CustomerController::class);
-
-
 
     //refrensi group
     Route::resource('/unit', UnitController::class);

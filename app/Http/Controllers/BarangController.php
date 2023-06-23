@@ -28,7 +28,7 @@ class BarangController extends Controller
         if (request()->ajax()) {
 
             $query = DB::table('barang')
-                ->leftJoin('unit', 'barang.id', '=', 'unit.id')
+                ->leftJoin('unit', 'barang.unit_id', '=', 'unit.id')
                 ->leftJoin(DB::raw('(SELECT barang_id, SUM(saldo_stok) AS stok
                                 FROM (SELECT barang_id, gudang_id, adjusment_stok AS saldo_stok, "adjusment" AS jenis
                                       FROM barang_adjusment_stok) AS tabel

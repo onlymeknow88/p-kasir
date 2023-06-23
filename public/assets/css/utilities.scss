@@ -121,34 +121,34 @@ $font-weights: (light: 300,
 
 /* text color */
 .text-black {
-    color: $nero_black_90;
+    color: $nero_black_90 !important;
 }
 
 .text-blue {
-    color: $egyptian_blue_30;
+    color: $egyptian_blue_30 !important;
 }
 
 .text-white {
-    color: $nero_white;
+    color: $nero_white !important;
 }
 
 .text-green {
-    color: $green_haze_50;
+    color: $green_haze_50 !important;
 }
 .text-red {
-    color: $hornet_sting_50;
+    color: $hornet_sting_50 !important;
 }
 
 .text-softgray {
-    color: $nero_black_2;
+    color: $nero_black_2 !important;
 }
 
 .text-red-validate {
-    color: $hornet_sting_50;
+    color: $hornet_sting_50 !important;
 }
 
 .text-gray {
-    color: $nero_black_30;
+    color: $nero_black_30 !important;
 }
 
 /* color */

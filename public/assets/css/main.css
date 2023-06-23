@@ -133,6 +133,8 @@ ul {
 .btn-success {
   color: #ffffff;
   font-size: 12px;
+  display: flex;
+  align-items: center;
   font-weight: 400;
 }
 .btn-success:hover {
@@ -220,6 +222,14 @@ ul {
   box-shadow: none !important;
 }
 
+.btn.del-row {
+  padding: 3px 8px;
+}
+.btn.del-row:hover {
+  background-color: #fafafa;
+  border: 1px solid #ff0033;
+}
+
 input.form-control {
   font-size: 12px;
   font-weight: 400;
@@ -269,12 +279,16 @@ select.form-select:focus-within {
   box-shadow: none !important;
 }
 
-.input-group .form-control {
-  height: 32px;
-}
 .input-group button {
   padding: 0 12px !important;
-  font-size: 13px !important;
+  height: auto;
+  font-size: 12px !important;
+}
+.input-group a {
+  padding: 8px 12px !important;
+  height: auto;
+  font-size: 12px !important;
+  text-align: center !important;
 }
 .input-group .input-group-text {
   padding: 0 12px !important;
@@ -2164,6 +2178,27 @@ text.highcharts-credits {
 }
 
 @media screen and (min-width: 320px) and (max-width: 480px) {
+  .operator {
+    width: 30% !important;
+  }
+  .barcode-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .barcode-group input, .barcode-group a {
+    width: 100% !important;
+    margin-bottom: 10px;
+  }
+  .barcode-group button {
+    width: 100% !important;
+    margin-bottom: 10px;
+    height: 32px !important;
+  }
+  #list-produk {
+    width: 900px !important;
+  }
   .form-select {
     height: 38px !important;
   }
@@ -2846,14 +2881,14 @@ text.highcharts-credits {
     width: 50% !important;
   }
   .sidebar {
-    margin-left: -256px;
+    margin-left: -286px;
   }
   .sidebar.show-menu {
     margin-left: 0;
     transition: 0.3s all ease;
   }
   .sidebar .content .sidebar-content-items .section-sidebar {
-    width: 256px;
+    width: 286px;
   }
 }
 .custom-loader {
@@ -2979,4 +3014,17 @@ text.highcharts-credits {
 .img-prop ul {
   margin: 0;
   padding: 0;
+}
+
+.list-barang-terpilih {
+  padding: 15px 20px 10px 20px;
+  border-bottom: 1px solid #CCCCCC;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.toast {
+  width: auto;
+  font-size: 100%;
 }/*# sourceMappingURL=main.css.map */

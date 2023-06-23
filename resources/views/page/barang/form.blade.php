@@ -173,7 +173,7 @@
                                     <div class="col-sm-5 stok-number">
                                         <div class="d-flex flex-start">
                                             {!! Helper::options(
-                                                ['name' => 'operator[]', 'class' => 'form-select operator me-2'],
+                                                ['name' => 'operator[]', 'class' => 'operator me-2', 'style' => 'flex: 0 0 auto;width: 70px'],
                                                 ['plus' => '+', 'minus' => '-'],
                                             ) !!}
                                             <div class="input-group" style="width:130px">

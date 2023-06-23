@@ -77,35 +77,35 @@
 
 /* text color */
 .text-black {
-  color: #000000;
+  color: #000000 !important;
 }
 
 .text-blue {
-  color: #8A9CD7;
+  color: #8A9CD7 !important;
 }
 
 .text-white {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
 }
 
 .text-green {
-  color: #00A650;
+  color: #00A650 !important;
 }
 
 .text-red {
-  color: #FF0033;
+  color: #FF0033 !important;
 }
 
 .text-softgray {
-  color: #FAFAFA;
+  color: #FAFAFA !important;
 }
 
 .text-red-validate {
-  color: #FF0033;
+  color: #FF0033 !important;
 }
 
 .text-gray {
-  color: #808080;
+  color: #808080 !important;
 }
 
 /* color */

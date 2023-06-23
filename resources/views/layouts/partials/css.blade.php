@@ -13,7 +13,7 @@
 {{-- dragula --}}
 <link href="{{ asset('assets/js/dragula/dragula.min.css') }}" rel="stylesheet">
 {{-- fapicker --}}
-<link href="{{ asset('assets/js/wdi/wdi-modal.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/js/wdi/wdi-fapicker.css') }}" rel="stylesheet">
-<link href="{{ asset('assets/js/wdi/wdi-loader.css') }}" rel="stylesheet">
+
 <link href="{{ asset('assets/js/overlayscrollbars/OverlayScrollbars.min.css') }}" rel="stylesheet">
+
+

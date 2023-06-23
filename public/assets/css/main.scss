@@ -210,6 +210,8 @@ ul {
     // background: $egyptian_blue_70 !important;
     color: $nero_white;
     font-size: 12px;
+    display: flex;
+    align-items: center;
     font-weight: map-get($font-weights, normal);
 
     &:hover {
@@ -318,6 +320,16 @@ ul {
     }
 }
 
+.btn {
+    &.del-row{
+        padding: 3px 8px;
+        &:hover {
+            background-color: $nero_black_2;
+            border: 1px solid $hornet_sting_50;
+        }
+    }
+}
+
 input {
     &.form-control {
         font-size: 12px;
@@ -381,14 +393,23 @@ select {
 }
 
 .input-group {
-    .form-control {
-        height: 32px;
+    // .form-control {
+    //     height: 32px !important;
+    // }
+
+    button{
+        padding: 0 12px !important;
+        height: auto;
+        font-size: 12px !important;
     }
 
-    button {
-        padding: 0 12px !important;
-        font-size: 13px !important;
+    a {
+        padding: 8px 12px !important;
+        height: auto;
+        font-size: 12px !important;
+        text-align: center !important;
     }
+
 
     .input-group-text {
         padding: 0 12px !important;
@@ -3341,6 +3362,37 @@ text.highcharts-credits {
 
     // }
 
+    .operator {
+        width: 30% !important;
+    }
+
+    .barcode-group {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        & input,a  {
+            width: 100% !important;
+            margin-bottom: 10px;
+        }
+
+        & button {
+            width: 100% !important;
+            margin-bottom: 10px;
+            height: 32px !important;
+        }
+    }
+
+    // .barcode-group {
+    //     display: flex;
+    //     flex-direction: column ;
+    // }
+
+    #list-produk{
+        width: 900px !important;
+    }
+
     .form-select {
         height: 38px !important;
     }
@@ -4234,7 +4286,7 @@ text.highcharts-credits {
     }
 
     .sidebar {
-        margin-left: -256px;
+        margin-left: -286px;
 
         &.show-menu {
             margin-left: 0;
@@ -4243,7 +4295,7 @@ text.highcharts-credits {
         .content {
             .sidebar-content-items {
                 .section-sidebar {
-                    width: 256px;
+                    width: 286px;
                 }
             }
         }
@@ -4375,4 +4427,17 @@ text.highcharts-credits {
 .img-prop ul {
     margin: 0;
     padding: 0;
+}
+
+.list-barang-terpilih {
+	padding: 15px 20px 10px 20px;
+	border-bottom: 1px solid #CCCCCC;
+	display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.toast {
+	width: auto;
+	font-size: 100%;
 }

@@ -246,7 +246,7 @@ class ResponseFormatter
                     $class_li[] = 'highlight';
                 }
 
-                $class_li[] = self::setActiveMenu(url($val->url),$val->children);
+                $class_li[] = self::setActiveMenu(url($val->url), $val->children);
 
                 if ($class_li) {
                     $class_li = ' class="' . join(' ', $class_li) . '"';
@@ -406,28 +406,233 @@ class ResponseFormatter
         return $default;
     }
 
-    public static function options(array $attributes, array $options)
+    // public static function options(array $attributes, array $options)
+    // {
+    //     $html = '<select style="width:60px !important;"';
+    //     foreach ($attributes as $name => $value) {
+    //         $html .= ' ' . $name . '="' . e($value) . '"';
+    //     }
+    //     $html .= '>';
+
+    //     foreach ($options as $value => $label) {
+    //         $html .= '<option value="' . e($value) . '">' . e($label) . '</option>';
+    //     }
+
+    //     $html .= '</select>';
+
+    //     return $html;
+    // }
+
+    public static function format_ribuan($value)
     {
-        $html = '<select style="width:60px !important;"';
-        foreach ($attributes as $name => $value) {
-            $html .= ' ' . $name . '="' . e($value) . '"';
-        }
-        $html .= '>';
-
-        foreach ($options as $value => $label) {
-            $html .= '<option value="' . e($value) . '">' . e($label) . '</option>';
-        }
-
-        $html .= '</select>';
-
-        return $html;
-    }
-
-    public static function format_ribuan($value) {
         if (!$value)
             return 0;
         return number_format((float) $value, 0, ',', '.');
     }
 
+    public static function format_number($value)
+    {
+        if ($value) {
+            $minus = substr($value, 0, 1);
+            if ($minus != '-') {
+                $minus = '';
+            }
 
+
+            $value = preg_replace('/\D/', '', $value);
+        }
+
+        if ($value == 0)
+            return 0;
+
+        if ($value == '')
+            return '';
+
+        if (!is_numeric($value))
+            return '';
+
+        if (empty($value))
+            return;
+
+        return $minus . number_format($value, 0, ',', '.');
+    }
+
+    function nama_bulan() {
+        return [1=> 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    }
+
+    public static function format_tanggal($date, $format = 'dd mmmm yyyy')
+    {
+        if ($date == '0000-00-00' || $date == '0000-00-00 00:00:00' || $date == '')
+            return $date;
+
+        $time = '';
+        // Date time
+        if (strlen($date) == 19) {
+            $exp = explode(' ', $date);
+            $date = $exp[0];
+            $time = ' ' . $exp[1];
+        }
+
+        $format = strtolower($format);
+        $new_format = $date;
+
+        list($year, $month, $date) = explode('-', $date);
+        if (strpos($format, 'dd') !== false) {
+            $new_format = str_replace('dd', $date, $format);
+        }
+
+        if (strpos($format, 'mmmm') !== false) {
+            $bulan = self::nama_bulan();
+            $new_format = str_replace('mmmm', $bulan[($month * 1)], $new_format);
+        } else if (strpos($format, 'mm') !== false) {
+            $new_format = str_replace('mm', $month, $new_format);
+        }
+
+        if (strpos($format, 'yyyy') !== false) {
+            $new_format = str_replace('yyyy', $year, $new_format);
+        }
+        return $new_format . $time;
+    }
+
+    public static function btn_action($data = [])
+    {
+
+        $html = '<div class="form-inline btn-action-group">';
+        $attr = '';
+        foreach ($data as $key => $val) {
+            if ($key == 'edit') {
+                $btn_class = 'btn btn-success btn-xs me-1';
+                if (!key_exists('attr', $val)) {
+
+                    $val['attr'] = ['class' => $btn_class];
+                }
+
+                foreach ($val['attr'] as $attr_name => $attr_value) {
+                    if ($attr_name == 'class') {
+                        $attr_value = $btn_class . ' ' . $attr_value;
+                    }
+
+                    $attr .= $attr_name . '="' . $attr_value . '"';
+                }
+
+                $html .= '<a href="' . $data[$key]['url'] . '" ' . $attr . '>
+                            <span class="btn-label-icon"><i class="fa fa-edit pe-1"></i></span> Edit
+                        </a>';
+            } else if ($key == 'delete') {
+                $html .= '<form method="post" action="' . $data[$key]['url'] . '">
+                        <button type="submit" data-action="delete-data" data-delete-title="' . $data[$key]['delete-title'] . '" class="btn btn-danger btn-xs">
+                            <span class="btn-label-icon"><i class="fa fa-times pe-1"></i></span> Delete
+                        </button>
+                        <input type="hidden" name="delete" value="delete"/>
+                        <input type="hidden" name="id" value="' . $data[$key]['id'] . '"/>
+                    </form>';
+            } else {
+
+                if (key_exists('attr', $data[$key])) {
+                    foreach ($data[$key]['attr'] as $key_attr => $val_attr) {
+                        $attr .= $key_attr . '="' . $val_attr . '"';
+                    }
+                }
+                // print_r($attr); die;
+                $html .= '<a href="' . $data[$key]['url'] . '" class="btn ' . $data[$key]['btn_class'] . ' btn-xs me-1" ' . $attr . '>
+                            <span class="btn-label-icon"><i class="' . $data[$key]['icon'] . '"></i></span>&nbsp;' . $data[$key]['text'] . '
+                        </a>';
+            }
+        }
+
+        $html .= '</div>';
+        return $html;
+    }
+
+    public static function btn_label($data)
+    {
+        $attr = [];
+        if (key_exists('attr', $data)) {
+            foreach ($data['attr'] as $name => $value) {
+                if ($name == 'class') {
+                    // $value = 'btn-inline ' . $value;
+                }
+                $attr[] = $name . '="' . $value . '"';
+            }
+        }
+
+        $label = '';
+        if (key_exists('label', $data)) {
+            $label = $data['label'];
+        }
+
+        $icon = '';
+        if (key_exists('icon', $data)) {
+            $padding = $label ? ' pe-1' : '';
+            $icon = '<span class="btn-label-icon"><i class="' . $data['icon'] . $padding . '"></i></span> ';
+        }
+
+        $html = '
+		<button  type="button" ' . join(' ', $attr) . '>' . $icon . $label . '</button>';
+        return $html;
+    }
+
+    public static function options($attr, $data, $selected = '', $print = false)
+    {
+        if (empty($attr['class'])) {
+            $attr['class'] = 'form-select';
+        } else {
+            $attr['class'] = $attr['class'] . ' form-select';
+        }
+
+        foreach ($attr as $key => $val) {
+            $attribute[] = $key . '="' . $val . '"';
+        }
+        $attribute = join(' ', $attribute);
+
+        if ($selected != '') {
+            if (!is_array($selected)) {
+                $selected = [$selected];
+            }
+        }
+
+        $result = '
+	<select ' . $attribute . '>';
+        foreach ($data as $key => $value) {
+            $attr_option = '';
+            if (is_array($value)) {
+                $text = $value['text'];
+                if (key_exists('attr', $value)) {
+                    $attr_option = ' ';
+                    foreach ($value['attr'] as $attr_key => $attr_val) {
+                        $attr_option .= $attr_key . '="' . $attr_val . '"';
+                    }
+                }
+            } else {
+                $text = $value;
+            }
+
+            $option_selected = '';
+            if ($selected != '') {
+                if (@empty($_REQUEST[$selected[0]])) {
+                    if (in_array($key, $selected)) {
+                        $option_selected = true;
+                    }
+                } else {
+                    if ($key == $_REQUEST[$selected[0]]) {
+                        $option_selected = true;
+                    }
+                }
+            }
+
+            if ($option_selected) {
+                $option_selected = ' selected';
+            }
+            $result .= '<option ' . $attr_option . ' value="' . $key . '"' . $option_selected . '>' . $text . '</option>';
+        }
+
+        $result .= '</select>';
+
+        if ($print) {
+            echo $result;
+        } else {
+            return $result;
+        }
+    }
 }

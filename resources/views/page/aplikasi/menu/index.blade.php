@@ -22,11 +22,14 @@
 
 @push('css')
     @include('layouts.partials.css')
+    <link href="{{ asset('assets/js/wdi/wdi-modal.css') }}" rel="stylesheet">
+<link href="{{ asset('assets/js/wdi/wdi-fapicker.css') }}" rel="stylesheet">
+<link href="{{ asset('assets/js/wdi/wdi-loader.css') }}" rel="stylesheet">
 @endpush
 
 @push('script')
     @include('layouts.partials.js')
-
+    <script src="{{ asset('assets/js/wdi/wdi-fapicker.js') }}"></script>
     <script src="{{ asset('assets/js/page/admin-menu.js') }}"></script>
     <script src="{{ asset('assets/js/js-yaml/js-yaml.min.js') }}"></script>
 @endpush
