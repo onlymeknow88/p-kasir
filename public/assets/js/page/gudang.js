@@ -56,6 +56,30 @@ $(document).ready(function () {
         $bootbox = showForm("add");
     });
 
+    $("#table-data").delegate(".switch", "click", function (e) {
+        default_gudang = $(this).is(":checked") ? "Y" : "N";
+        id = $(this).attr("data-id-gudang");
+        $.ajax({
+            type: "POST",
+            url: "/list-barang/SwitchDefault",
+            data: "default_gudang=" + default_gudang + "&id=" + id,
+            dataType: "json",
+            success: function (data) {
+                if (data.status == "ok") {
+                    // dataTable.ajax.draw();
+                } else {
+                    show_alert("Error !!!", data.message, "error");
+                }
+
+                dataTable.ajax.reload();
+            },
+            error: function (xhr) {
+                show_alert("Error !!!", xhr.responseText, "error");
+                console.log(xhr.responseText);
+            },
+        });
+    });
+
     $("#form").on("keyup keypress", function (e) {
         var keyCode = e.keyCode || e.which;
         if (keyCode === 13) {

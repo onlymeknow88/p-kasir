@@ -35,6 +35,11 @@ class TransferBarang extends Model
         'user_id_update'
     ];
 
+    // public function jenisHargaTransfer()
+    // {
+    //     return
+    // }
+
 
     public function getBarangByIdTransferBarang($id)
     {
@@ -109,7 +114,7 @@ class TransferBarang extends Model
 
     public function getBarangByBarcode($code,$gudang_id)
     {
-        $data = Barang::select('barang.*', 'unit.nama_satuan', 'detail.stok')
+        $data = Barang::select('barang.*', 'unit.satuan', 'detail.stok')
         ->where('barcode', trim($code))
         ->selectSub(function ($query) {
             $query->select('harga')

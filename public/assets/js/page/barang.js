@@ -1,6 +1,5 @@
 var dataTable;
-
-dataTable = $(".table").DataTable({
+ dataTable = $(".table").DataTable({
     ajax: {
         url: "/barang",
     },
@@ -10,33 +9,38 @@ dataTable = $(".table").DataTable({
             name: "DT_RowIndex",
             orderable: false,
             searchable: false,
+            width: "5%",
         },
         {
             data: "nama_barang",
             name: "nama_barang",
+            width: "20%",
         },
         {
             data: "deskripsi",
             name: "deskripsi",
+            width: "30%",
         },
         {
             data: "barcode",
             name: "barcode",
+            width: "10%",
         },
         {
             data: "stok",
             name: "stok",
+            width: "10%",
         },
         {
             data: "aksi",
             searchable: false,
             sortable: false,
+            width: "25%",
         },
     ],
-    responsive: true,
-    autoWidth: false,
-    scrollX: true,
-    scrollCollapse: true,
+    pagingType: "simple_numbers",
+    lengthMenu: [10, 25, 50],
+    pageLength: 10,
     language: {
         paginate: {
             next: ">", // or '→'
@@ -114,6 +118,7 @@ jQuery(document).ready(function () {
             .val(sign + adjusment.toString());
     });
 
+
     $(".operator").change(function () {
         $parent = $(this).parents(".stok-number").eq(0);
         $parent.find(".stok").trigger("keyup");
@@ -146,7 +151,33 @@ jQuery(document).ready(function () {
         $parent.find(".adjusment-harga-jual").text(format_ribuan(adjusment));
     });
 
-    $('#list-kategori').css('width','100%');
+    $("#list-kategori").css("width", "100%");
+
+    $("#btn-excel").click(function () {
+        $this = $(this);
+        $this.prop("disabled", true);
+        $spinner = $(
+            '<div class="spinner-border spinner-border-sm me-2"></div>'
+        );
+        $spinner.prependTo($this);
+
+        url = "/barang/exportExcel";
+        $.ajax({
+            url: url,
+            method: "GET",
+            success: function (response) {
+                // Redirect to the file download URL
+                $this.prop("disabled", false);
+                $spinner.remove();
+                window.location.href = url;
+            },
+            error: function (xhr) {
+                $this.prop("disabled", false);
+                $spinner.remove();
+                console.log(xhr.responseText);
+            },
+        });
+    });
 });
 
 function showForm(type = "add", id = "") {
@@ -231,7 +262,7 @@ function submitForm(url) {
     }
 
     $.ajax({
-        data: formdata ? formdata : form.serialize(),
+        data: formdata || form.serialize(),
         url: url,
         type: "POST",
         dataType: "json",
@@ -239,22 +270,30 @@ function submitForm(url) {
         contentType: false,
         processData: false,
         success: function (data) {
-            // if (data.meta.code == 200) {
-            //     // console.log(data.meta.message.substr(0, 12));
-            //     swal.fire({
-            //         text: data.meta.message,
-            //         type: "success",
-            //     }).then(function () {
-            //         // window.history.back();
-            //         window.location.href = "/customer";
-            //         dataTable.ajax.reload(null, false);
-            //     });
-            // } else if (data.meta.code == 500) {
-            //     swal.fire({
-            //         text: data.meta.message,
-            //         type: "error",
-            //     });
-            // }
+            if (data.meta.code == 200) {
+                // console.log(data.meta.message.substr(0, 12));
+                swal.fire({
+                    text: data.meta.message,
+                    type: "success",
+                }).then(function () {
+                    history.back();
+                    var table = $(".table").DataTable();
+                    var indexes = table
+                        .rows()
+                        .eq(0)
+                        .filter(function (rowIdx) {
+                            return table.cell(rowIdx, 0).data() === data.result.data.id
+                                ? true
+                                : false;
+                        });
+                    table.rows(indexes).invalidate().draw(false);
+                });
+            } else if (data.meta.code == 500) {
+                swal.fire({
+                    text: data.meta.message,
+                    type: "error",
+                });
+            }
         },
         error: function (xhr, status, error) {
             console.log("Error:", xhr);
@@ -317,12 +356,13 @@ function loopErrors(errors) {
     for (error in errors) {
         $(`[name=${error}]`).addClass("is-invalid");
 
-        if ($(`[name=${error}]`).hasClass("barcode") || $(`[name=${error}]`).hasClass("number")) {
-            // if ($(".input-group").hasClass("barcode")) {
-                $(
-                    `<span class="error invalid-feedback">${errors[error][0]}</span>`
-                ).insertAfter($(`[name=${error}]`).next());
-            // }
+        if (
+            $(`[name=${error}]`).hasClass("barcode") ||
+            $(`[name=${error}]`).hasClass("number")
+        ) {
+            $(
+                `<span class="error invalid-feedback">${errors[error][0]}</span>`
+            ).insertAfter($(`[name=${error}]`).next());
         } else if ($(`[name=${error}]`).hasClass("form-select")) {
             if ($("span").hasClass("select2")) {
                 $(

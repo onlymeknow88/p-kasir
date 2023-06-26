@@ -1,59 +1,57 @@
 var dataTable;
 
-    dataTable = $("#table-result").DataTable({
-        ajax: {
-            url: "/transfer-barang",
+dataTable = $("#table-result").DataTable({
+    ajax: {
+        url: "/transfer-barang",
+    },
+    columns: [
+        {
+            data: "DT_RowIndex",
+            name: "DT_RowIndex",
+            orderable: false,
+            searchable: false,
         },
-        columns: [
-            {
-                data: "DT_RowIndex",
-                name: "DT_RowIndex",
-                orderable: false,
-                searchable: false,
-            },
-            {
-                data: "no_nota_transfer",
-                name: "no_nota_transfer",
-            },
-            {
-                data: "tgl_nota_transfer",
-                name: "tgl_nota_transfer",
-            },
-            {
-                data: "nama_gudang_asal",
-                name: "nama_gudang_asal",
-            },
-            {
-                data: "nama_gudang_tujuan",
-                name: "nama_gudang_tujuan",
-            },
-            {
-                data: "total_qty_transfer",
-                name: "total_qty_transfer",
-            },
-            {
-                data: "aksi",
-                searchable: false,
-                sortable: false,
-            },
-        ],
-        responsive: true,
-        autoWidth: false,
-        scrollX: true,
-        scrollCollapse: true,
-        language: {
-            paginate: {
-                next: ">", // or '→'
-                previous: "<", // or '←'
-            },
+        {
+            data: "no_nota_transfer",
+            name: "no_nota_transfer",
         },
-    });
+        {
+            data: "tgl_nota_transfer",
+            name: "tgl_nota_transfer",
+        },
+        {
+            data: "nama_gudang_asal",
+            name: "nama_gudang_asal",
+        },
+        {
+            data: "nama_gudang_tujuan",
+            name: "nama_gudang_tujuan",
+        },
+        {
+            data: "total_qty_transfer",
+            name: "total_qty_transfer",
+        },
+        {
+            data: "aksi",
+            searchable: false,
+            sortable: false,
+        },
+    ],
+    responsive: true,
+    autoWidth: false,
+    scrollX: true,
+    scrollCollapse: true,
+    language: {
+        paginate: {
+            next: ">", // or '→'
+            previous: "<", // or '←'
+        },
+    },
+});
 
 jQuery(document).ready(function () {
     list_barang_terpilih = {};
     $table = $("#list-produk");
-
-
 
     // Edit
     if (!$("#list-produk").is(":hidden")) {
@@ -254,45 +252,37 @@ jQuery(document).ready(function () {
     }
 
     $(".barcode").keypress(function (e) {
-        $(".input-group").next(".barcode").css("display", "none");
         if (e.which == 13) {
             return false;
         }
     });
 
     $(".barcode").keyup(function (e) {
-        $this = $(this);
-        value = $this.val().replace(/\D/g, "");
+        const $this = $(this);
+        let value = $this.val().replace(/\D/g, "");
         this.value = value.substr(0, 13);
-        // console.log(this.value)
-        // // console.log(value.length);
         if (value.length >= 13) {
-            let gudang = $("#gudang-asal").val();
+            const gudang = $("#gudang-asal").val();
             value = value.substr(0, 13);
-            $spinner = $(
+            const $spinner = $(
                 '<div class="spinner-border text-secondary spinner" style="height: 18px; width:18px; position:absolute; left:315px; top:7px" role="status"><span class="visually-hidden">Loading...</span></div>'
             );
-            $parent = $this.parent().parent();
+            const $parent = $this.parent().parent();
             $parent.find(".spinner").remove();
             $spinner.appendTo($parent);
             $this.attr("disabled", "disabled");
             $(".add-barang").attr("disabled", "disabled").addClass("disabled");
             $.ajax({
-                url:
-                    "/transfer-barang/ajaxGetBarangByBarcode?code=" +
-                    value +
-                    "&gudang_id=" +
-                    gudang,
+                url: `/transfer-barang/ajaxGetBarangByBarcode?code=${value}&gudang_id=${gudang}`,
                 success: function (data) {
                     $parent.find(".spinner").remove();
                     $this.removeAttr("disabled");
                     $(".add-barang")
                         .removeAttr("disabled")
                         .removeClass("disabled");
-
-                    data = JSON.parse(data);
-                    // console.log(data.data)
+                    // data = JSON.parse(data);
                     if (data.status == "ok") {
+                        console.log(data);
                         addBarang(data.data);
                         $this.val("").focus();
                     } else {
@@ -316,7 +306,6 @@ jQuery(document).ready(function () {
                                 );
                             },
                         });
-
                         Toast.fire({
                             html: '<div class="toast-content"><i class="far fa-check-circle me-2"></i> Data tidak ditemukan</div>',
                         });
@@ -328,88 +317,86 @@ jQuery(document).ready(function () {
     });
 
     function addBarang(barang) {
+        let list_barang_terpilih = {}; // declare the variable
         list_barang_terpilih[barang.id] = barang;
-
         // List barang
-        $tbody = $table.find("tbody").eq(0);
-
-        $trs = $tbody.find("tr");
-        $tr = $trs.eq(0).clone();
-        num = $trs.length;
+        const $tbody = $table.find("tbody").eq(0);
+        const $trs = $tbody.find("tr");
+        const $tr = $trs.eq(0).clone();
+        const num = $trs.length;
         if ($table.is(":hidden")) {
             $trs.remove();
-            num = 0;
+            $tbody.empty(); // clear the tbody instead of removing all trs
         }
-
-        $td = $tr.find("td");
+        const $td = $tr.find("td");
         $td.eq(0).text(num + 1);
         $td.eq(1).text(barang.nama_barang);
         $td.eq(2).html('<span class="jml-stok">' + barang.stok + "</span>");
         $td.eq(3).html(barang.satuan);
-
         $tr.find(".qty").val(1);
         $tr.find(".diskon-barang").val("");
-        harga_jual = barang.harga_pokok || 0;
-        $harga_satuan = $tr.find(".harga-satuan").val(harga_jual);
-
-        $barang_id = $tr.find(".id-barang");
-        $parent = $barang_id.parent();
-        // console.log($barang_id)
-        $barang_id.remove();
+        const harga_jual = barang.harga_pokok || 0;
+        const $harga_satuan = $tr.find(".harga-satuan");
+        $harga_satuan.val(harga_jual); // set the value directly instead of triggering keyup
+        const $barang_id = $tr.find(".id-barang");
+        const $parent = $barang_id.parent();
+        $barang_id.detach(); // detach instead of remove
         $parent.append(
             '<input type="hidden" class="id-barang" name="barang_id[]" value="' +
                 barang.id +
                 '"/>'
         );
-
         $table.show();
         $tbody.append($tr);
-
-        $harga_satuan.trigger("keyup");
-
+        $harga_satuan.triggerHandler("keyup"); // use triggerHandler instead of trigger
         $tr.find(".flatpickr").flatpickr({
             enableTime: false,
             dateFormat: "d-m-Y",
             time_24hr: true,
         });
-
         $(".list-barang-terpilih").find(".belum-ada").remove();
         $(".list-barang-terpilih").append(
-            '<small  class="px-3 py-2 me-2 mb-2 text-light bg-success bg-opacity-10 border border-success border-opacity-10 rounded-2">' +
+            '<small class="px-3 py-2 me-2 mb-2 text-light bg-success bg-opacity-10 border border-success border-opacity-10 rounded-2">' +
                 barang.nama_barang +
                 "</small>"
         );
     }
 
     $(".add-barang").click(function () {
-        $this = $(this);
+        const $this = $(this);
         if ($this.hasClass("disabled")) {
             return false;
         }
-
-        let gudang = $("#gudang-asal").val();
-        let harga = $("#jenis-harga").val();
-        var $modal = jwdmodal({
+        const $gudang = $("#gudang-asal");
+        const $harga = $("#jenis-harga");
+        const $table = $("table");
+        const gudang = $gudang.val();
+        const harga = $harga.val();
+        const url =
+            "/transfer-barang/getDataDTListBarang?gudang_id=" +
+            gudang +
+            "&jenis_harga_id=" +
+            harga;
+        const $modal = jwdmodal({
             title: "Pilih Barang",
-            url:
-                "/transfer-barang/getDataDTListBarang?gudang_id=" +
-                gudang +
-                "&jenis_harga_id=" +
-                harga,
+            url: url,
             width: "850px",
             action: function () {
-                $trs = $table.find("tbody").eq(0).find("tr");
-                var list_barang =
+                const $trs = $table.children("tbody").children("tr");
+                let list_barang =
                     '<span class="belum-ada mb-2">Silakan pilih barang</span>';
                 if ($table.is(":visible")) {
-                    var list_barang = "";
-                    $trs.each(function (i, elm) {
-                        $td = $(elm).find("td");
-                        list_barang +=
-                            '<small  class="px-3 py-2 me-2 mb-2 text-light bg-success bg-opacity-10 border border-success border-opacity-10 rounded-2">' +
-                            $td.eq(1).html() +
-                            "</small>";
-                    });
+                    list_barang = $trs
+                        .map(function (i, elm) {
+                            const $td = $(elm).children("td");
+                            return (
+                                '<small class="px-3 py-2 me-2 mb-2 text-light bg-success bg-opacity-10 border border-success border-opacity-10 rounded-2">' +
+                                $td.eq(1).text() +
+                                "</small>"
+                            );
+                        })
+                        .get()
+                        .join("");
                 }
                 $(".jwd-modal-header-panel").prepend(
                     '<div class="list-barang-terpilih">' +
@@ -418,20 +405,18 @@ jQuery(document).ready(function () {
                 );
             },
         });
-
         $(document)
-            .undelegate(".pilih-barang", "click")
-            .delegate(".pilih-barang", "click", function () {
+            .off("click", ".pilih-barang")
+            .on("click", ".pilih-barang", function () {
                 // Barang Popup
-                $tr = $(this).parents("tr").eq(0);
-                barang = JSON.parse($tr.find(".detail-barang").text());
+                const $tr = $(this).closest("tr");
+                const barang = JSON.parse($tr.find(".detail-barang").text());
                 addBarang(barang);
             });
     });
 });
 
 function submitForm(url) {
-
     var form = $("#form");
     var formdata = false;
     if (window.FormData) {
@@ -452,7 +437,7 @@ function submitForm(url) {
     }
 
     $.ajax({
-        data: formdata ? formdata : form.serialize(),
+        data: formdata || form.serialize(),
         url: url,
         type: "POST",
         dataType: "json",
@@ -466,9 +451,19 @@ function submitForm(url) {
                     text: data.meta.message,
                     type: "success",
                 }).then(function () {
-                    // window.history.back();
-                    window.location.href = "/trasnfer-barang";
-                    dataTable.ajax.reload(null, false);
+                    window.history.back();
+                    // window.location.href = "/transfer-barang";
+                    // Reload only the affected rows
+                    var table = $("#table-result").DataTable();
+                    var indexes = table
+                        .rows()
+                        .eq(0)
+                        .filter(function (rowIdx) {
+                            return table.cell(rowIdx, 0).data() === data.id
+                                ? true
+                                : false;
+                        });
+                    table.rows(indexes).invalidate().draw(false);
                 });
             } else if (data.meta.code == 500) {
                 swal.fire({
@@ -481,80 +476,62 @@ function submitForm(url) {
             console.log("Error:", xhr);
             if (xhr.status == 422) {
                 loopErrors(xhr.responseJSON.errors);
-                return;
+            } else {
+                swal.fire({
+                    text: "An error occurred. Please try again later.",
+                    type: "error",
+                });
             }
         },
     });
 }
 
 function deleteData(url) {
-    Swal.fire({
-      title: "Delete?",
-      text: "Apakah anda yakin?",
-      type: "warning",
-      showCancelButton: !0,
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-      reverseButtons: !0,
-    }).then(
-      function (e) {
-        if (e.value === true) {
-          $.post(url, {
+    const confirmation = confirm("Apakah anda yakin?");
+    if (confirmation) {
+        $.post(url, {
             _method: "delete",
-            // '_token': `{{ csrf_token() }}`
-          })
+        })
             .done((response) => {
-              console.log(response);
-              if (response.meta.message == "Deleted") {
-                // window.location.href = location.pathname;
-                dataTable.ajax.reload();
-              }
+                console.log(response);
+                if (response.meta.message == "Deleted") {
+                    // window.location.href = location.pathname;
+                    dataTable.ajax.reload();
+                }
             })
             .fail((errors) => {
-              Swal.fire(
-                "Something went wrong.",
-                "You clicked the button!",
-                "error"
-              );
-              return;
+                alert("Something went wrong.");
+                return;
             });
-        } else {
-          e.dismiss;
-        }
-      },
-      function (dismiss) {
-        return false;
-      }
-    );
-  }
-
-function loopErrors(errors) {
-    $(".invalid-feedback").remove();
-
-    if (errors == undefined) {
-        return;
-    }
-
-    for (error in errors) {
-        $(`[name=${error}]`).addClass("is-invalid");
-
-        if ($(`[name=${error}]`).hasClass("form-select")) {
-            if ($("span").hasClass("select2")) {
-                $(
-                    `<span class="error invalid-feedback">${errors[error][0]}</span>`
-                ).insertAfter($(`[name=${error}]`).next());
-            }
-        } else {
-            if ($(`[name=${error}]`).length == 0) {
-                $(`[name="${error}[]"]`).addClass("is-invalid");
-                $(
-                    `<span class="error invalid-feedback">${errors[error][0]}</span>`
-                ).insertAfter($(`[name="${error}[]"]`).next());
-            } else {
-                $(
-                    `<span class="error invalid-feedback">${errors[error][0]}</span>`
-                ).insertAfter($(`[name=${error}]`));
-            }
-        }
     }
 }
+
+
+function loopErrors(errors) {
+    const invalidFeedback = $(".invalid-feedback");
+    invalidFeedback.remove();
+     if (!errors) {
+      return;
+    }
+     for (const [name, errorMessages] of Object.entries(errors)) {
+      const input = $(`[name="${name}"]`);
+      const isSelect = input.hasClass("form-select");
+       input.addClass("is-invalid");
+       if (isSelect && $("span.select2").length) {
+        $("<span>", {
+          class: "error invalid-feedback",
+          text: errorMessages[0]
+        }).insertAfter(input.next());
+      } else {
+        const isArray = input.length === 0;
+        const nameAttr = isArray ? `[name="${name}[]"]` : `[name="${name}"]`;
+         $(`<span>`, {
+          class: "error invalid-feedback",
+          text: errorMessages[0]
+        }).insertAfter($(nameAttr).last());
+         if (isArray) {
+          $(nameAttr).addClass("is-invalid");
+        }
+      }
+    }
+  }

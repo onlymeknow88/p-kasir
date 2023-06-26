@@ -32,6 +32,7 @@
 
 
 
+    <script src="{{ asset('assets/js/filesaver/FileSaver.js') }}"></script>
     <script src="{{ asset('assets/js/page/barang.js') }}"></script>
 @endpush
 
@@ -42,15 +43,11 @@
                 <div class="card-title">
                     <div class="col-12 item-title">
                         <h6>Data Barang</h6>
-                        {{-- <button class="btn btn-icon" title="Add" href="#"
-                    onclick="addForm('')">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                            d="M12.8034 2.3584H11.1962C11.0534 2.3584 10.9819 2.42983 10.9819 2.57268V10.9834H3.00042C2.85756 10.9834 2.78613 11.0548 2.78613 11.1977V12.8048C2.78613 12.9477 2.85756 13.0191 3.00042 13.0191H10.9819V21.4298C10.9819 21.5727 11.0534 21.6441 11.1962 21.6441H12.8034C12.9462 21.6441 13.0176 21.5727 13.0176 21.4298V13.0191H21.0004C21.1433 13.0191 21.2147 12.9477 21.2147 12.8048V11.1977C21.2147 11.0548 21.1433 10.9834 21.0004 10.9834H13.0176V2.57268C13.0176 2.42983 12.9462 2.3584 12.8034 2.3584Z"
-                            fill="#100F16" />
-                        </svg>
-                    </button> --}}
+                        <div class="btn-group">
+                            <button class="btn btn-link color-softgray-5" id="btn-excel" title="Export Excel">
+                                <i class="fas fa-file-excel me-2"></i> Export Excel
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="horizontal-line my-3"></div>

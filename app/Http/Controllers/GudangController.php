@@ -31,7 +31,7 @@ class GudangController extends Controller
                 ->addColumn('aksi', function ($item) {
                     return '
                     <div class="d-flex justify-content-start">
-                        <button onclick="showForm(\'edit\','.$item->id.')" class="btn btn-icon color-yellow mr-6 px-2" title="Edit" >
+                        <button onclick="showForm(\'edit\',' . $item->id . ')" class="btn btn-icon color-yellow mr-6 px-2" title="Edit" >
                             <i class="far fa-edit"></i>
                             <span class="form-text-12 fw-bold">Edit</span>
                         </button>
@@ -159,5 +159,28 @@ class GudangController extends Controller
         return ResponseFormatter::success([
             'data' => null
         ], 'Deleted');
+    }
+
+    public function switchDefault(Request $request)
+    {
+        // Get the count of the default gudang
+        $defaultGudangCount = Gudang::where('default_gudang', 'Y')->count();
+        // Check if there is only one default gudang and the requested gudang is not set as default
+        if ($defaultGudangCount == 1 && $request->default_gudang == 'N') {
+            return response()->json(['status' => 'error', 'message' => 'Setidaknya ada satu gudang yang dipilih menjadi default']);
+        }
+        // Set the default gudang to 'N' for all gudangs
+        Gudang::where('default_gudang', 'Y')->update(['default_gudang' => 'N']);
+        // Find the requested gudang
+        $requestedGudang = Gudang::find($request->id);
+        // If the requested gudang is not found, return an error response
+        if (!$requestedGudang) {
+            return response()->json(['status' => 'error', 'message' => 'Data gagal disimpan']);
+        }
+        // Set the requested gudang as the default gudang and save the changes
+        $requestedGudang->default_gudang = 'Y';
+        $requestedGudang->save();
+        // Return a success response
+        return response()->json(['status' => 'ok', 'message' => 'Data berhasil disimpan']);
     }
 }

@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <div class="horizontal-line my-3"></div>
-                    <a class="btn btn-link color-softgray-5" title="Back" href="{{ route('customer.index') }}">
+                    <a class="btn btn-link color-softgray-5" title="Back" href="{{ route('barang.index') }}">
                         {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
                         <i class="fas fa-arrow-left me-2"></i>
                         back

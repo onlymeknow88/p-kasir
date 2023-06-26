@@ -11,6 +11,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JenisHargaController;
+use App\Http\Controllers\BarcodeCetakController;
 use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
 use App\Http\Controllers\SettingPajakController;
@@ -39,16 +40,31 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::resource('/dashboard', DashboardController::class);
 
     //gudang
+    Route::post('/list-barang/SwitchDefault', [GudangController::class,'switchDefault']);
     Route::resource('/list-gudang', GudangController::class);
     Route::get('/transfer-barang/ajaxGetBarangByBarcode', [TransferBarangController::class,'ajaxGetBarangByBarcode']);
     Route::get('/transfer-barang/getDataDTListBarang', [TransferBarangController::class,'getDataDTListBarang']);
     Route::post('/transfer-barang/getDataBarang', [TransferBarangController::class,'getDataBarang']);
     Route::resource('/transfer-barang', TransferBarangController::class);
 
-    //barang
-    Route::get('/barang/GenerateBarcodeNumber', [BarangController::class,'ajaxGenerateBarcodeNumber']);
-    Route::resource('/barang', BarangController::class);
+    //cetak barcoder barang
+    Route::prefix('barcode-cetak')->name('barcode-cetak.')->group(function () {
+        Route::get('/ajaxGetBarangByBarcode', [BarcodeCetakController::class,'ajaxGetBarangByBarcode']);
+        Route::post('/getDataBarang', [BarcodeCetakController::class,'getDataBarang']);
+        Route::get('/getDataDTListBarang', [BarcodeCetakController::class,'getDataDTListBarang']);
+        Route::get('/', [BarcodeCetakController::class,'index'])->name('index');
+    });
 
+
+    //barang
+    Route::prefix('barang')->name('barang.')->group(function () {
+        Route::get('/GenerateBarcodeNumber', [BarangController::class,'ajaxGenerateBarcodeNumber']);
+        Route::get('/exportExcel', [BarangController::class,'generateExcel'])->name('exportExcel');
+        Route::get('/{id}/edit', [BarangController::class, 'edit'])->name('edit');
+        Route::match(['PUT', 'PATCH'], '/update/{barang}', [BarangController::class, 'update'])->name('update');
+        Route::delete('/destroy/{barang}', [BarangController::class, 'destroy'])->name('destroy');
+        Route::resource('/', BarangController::class)->except(['edit', 'update', 'destroy']);
+    });
     //user
     Route::post('/check-username', [UserController::class,'checkUsername']);
     Route::post('/check-email', [UserController::class,'checkEmail']);

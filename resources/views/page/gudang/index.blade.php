@@ -60,7 +60,7 @@
 
                 <div class="horizontal-line my-3"></div>
                 <div class="table-responsive">
-                    <table class="table table-striped" width="100%">
+                    <table id="table-data" class="table table-striped" width="100%">
                         <thead>
                             <tr>
                                 <th>No</th>

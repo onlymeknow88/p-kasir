@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use File;
-
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\Hash;
+use Intervention\Image\Facades\Image;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
@@ -23,54 +23,36 @@ class UserController extends Controller
      */
     public function index()
     {
-
         if (request()->ajax()) {
-            $query = User::query();
-
+            $query = User::with('roles')->select(['id', 'name', 'username', 'email', 'verified', 'avatar', 'role_id']);
             return DataTables::of($query)
-                ->addColumn('role_id', function ($item) {
-                    return $item->roles->nama_role;
+                ->addColumn('role_id', function ($user) {
+                    return $user->roles->nama_role;
                 })
-                ->addColumn('verified', function ($item) {
-                    return $item->verified == 1 ? 'Ya' : 'Tidak';
+                ->addColumn('verified', function ($user) {
+                    return $user->verified ? 'Ya' : 'Tidak';
                 })
-                ->addColumn('avatar', function ($item) {
-                    $avatar_path = public_path('assets/img/user/', $item->avatar);
-                    if ($item->avatar) {
-                        if (file_exists($avatar_path)) {
-                            $avatar = $item->avatar;
-                        } else {
-                            $avatar = 'default.png';
-                        }
-                    } else {
-                        $avatar = 'default.png';
-                    }
-
-                    $ignore_avatar = '<img width="60" src="' . asset('assets/img/user/' . $avatar) . '">';
-
-                    return $ignore_avatar;
+                ->addColumn('avatar', function ($user) {
+                    $avatar = $user->avatar ? asset('assets/img/user/' . $user->avatar) : asset('assets/img/user/default.png');
+                    return "<img width='60' src='$avatar'>";
                 })
                 ->addColumn('aksi', function ($item) {
                     return '
-                    <div class="d-flex justify-content-start">
-                        <a class="btn btn-icon color-yellow mr-6 px-2" title="Edit" href="' . route('user.edit', $item->id) . '">
-                            <i class="far fa-edit"></i>
-                            <span class="form-text-12 fw-bold">Edit</span>
-                        </a>
-                        <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('user.destroy', $item->id) . '`)">
-                            <i class="far fa-trash-alt text-white"></i>
-                            <span class="text-white form-text-12 fw-bold">Hapus</span>
-                        </button>
-                    </div>
-                    ';
+                        <div class="d-flex justify-content-start">
+                            <a class="btn btn-icon color-yellow mr-6 px-2" title="Edit" href="' . route('user.edit', $item->id) . '">
+                                <i class="far fa-edit"></i>
+                                <span class="form-text-12 fw-bold">Edit</span>
+                            </a>
+                            <button type="button" class="btn btn-icon color-red mr-6 px-2" title="Delete" onclick="deleteData(`' . route('user.destroy', $item->id) . '`)">
+                                <i class="far fa-trash-alt text-white"></i>
+                                <span class="text-white form-text-12 fw-bold">Hapus</span>
+                            </button>
+                        </div>
+                        ';
                 })
-                ->rawColumns(['aksi'])
-                ->escapeColumns([])
+                ->rawColumns(['avatar', 'aksi'])
                 ->make(true);
         }
-
-
-
         return view('page.user.index');
     }
 
@@ -83,7 +65,7 @@ class UserController extends Controller
     {
         $user = new User();
         $role = Role::all();
-        return view('page.user.form', compact('user','role'));
+        return view('page.user.form', compact('user', 'role'));
     }
 
     /**
@@ -94,56 +76,71 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => ['required', 'string', 'max:255'],
-                'username' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'max:255'],
-                'verified' => ['required'],
-                'status' => ['required'],
-                'avatar' => 'nullable|image|mimes:jpeg,png|max:300|dimensions:min_width=100,min_height=100,max_width=100,max_height=100',
-                'password' => 'required|min:8|same:ulangi_password',
-                'ulangi_password' => 'required|min:6',
-            ],
-            [
-                'avatar.required' => 'Please upload an image.',
-                'avatar.image' => 'The file must be an image.',
-                'avatar.mimes' => 'Only JPEG and PNG images are allowed.',
-                'avatar.max' => 'The image size should not exceed 300KB.',
-                'avatar.dimensions' => 'The image dimensions should be exactly 100x100 pixels.',
-                'name.required' => 'Silahkan isi nama',
-                'username.required' => 'Silahkan isi username',
-                'email.required' => 'Silahkan isi email',
-                'verified.required' => 'Silahkan pilih',
-                'status.required' => 'Silahkan pilih',
-                'password.required' => 'Silahkan isi password.',
-                'password.min' => 'The password must be at least 8 characters.',
-                'password.same' => 'password konfirmasi tidak sama.',
-                'ulangi_password.required' => 'Silahkan ulangi password',
-                'ulangi_password.min' => 'The password confirmation must be at least 8 characters.',
-            ]
-        );
-
+        $id = $request->id;
+        $validator = $this->validateRequest($request, $id);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $data = $request->except('avatar');
-        $data['password'] = Hash::make($request->password);
-
-        $path = 'assets/img/user/';
-        $data['avatar'] = null;
-
+        $userData = $request->except('avatar');
+        $userData['password'] = Hash::make($request->password);
+        $avatarPath = 'assets/img/user/';
+        $userData['avatar'] = null;
+        $file = Image::make($request->file('avatar')->getPathname());
+        // dd($file);
         if ($request->hasFile('avatar')) {
-            $data['avatar'] = ResponseFormatter::upload_file($path, $request->avatar);
+            $userData['avatar'] = $this->uploadFile($avatarPath, $file->resize(100,100));
         }
-
-        $user = User::create($data);
-
+        $user = User::create($userData);
         return ResponseFormatter::success([
             'data' => $user
-        ], 'User Success');
+        ], 'Success');
+    }
+
+    private function validateRequest(Request $request, $id = '')
+    {
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'max:255'],
+            'verified' => ['required'],
+            'status' => ['required'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png', 'max:300'],
+        ];
+        $messages = [
+            'name.required' => __('Please enter a name.'),
+            'avatar.image' => 'The file must be an image.',
+            'avatar.mimes' => 'Only JPEG and PNG images are allowed.',
+            'avatar.max' => 'The image size should not exceed 300KB.',
+            'username.required' => __('Please enter a username.'),
+            'email.required' => __('Please enter an email address.'),
+            'verified.required' => __('Please select an option.'),
+            'status.required' => __('Please select an option.'),
+        ];
+        $sometimesRules = [
+            'password' => ['required', 'min:8', 'same:ulangi_password'],
+            'ulangi_password' => ['nullable', 'min:6'],
+        ];
+        $sometimesMessages = [
+            'password.required' => __('Please enter a password.'),
+            'password.min' => __('The password must be at least 8 characters.'),
+            'password.same' => __('The password confirmation does not match.'),
+            'ulangi_password.min' => __('The password confirmation must be at least 6 characters.'),
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
+        $validator->sometimes(['password', 'ulangi_password'], $sometimesRules['password'], function () use ($id) {
+            return !$id;
+        });
+        $validator->sometimes(['password', 'ulangi_password'], $sometimesRules['ulangi_password'], function () use ($id) {
+            return !$id;
+        });
+        return $validator;
+    }
+
+
+    private function uploadFile($path, $file)
+    {
+        return ResponseFormatter::upload_file($path, $file);
     }
 
     /**
@@ -168,7 +165,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $role = Role::all();
-        return view('page.user.form', compact('user','role'));
+        return view('page.user.form', compact('user', 'role'));
     }
 
     /**
@@ -180,39 +177,14 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name' => ['required', 'string', 'max:255'],
-                'username' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'max:255'],
-                'verified' => ['required'],
-                'status' => ['required'],
-                'avatar' => 'nullable|image|mimes:jpeg,png|max:300|dimensions:min_width=100,min_height=100,max_width=130,max_height=130',
-            ],
-            [
-                'avatar.required' => 'Please upload an image.',
-                'avatar.image' => 'The file must be an image.',
-                'avatar.mimes' => 'Only JPEG and PNG images are allowed.',
-                'avatar.max' => 'The image size should not exceed 300KB.',
-                'avatar.dimensions' => 'The image dimensions should be exactly 100x100 pixels.',
-                'name.required' => 'Silahkan isi nama',
-                'username.required' => 'Silahkan isi username',
-                'email.required' => 'Silahkan isi email',
-                'verified.required' => 'Silahkan pilih',
-                'status.required' => 'Silahkan pilih',
-            ]
-        );
 
+        $validator = $this->validateRequest($request, $id);
         if ($validator->fails()) {
-            if ($request->expectsJson()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json(['errors' => $validator->errors()], 422);
         }
 
         $data = $request->all();
+
 
         $path = 'assets/img/user/';
 

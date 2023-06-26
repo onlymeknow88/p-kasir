@@ -68,7 +68,7 @@
                         back
                     </a>
                     <div class="horizontal-line my-3"></div>
-                    <input type="hidden" id="id" value="{{ $trfBarang->id }}">
+                    <input type="hidden" id="id" name="id" value="{{ $trfBarang->id }}">
 
                     <div class="row mb-3">
                         <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">No. Nota
@@ -96,14 +96,6 @@
                                 $gudang,
                                 Helper::set_value('gudang_asal_id', @$trfBarang->gudang_asal_id),
                             ) !!}
-                            {{-- <select class="form-select" id="gudang-asal" type="text" name="gudang_asal_id">
-                                @foreach ($gudang as $val)
-                                    <option value="{{ $val->id }}"
-                                        {{ $val->id == $trfBarang->gudang_asal_id ? 'selected' : '' }}>
-                                        {{ $val->nama_gudang }}
-                                    </option>
-                                @endforeach
-                            </select> --}}
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -115,14 +107,6 @@
                                 $gudang,
                                 Helper::set_value('gudang_tujuan_id', @$trfBarang->gudang_tujuan_id),
                             ) !!}
-                            {{-- <select class="form-select" id="gudang-tujuan" type="text" name="gudang_tujuan_id">
-                                @foreach ($gudang as $val)
-                                    <option value="{{ $val->id }}"
-                                        {{ $val->id == $trfBarang->gudang_tujuan_id ? 'selected' : '' }}>
-                                        {{ $val->nama_gudang }}
-                                    </option>
-                                @endforeach
-                            </select> --}}
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -133,14 +117,6 @@
                                 $jenis_harga,
                                 Helper::set_value('jenis_harga_id', @$jenis_harga_selected),
                             ) !!}
-                            {{-- <select class="form-select" type="text" id="jenis-harga" name="jenis_harga_id">
-                                @foreach ($jenis_harga as $key => $val)
-                                    <option value="{{ $key }}"
-                                        {{ $jenis_harga_selected == $key ? 'selected' : '' }}>
-                                        {{ $val }}
-                                    </option>
-                                @endforeach
-                            </select> --}}
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -201,7 +177,6 @@
 
                                         @foreach ($barang as $val)
                                             @php
-                                                // $stok = $val['list_stok']['1'];
                                                 $stok = @$val->list_stok[$trfBarang->gudang_asal_id];
                                                 $sub_total += @$val->harga_neto_transfer;
                                             @endphp
@@ -326,7 +301,9 @@
                                             <th colspan="7" class="text-start">Total</th>
                                             <th>
                                                 <input name="neto" class="form-control text-end" id="total"
-                                                    type="text" value="{{ Helper::format_number($trfBarang->neto_transfer) }}" readonly />
+                                                    type="text"
+                                                    value="{{ Helper::format_number($trfBarang->neto_transfer) }}"
+                                                    readonly />
                                             </th>
                                             <th></th>
                                         </tr>
@@ -339,8 +316,7 @@
                     <div class="horizontal-line color-shadow"></div>
                     <div class="card-footer mb-10">
                         <div class="col-md-4 col-12 button-group">
-                            <button type="button"
-                                onclick="submitForm(`{{ route('transfer-barang.store') }}`)"
+                            <button type="button" onclick="submitForm(`{{ route('transfer-barang.store') }}`)"
                                 class="btn btn-primary color-blue" id="submit">Submit</button>
                             <button type="button" class="btn btn-link mx-2"
                                 onclick="resetForm(this.form)">Reset</button>
