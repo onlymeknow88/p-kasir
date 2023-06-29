@@ -9,13 +9,14 @@ use App\Models\Kategori;
 use App\Models\BarangStok;
 use App\Models\JenisHarga;
 use App\Models\BarangHarga;
+use App\Models\BarangImage;
 use Illuminate\Http\Request;
 use App\Exports\BarangExport;
 use App\Helpers\ResponseFormatter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 // use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -108,6 +109,24 @@ class BarangController extends Controller
     //     return view('page.barang.form', compact('barang', 'list_kategori', 'satuan_unit', 'gudang', 'stok', 'harga_pokok', 'harga_jual'));
     // }
 
+    public function getBarangById($id)
+    {
+        $barang = DB::table('barang')->where('id', $id)->first();
+
+        if ($barang) {
+            $images = DB::table('barang_image')
+                ->leftJoin('file_picker', 'barang_image.file_picker_id', '=', 'file_picker.id')
+                ->where('barang_id', $barang->id)
+                ->orderBy('urut')
+                ->get()
+                ->toArray();
+
+            $barang->images = $images;
+        }
+
+        return $barang;
+    }
+
 
     public function create(Request $request)
     {
@@ -119,6 +138,11 @@ class BarangController extends Controller
         $stok = Cache::remember('stok_data_' . $id, 60, function () use ($barang, $id) {
             return $barang->getStok($id);
         });
+
+        $images = null;
+
+        // dd($images);
+
         // Get the list of kategori barang.
         $list_kategori = Cache::remember('kategori_data', 60, function () {
             $kategoris = new Kategori;
@@ -145,7 +169,7 @@ class BarangController extends Controller
             return $jenisHarga->getHargaJualByIdBarang($id);
         });
         // Return the view with the necessary data.
-        return view('page.barang.form', compact('barang', 'list_kategori', 'satuan_unit', 'gudang', 'stok', 'harga_pokok', 'harga_jual'));
+        return view('page.barang.form', compact('barang', 'list_kategori', 'satuan_unit', 'gudang', 'stok', 'harga_pokok', 'harga_jual', 'images'));
     }
     /**
      * Store a newly created resource in storage.
@@ -155,6 +179,7 @@ class BarangController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         // Validate request data
         $validator = Validator::make($request->all(), [
             'kode_barang' => ['required', 'string', 'max:255'],
@@ -172,11 +197,28 @@ class BarangController extends Controller
         // Create new Barang with request data
         $data = $request->except('operator', 'gudang_id', 'adjusment', 'harga_pokok', 'harga_jual', 'harga_awal', 'jenis_harga_id', 'adjusment_harga_pokok');
 
-        // dd($data);
         $barang = Barang::create($data);
-        // Update user_id_edit and tgl_edit in request data
-        $data['user_id_edit'] = Auth::user()->id;
-        $data['tgl_edit'] = date('Y-m-d H:i:s');
+        // // Update user_id_edit and tgl_edit in request data
+        // $data['user_id_edit'] = Auth::user()->id;
+        // $data['tgl_edit'] = date('Y-m-d H:i:s');
+
+
+        // Image
+        if ($request->id) {
+            DB::table('barang_image')->where('barang_id', $barang->id)->delete();
+        }
+
+        $data_db = [];
+        foreach ($request->input('file_picker_id') as $index => $val) {
+            if (!$val) {
+                continue;
+            }
+            $data_db[] = ['file_picker_id' => $val, 'barang_id' => $barang->id, 'urut' => ($index + 1)];
+        }
+        if ($data_db) {
+            DB::table('barang_image')->insert($data_db);
+        }
+
         // Add adjusment stok data to database
         $data_db = [];
         $userId = Auth::user()->id;
@@ -239,6 +281,7 @@ class BarangController extends Controller
             'data' => $barang
         ], 'Success');
     }
+
     // public function store(Request $request)
     // {
     //     $validator = Validator::make(
@@ -369,6 +412,11 @@ class BarangController extends Controller
         $barang = Barang::find($id);
 
         // $id = $request->id;
+        $images = BarangImage::leftJoin('file_picker', 'barang_image.file_picker_id', 'file_picker.id')
+            ->where('barang_id', $barang->id)
+            ->orderBy('urut')
+            ->get()
+            ->toArray();
 
         //stok
         $data_stok = [];
@@ -400,9 +448,7 @@ class BarangController extends Controller
         $jenisHarga = new JenisHarga();
         $harga_jual = $jenisHarga->getHargaJualByIdBarang($id);
 
-        // dd($harga_jual);
-
-        return view('page.barang.form', compact('barang', 'list_kategori', 'satuan_unit', 'gudang', 'stok', 'harga_pokok', 'harga_jual'));
+        return view('page.barang.form', compact('barang', 'images', 'list_kategori', 'satuan_unit', 'gudang', 'stok', 'harga_pokok', 'harga_jual'));
     }
 
     /**
@@ -425,16 +471,6 @@ class BarangController extends Controller
                 'kategori_id' => ['required'],
                 'barcode' => ['required'],
             ]
-            // ,
-            // [
-            //     'nama_menu.required' => 'Silahkan isi nama menu',
-            //     'url.required' => 'Silahkan isi url',
-            //     // 'aktif.required' => 'Silahkan pilih',
-            //     // 'parent_id.required' => 'Silahkan pilih',
-            //     'use_icon.required' => 'Silahkan pilih',
-            //     'menu_kategori_id.required' => 'Silahkan pilih',
-            //     'role_id.required' => 'Silahkan pilih',
-            // ]
         );
 
         if ($validator->fails()) {
@@ -446,6 +482,23 @@ class BarangController extends Controller
         $data = $request->except('berat', 'operator', 'gudang_id', 'adjusment', 'harga_pokok', 'harga_jual', 'harga_awal', 'jenis_harga_id', 'adjusment_harga_pokok');
         $data['user_id_edit'] = Auth::user()->id;
         $data['tgl_edit'] = date('Y-m-d H:i:s');
+
+
+        // Image
+        if ($request->id) {
+            DB::table('barang_image')->where('barang_id', $id)->delete();
+        }
+
+        $data_db = [];
+        foreach ($request->input('file_picker_id') as $index => $val) {
+            if (!$val) {
+                continue;
+            }
+            $data_db[] = ['file_picker_id' => $val, 'barang_id' => $id, 'urut' => ($index + 1)];
+        }
+        if ($data_db) {
+            DB::table('barang_image')->insert($data_db);
+        }
 
 
         // Adjusment stok
@@ -515,7 +568,6 @@ class BarangController extends Controller
 
         $barang = Barang::find($id);
         $barang->update($data);
-
 
         return ResponseFormatter::success([
             'data' => $barang

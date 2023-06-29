@@ -158,63 +158,6 @@ class ResponseFormatter
     //     return $menu;
     // }
 
-    public static function tanggal_indonesia($tgl, $tampil_hari = false)
-    {
-        $nama_hari  = array(
-            'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jum\'at', 'Sabtu'
-        );
-        $nama_bulan = array(
-            1 =>
-            'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-        );
-
-        $tahun   = substr($tgl, 0, 4);
-        $bulan   = $nama_bulan[(int) substr($tgl, 5, 2)];
-        $tanggal = substr($tgl, 8, 2);
-        $text    = '';
-
-        if ($tampil_hari) {
-            $urutan_hari = date('w', mktime(0, 0, 0, substr($tgl, 5, 2), $tanggal, $tahun));
-            $hari        = $nama_hari[$urutan_hari];
-            $text       .= "$hari, $tanggal $bulan $tahun";
-        } else {
-            $text       .= "$tanggal $bulan $tahun";
-        }
-
-        return $text;
-    }
-
-    public static function tambah_nol_didepan($value, $threshold = null)
-    {
-        return sprintf("%0" . $threshold . "s", $value);
-    }
-
-    public static function terbilang($angka)
-    {
-        $angka = abs($angka);
-        $baca  = array('', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas');
-        $terbilang = '';
-
-        if ($angka < 12) { // 0 - 11
-            $terbilang = ' ' . $baca[$angka];
-        } elseif ($angka < 20) { // 12 - 19
-            $terbilang = self::terbilang($angka - 10) . ' belas';
-        } elseif ($angka < 100) { // 20 - 99
-            $terbilang = self::terbilang($angka / 10) . ' puluh' . self::terbilang($angka % 10);
-        } elseif ($angka < 200) { // 100 - 199
-            $terbilang = ' seratus' . self::terbilang($angka - 100);
-        } elseif ($angka < 1000) { // 200 - 999
-            $terbilang = self::terbilang($angka / 100) . ' ratus' . self::terbilang($angka % 100);
-        } elseif ($angka < 2000) { // 1.000 - 1.999
-            $terbilang = ' seribu' . self::terbilang($angka - 1000);
-        } elseif ($angka < 1000000) { // 2.000 - 999.999
-            $terbilang = self::terbilang($angka / 1000) . ' ribu' . self::terbilang($angka % 1000);
-        } elseif ($angka < 1000000000) { // 1000000 - 999.999.990
-            $terbilang = self::terbilang($angka / 1000000) . ' juta' . self::terbilang($angka % 1000000);
-        }
-
-        return $terbilang;
-    }
 
     public static function build_menu($arr, $currentPage, $menuKategori = null, $parentId = 0, $submenu = false)
     {
@@ -382,6 +325,39 @@ class ResponseFormatter
             return false;
     }
 
+    public static function delete_file($path)
+    {
+        if (file_exists($path)) {
+            $unlink = unlink($path);
+            if ($unlink) {
+                return true;
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function image_dimension($images, $maxw = null, $maxh = null)
+    {
+        if ($images) {
+            $img_size = @getimagesize($images);
+            $w = $img_size[0];
+            $h = $img_size[1];
+            $dim = array('w', 'h');
+            foreach ($dim as $val) {
+                $max = "max{$val}";
+                if (${$val} > ${$max} && ${$max}) {
+                    $alt = ($val == 'w') ? 'h' : 'w';
+                    $ratio = ${$alt} / ${$val};
+                    ${$val} = ${$max};
+                    ${$alt} = ${$val} * $ratio;
+                }
+            }
+            return array($w, $h);
+        }
+    }
+
     public static function set_value($field_name, $default = '')
     {
         $request = array_merge($_GET, $_POST);
@@ -405,23 +381,6 @@ class ResponseFormatter
         }
         return $default;
     }
-
-    // public static function options(array $attributes, array $options)
-    // {
-    //     $html = '<select style="width:60px !important;"';
-    //     foreach ($attributes as $name => $value) {
-    //         $html .= ' ' . $name . '="' . e($value) . '"';
-    //     }
-    //     $html .= '>';
-
-    //     foreach ($options as $value => $label) {
-    //         $html .= '<option value="' . e($value) . '">' . e($label) . '</option>';
-    //     }
-
-    //     $html .= '</select>';
-
-    //     return $html;
-    // }
 
     public static function format_ribuan($value)
     {
@@ -457,8 +416,9 @@ class ResponseFormatter
         return $minus . number_format($value, 0, ',', '.');
     }
 
-    function nama_bulan() {
-        return [1=> 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+    public static function nama_bulan()
+    {
+        return [1 => 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
     }
 
     public static function format_tanggal($date, $format = 'dd mmmm yyyy')
@@ -634,5 +594,59 @@ class ResponseFormatter
         } else {
             return $result;
         }
+    }
+
+    public static function file_type()
+    {
+
+        return [
+
+            'text/plain' => ['file_type' => 'document', 'extension' => 'txt'],
+
+            // Image
+            'image/jpg'        => ['file_type' => 'image', 'extension' => 'jpg'],
+            'image/jpeg'        => ['file_type' => 'image', 'extension' => 'jpg'],
+            'image/png'        => ['file_type' => 'image', 'extension' => 'png'],
+            'image/bmp'        => ['file_type' => 'image', 'extension' => 'bmp'],
+            'image/gif'        => ['file_type' => 'image', 'extension' => 'gif'],
+
+            // Media
+            'audio/x-wav'        => ['file_type' => 'audio', 'extension' => 'wav'],
+            'audio/flac'        => ['file_type' => 'audio', 'extension' => 'flac'],
+            'audio/mpeg'        => ['file_type' => 'audio', 'extension' => 'mp3'],
+
+            'video/mp4'            => ['file_type' => 'video', 'extension' => 'mp4'],
+            'video/x-msvideo'     => ['file_type' => 'video', 'extension' => 'avi'],
+            'video/quicktime'     => ['file_type' => 'video', 'extension' => 'mov'],
+            'video/x-matroska'     => ['file_type' => 'video', 'extension' => 'mkv'],
+            'video/x-ms-asf'     => ['file_type' => 'video', 'extension' => 'wmv'],
+
+            // Document
+            'application/pdf' => ['file_type' => 'document', 'extension' => 'pdf'],
+
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => ['file_type' => 'document', 'extension' => 'xlsx'], //xlsx
+            'application/vnd.ms-excel' => ['file_type' => 'document', 'extension' => 'xls'], // xls
+            'application/vnd.oasis.opendocument.spreadsheet' => ['file_type' => 'document', 'extension' => 'ods'], // ods
+
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => ['file_type' => 'document', 'extension' => 'docx'], //docx
+            'application/msword' => ['file_type' => 'document', 'extension' => 'doc'], // doc
+            'application/vnd.oasis.opendocument.text' => ['file_type' => 'document', 'extension' => 'odt'],
+            'text/rtf' => ['file_type' => 'document', 'extension' => 'rtf'],
+
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => ['file_type' => 'document', 'extension' => 'ppt'], // pptx
+            'application/vnd.oasis.opendocument.presentation' => ['file_type' => 'document', 'extension' => 'odp'],
+            'application/vnd.ms-powerpoint' => ['file_type' => 'document', 'extension' => 'ppt'], //ppt
+
+            // Compression
+            'application/x-rar'    => ['file_type' => 'archive', 'extension' => 'rar'],
+            'application/zip'    => ['file_type' => 'archive', 'extension' => 'zip'],
+            'application/gzip'    => ['file_type' => 'archive', 'extension' => 'gz'],
+            'application/x-7z-compressed' => ['file_type' => 'archive', 'extension' => '7z'],
+
+            // Application
+            'application/x-msi' => ['file_type' => 'application', 'extension' => 'msi'],
+            'application/x-dosexec' => ['file_type' => 'application', 'extension' => 'exe']
+
+        ];
     }
 }

@@ -1,0 +1,3 @@
+INSERT INTO `p-pos`.users (name,email,username,email_verified_at,password,two_factor_secret,two_factor_recovery_codes,two_factor_confirmed_at,remember_token,current_team_id,profile_photo_path,created_at,updated_at,role_id,avatar,status,verified,last_login) VALUES
+	 ('Fadjri Wivindi','admin@admin.com','admin',NULL,'$2y$10$0sRVF5ROYV1WYKjNMWXH8uWCXj3YvuqXRHN1PpchznCWyiH.neuFC',NULL,NULL,NULL,NULL,NULL,NULL,'2023-06-09 12:10:00','2023-06-11 13:55:36',2,'default_avatar.png',1,1,NULL),
+	 ('Fadjri','fadjri@gmail.com','fadjri',NULL,'$2y$10$XRkrw368fAdh11QQ83DOVutFTJQV/h3YjUB1QxwFaCz6TEelYCCgW',NULL,NULL,NULL,NULL,NULL,NULL,'2023-06-24 16:21:02','2023-06-25 14:27:59',2,'avatar.png',1,1,NULL);

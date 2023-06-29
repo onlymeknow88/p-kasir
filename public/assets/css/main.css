@@ -231,7 +231,7 @@ ul {
 }
 
 input.form-control {
-  font-size: 12px;
+  font-size: 12px !important;
   font-weight: 400;
   box-shadow: none;
 }
@@ -2178,6 +2178,16 @@ text.highcharts-credits {
 }
 
 @media screen and (min-width: 320px) and (max-width: 480px) {
+  .paper {
+    display: flex;
+    flex-direction: column;
+  }
+  .paper .form-select {
+    margin-right: 0 !important;
+  }
+  .paper .input-group {
+    margin-top: 10px;
+  }
   .operator {
     width: 30% !important;
   }
@@ -3027,4 +3037,21 @@ text.highcharts-credits {
 .toast {
   width: auto;
   font-size: 100%;
+}
+
+.form-inline input,
+.form-inline select {
+  float: left;
+  width: auto;
+}
+
+.form-inline input:not(:last-child),
+.form-inline select:not(:last-child) {
+  margin-right: 3px;
+}
+
+.form-inline:after {
+  content: "";
+  display: block;
+  clear: both;
 }/*# sourceMappingURL=main.css.map */

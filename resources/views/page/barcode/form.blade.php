@@ -61,19 +61,13 @@
                         </div>
                     </div>
                     <div class="horizontal-line my-3"></div>
-                    <a class="btn btn-link color-softgray-5" title="Back" href="{{ route('transfer-barang.index') }}">
-                        {{-- <img src="{{ asset('assets/icon/plus.svg') }}" alt="" class="me-2"> --}}
-                        <i class="fas fa-arrow-left me-2"></i>
-                        back
-                    </a>
-                    <div class="horizontal-line my-3"></div>
                     <div class="col-lg-12">
                         <div class="tab-content" id="myTabContent">
                             <div class="form-group row mb-3">
                                 <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Ukuran
                                     Kertas</label>
                                 <div class="col-sm-5">
-                                    <div class="d-flex">
+                                    <div class="d-flex paper">
                                         {!! Helper::options(
                                             ['name' => 'ukuran_kertas', 'style' => 'width:auto', 'id' => 'paper-size', 'class' => 'me-2'],
                                             ['a4' => 'A4', 'f4' => 'F4', 'custom' => 'Custom'],
@@ -136,42 +130,44 @@
                         </div>
                         <div class="form-group row mb-2">
                             <div class="col-sm-8">
-                                @php
-                                    $display = 'display:none';
-                                @endphp
-                                @if ($display === 'display:none')
-                                    <table style="width:auto;{{ $display }}" id="list-barang"
-                                        class="table table-stiped table-bordered form-text-12">
-                                        <thead>
-                                            <tr>
-                                                <th>No</th>
-                                                <th>Nama Barang</th>
-                                                <th>Barcode</th>
-                                                <th>Jumlah Barcode</th>
-                                                <th>Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>1</td>
-                                                <td>
-                                                    <span></span>
-                                                </td>
-                                                <td class="barcode-barang" value=""></td>
-                                                <td>
-                                                    <input type="text" size="2" name="jml_cetak[]"
-                                                        class="form-control text-end format-ribuan jml-cetak"
-                                                        value="0" />
-                                                </td>
-                                                <td class="text-center">
-                                                    <a href="javascript:void(0)" class="btn text-red del-row">
-                                                        <i class="fas fa-times"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                @endif
+                                <div class="table-responsive">
+                                    @php
+                                        $display = 'display:none';
+                                    @endphp
+                                    @if ($display === 'display:none')
+                                        <table style="width:auto;{{ $display }}" id="list-barang"
+                                            class="table table-stiped table-bordered form-text-12">
+                                            <thead>
+                                                <tr>
+                                                    <th>No</th>
+                                                    <th>Nama Barang</th>
+                                                    <th>Barcode</th>
+                                                    <th>Jumlah Barcode</th>
+                                                    <th>Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>1</td>
+                                                    <td>
+                                                        <span></span>
+                                                    </td>
+                                                    <td class="barcode-barang" value=""></td>
+                                                    <td>
+                                                        <input type="text" size="2" name="jml_cetak[]"
+                                                            class="form-control text-end format-ribuan jml-cetak"
+                                                            value="0" />
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a href="javascript:void(0)" class="btn text-red del-row">
+                                                            <i class="fas fa-times"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         <hr>
@@ -193,9 +189,11 @@
 
                     {{-- <span style="display:none" id="list-barang-terpilih"></span> --}}
                 </form>
-                <div id="barcode-print-container"
-                    style="border: 1px solid #CCCCCC;text-align: center;padding:12px;width: 793.7007874px;min-width:377.953px;margin-top:10px;">
-                    PREVIEW
+                <div class="table-responsive">
+                    <div id="barcode-print-container"
+                        style="border: 1px solid #CCCCCC;text-align: center;padding:12px;width: 793.7007874px;min-width:377.953px;margin-top:10px;">
+                        PREVIEW
+                    </div>
                 </div>
             </div>
         </div>

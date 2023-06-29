@@ -2,6 +2,7 @@
 
 use App\Models\TransferGudang;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TesController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BarangController;
@@ -10,6 +11,8 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\FilePickerController;
 use App\Http\Controllers\JenisHargaController;
 use App\Http\Controllers\BarcodeCetakController;
 use App\Http\Controllers\Setting\MenuController;
@@ -35,45 +38,58 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/tes', [TesController::class, 'index']);
+Route::post('/barcode-scanner', [TesController::class, 'scan']);
+
 Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
     Route::resource('/dashboard', DashboardController::class);
 
+    //pembelian
+    Route::prefix('pembelian')->name('pembelian.')->group(function () {
+        route::resource('/', PembelianController::class);
+    });
+
+    Route::delete('/filepicker/ajaxDeleteFile', [FilePickerController::class,'ajaxDeleteFile']);
+    Route::post('/filepicker/ajaxUpdateFile', [FilePickerController::class,'ajaxUpdateFile']);
+    Route::post('/filepicker/ajaxUploadFile', [FilePickerController::class,'ajaxUploadFile']);
+    Route::resource('/filepicker', FilePickerController::class);
+
     //gudang
-    Route::post('/list-barang/SwitchDefault', [GudangController::class,'switchDefault']);
+    Route::post('/list-barang/SwitchDefault', [GudangController::class, 'switchDefault']);
     Route::resource('/list-gudang', GudangController::class);
-    Route::get('/transfer-barang/ajaxGetBarangByBarcode', [TransferBarangController::class,'ajaxGetBarangByBarcode']);
-    Route::get('/transfer-barang/getDataDTListBarang', [TransferBarangController::class,'getDataDTListBarang']);
-    Route::post('/transfer-barang/getDataBarang', [TransferBarangController::class,'getDataBarang']);
+    Route::get('/transfer-barang/ajaxGetBarangByBarcode', [TransferBarangController::class, 'ajaxGetBarangByBarcode']);
+    Route::get('/transfer-barang/getDataDTListBarang', [TransferBarangController::class, 'getDataDTListBarang']);
+    Route::post('/transfer-barang/getDataBarang', [TransferBarangController::class, 'getDataBarang']);
     Route::resource('/transfer-barang', TransferBarangController::class);
 
     //cetak barcoder barang
     Route::prefix('barcode-cetak')->name('barcode-cetak.')->group(function () {
-        Route::get('/ajaxGetBarangByBarcode', [BarcodeCetakController::class,'ajaxGetBarangByBarcode']);
-        Route::post('/getDataBarang', [BarcodeCetakController::class,'getDataBarang']);
-        Route::get('/getDataDTListBarang', [BarcodeCetakController::class,'getDataDTListBarang']);
-        Route::get('/', [BarcodeCetakController::class,'index'])->name('index');
+        Route::get('/ajaxGetBarangByBarcode', [BarcodeCetakController::class, 'ajaxGetBarangByBarcode']);
+        Route::post('/getDataBarang', [BarcodeCetakController::class, 'getDataBarang']);
+        Route::get('/getDataDTListBarang', [BarcodeCetakController::class, 'getDataDTListBarang']);
+        Route::get('/', [BarcodeCetakController::class, 'index'])->name('index');
     });
 
 
     //barang
     Route::prefix('barang')->name('barang.')->group(function () {
-        Route::get('/GenerateBarcodeNumber', [BarangController::class,'ajaxGenerateBarcodeNumber']);
-        Route::get('/exportExcel', [BarangController::class,'generateExcel'])->name('exportExcel');
+        Route::get('/GenerateBarcodeNumber', [BarangController::class, 'ajaxGenerateBarcodeNumber']);
+        Route::get('/exportExcel', [BarangController::class, 'generateExcel'])->name('exportExcel');
         Route::get('/{id}/edit', [BarangController::class, 'edit'])->name('edit');
         Route::match(['PUT', 'PATCH'], '/update/{barang}', [BarangController::class, 'update'])->name('update');
         Route::delete('/destroy/{barang}', [BarangController::class, 'destroy'])->name('destroy');
         Route::resource('/', BarangController::class)->except(['edit', 'update', 'destroy']);
     });
     //user
-    Route::post('/check-username', [UserController::class,'checkUsername']);
-    Route::post('/check-email', [UserController::class,'checkEmail']);
+    Route::post('/check-username', [UserController::class, 'checkUsername']);
+    Route::post('/check-email', [UserController::class, 'checkEmail']);
     Route::resource('/user', UserController::class);
 
     //setting group
     Route::resource('/jenis-harga', JenisHargaController::class);
-    Route::resource('/invoice', SettingInvoiceController::class)->only('index','store');
-    Route::resource('/pajak', SettingPajakController::class)->only('index','store');
+    Route::resource('/invoice', SettingInvoiceController::class)->only('index', 'store');
+    Route::resource('/pajak', SettingPajakController::class)->only('index', 'store');
 
     //supplier
     Route::resource('/supplier', SupplierController::class);

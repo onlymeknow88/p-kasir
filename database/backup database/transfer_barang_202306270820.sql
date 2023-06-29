@@ -1,0 +1,2 @@
+INSERT INTO `p-pos`.transfer_barang (gudang_asal_id,gudang_tujuan_id,keterangan,no_squence,no_nota_transfer,tgl_nota_transfer,jenis_harga_transfer_id,sub_total_transfer,diskon_jenis_transfer,diskon_nilai_transfer,penyesuaian_transfer,total_qty_transfer,total_diskon_item_transfer,neto_transfer,user_id_input,tgl_input,user_id_update,tgl_update,created_at,updated_at) VALUES
+	 (1,3,NULL,1,'000001/NR/JWD/2023','2023-06-24',2,632800,'%',1,0,101,0,626472,1,'0000-00-00 00:00:00',NULL,NULL,'2023-06-24 15:50:55','2023-06-24 15:50:55');
