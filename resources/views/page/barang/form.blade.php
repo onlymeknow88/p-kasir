@@ -29,8 +29,8 @@
     <link href="{{ asset('assets/js/jwdfilepicker/jwdfilepicker.css') . '?' . date('YmdHis') }}" rel="stylesheet">
     <link href="{{ asset('assets/js/jwdfilepicker/jwdfilepicker-loader.css') . '?' . date('YmdHis') }}" rel="stylesheet">
     <link href="{{ asset('assets/js/jwdfilepicker/jwdfilepicker-modal.css') . '?' . date('YmdHis') }}" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('assets/js/dropzone/dropzone.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/css/gallery.css') . '?' . date('YmdHis') }}">
+    <link href="{{ asset('assets/js/dropzone/dropzone.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/css/gallery.css') . '?' . date('YmdHis') }}" rel="stylesheet">
 @endpush
 
 @push('script')

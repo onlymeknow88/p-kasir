@@ -46,9 +46,27 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::resource('/dashboard', DashboardController::class);
 
     //pembelian
-    Route::prefix('pembelian')->name('pembelian.')->group(function () {
+    Route::prefix('daftar-pembelian')->name('daftar-pembelian.')->group(function () {
+        Route::get('/ajaxGetBarangByBarcode', [PembelianController::class, 'ajaxGetBarangByBarcode']);
+        Route::post('/getDataBarang', [PembelianController::class, 'getDataBarang']);
+        Route::get('/getDataDTListBarang', [PembelianController::class, 'getDataDTListBarang']);
         route::resource('/', PembelianController::class);
     });
+
+    // Route::middleware(['allow.asset.access'])->group(function () {
+    //     Route::get('assets/css/{filename}', function ($filename) {
+    //         // return response()->file(public_path('assets/css/' . $filename), [
+    //         //     'Content-Type' => 'text/css'
+    //         // ]);
+    //         dd($filename);
+    //     })->where('filename', '.*\.css');
+
+    //     Route::get('assets/js/{filename}', function ($filename) {
+    //         return response()->file(public_path('assets/js/' . $filename), [
+    //             'Content-Type' => 'text/javascript'
+    //         ]);
+    //     })->where('filename', '.*\.js');
+    // });
 
     Route::delete('/filepicker/ajaxDeleteFile', [FilePickerController::class,'ajaxDeleteFile']);
     Route::post('/filepicker/ajaxUpdateFile', [FilePickerController::class,'ajaxUpdateFile']);
@@ -58,6 +76,8 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     //gudang
     Route::post('/list-barang/SwitchDefault', [GudangController::class, 'switchDefault']);
     Route::resource('/list-gudang', GudangController::class);
+
+
     Route::get('/transfer-barang/ajaxGetBarangByBarcode', [TransferBarangController::class, 'ajaxGetBarangByBarcode']);
     Route::get('/transfer-barang/getDataDTListBarang', [TransferBarangController::class, 'getDataDTListBarang']);
     Route::post('/transfer-barang/getDataBarang', [TransferBarangController::class, 'getDataBarang']);

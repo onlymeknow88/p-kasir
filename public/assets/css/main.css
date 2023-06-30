@@ -2206,7 +2206,7 @@ text.highcharts-credits {
     margin-bottom: 10px;
     height: 32px !important;
   }
-  #list-produk {
+  #list-produk, #list-barang, #list-pembayaran {
     width: 900px !important;
   }
   .form-select {
