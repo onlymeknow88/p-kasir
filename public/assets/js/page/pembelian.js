@@ -12,8 +12,16 @@ jQuery(document).ready(function () {
                 url: url,
             },
             columns: column,
+            language: {
+                paginate: {
+                    next: ">", // or '→'
+                    previous: "<", // or '←'
+                },
+            },
+
             initComplete: function (settings, json) {
                 table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+console.log(this.node());
                     /* this
                 .child(
                     $(

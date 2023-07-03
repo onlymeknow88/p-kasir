@@ -455,6 +455,44 @@ class ResponseFormatter
         return $new_format . $time;
     }
 
+    public static function format_date($tgl, $nama_bulan = true) {
+        if ($tgl == '0000-00-00 00:00:00' || !$tgl) {
+            return false;
+        }
+        $exp = explode (' ', $tgl);
+        $exp_tgl = explode ('-', $exp[0]);
+        $bulan = self::nama_bulan();
+        return $exp_tgl[2] . ' ' . $bulan[ (int) $exp_tgl[1] ] . ' ' . $exp_tgl[0];
+    }
+
+    public static function btn_link($data)
+    {
+        $attr = [];
+        if (key_exists('attr', $data)) {
+            foreach ($data['attr'] as $name => $value) {
+                if ($name == 'class') {
+                    // $value = 'btn-inline ' . $value;
+                }
+                $attr[] = $name . '="' . $value . '"';
+            }
+        }
+
+        $label = '';
+        if (key_exists('label', $data)) {
+            $label = $data['label'];
+        }
+
+        $icon = '';
+        if (key_exists('icon', $data)) {
+            $padding = $label ? ' pe-1' : '';
+            $icon = '<span class="btn-label-icon"><i class="' . $data['icon'] . $padding . '"></i></span> ';
+        }
+
+        $html = '
+		<a href="' . $data['url'] . '" ' . join(' ', $attr) . '>' . $icon . $label . '</a>';
+        return $html;
+    }
+
     public static function btn_action($data = [])
     {
 

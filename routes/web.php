@@ -18,6 +18,7 @@ use App\Http\Controllers\BarcodeCetakController;
 use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
 use App\Http\Controllers\SettingPajakController;
+use App\Http\Controllers\PembelianReturController;
 use App\Http\Controllers\SettingInvoiceController;
 use App\Http\Controllers\TransferBarangController;
 use App\Http\Controllers\Setting\SettingAppController;
@@ -50,7 +51,18 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('/ajaxGetBarangByBarcode', [PembelianController::class, 'ajaxGetBarangByBarcode']);
         Route::post('/getDataBarang', [PembelianController::class, 'getDataBarang']);
         Route::get('/getDataDTListBarang', [PembelianController::class, 'getDataDTListBarang']);
-        route::resource('/', PembelianController::class);
+        Route::get('/{id}/edit', [PembelianController::class, 'edit'])->name('edit');
+        route::resource('/', PembelianController::class)->except(['edit']);
+    });
+
+    //pembelian
+    Route::prefix('pembelian-retur')->name('pembelian-retur.')->group(function () {
+        Route::get('/notaReturPdf', [PembelianReturController::class, 'notaReturPdf']);
+        Route::post('/getDataInvoice', [PembelianReturController::class, 'getDataInvoice']);
+        Route::get('/getDataDTListInvoice', [PembelianReturController::class, 'getDataDTListInvoice']);
+        Route::get('/{id}/edit', [PembelianReturController::class, 'edit'])->name('edit');
+        Route::delete('/destroy/{id}', [PembelianReturController::class, 'destroy'])->name('destroy');
+        route::resource('/', PembelianReturController::class)->except(['edit','destroy']);
     });
 
     // Route::middleware(['allow.asset.access'])->group(function () {

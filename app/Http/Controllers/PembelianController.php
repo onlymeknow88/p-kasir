@@ -12,6 +12,8 @@ use App\Models\PembelianBayar;
 use App\Models\TransferBarang;
 use Illuminate\Support\Carbon;
 use App\Helpers\ResponseFormatter;
+use App\Models\PembelianDetail;
+use App\Models\PembelianFile;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -26,12 +28,16 @@ class PembelianController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            $query = Pembelian::select('pembelian.*', 'supplier.*',)
+            $query = Pembelian::select('pembelian.*', 'supplier.nama_supplier',)
                 ->leftJoin('supplier', 'pembelian.supplier_id', 'supplier.id');
 
 
             return DataTables::of($query)
                 ->addIndexColumn()
+                ->addColumn('total', function ($item) {
+                    return ResponseFormatter::format_number($item->total);
+                })
+
                 ->addColumn('ignore_search_action', function ($item) {
                     return '
                     <div class="d-flex justify-content-start">
@@ -62,11 +68,14 @@ class PembelianController extends Controller
     {
         $pembelian = new Pembelian();
         $pembelian['tanda_terima'] = 'N';
-        // dd($pembelian);
+        $pembelian_detail = null;
+        $pembayaran = null;
+        $images = null;
+        // dd($pembelian->images);
         $supplier = Supplier::pluck('nama_supplier', 'id');
         $gudang = Gudang::pluck('nama_gudang', 'id');
         $user = User::pluck('name', 'id');
-        return view('page.pembelian.form', compact('pembelian', 'supplier', 'gudang', 'user'));
+        return view('page.pembelian.form', compact('pembelian', 'images', 'pembelian_detail', 'pembayaran', 'supplier', 'gudang', 'user'));
     }
 
     /**
@@ -77,55 +86,64 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         // Validation rules
-    $rules = [
-        'no_invoice' => 'required',
-        'supplier_id' => 'required',
-        'gudang_id' => 'required',
-        'tgl_invoice' => 'required|date_format:d-m-Y',
-        'tgl_jatuh_tempo' => 'required|date_format:d-m-Y',
-        'sub_total' => 'required|numeric',
-        'diskon' => 'required|numeric',
-        'total_bayar' => 'required|numeric',
-        'kurang_bayar' => 'required|numeric',
-        'terima_barang' => 'required',
-        'tgl_terima_barang' => 'nullable|date_format:d-m-Y',
-        'user_id_terima' => 'nullable',
-        'using_pembayaran' => 'nullable',
-        'qty.*' => 'required|numeric',
-        'harga_satuan.*' => 'required|numeric',
-        'harga_neto.*' => 'required|numeric',
-        'keterangan.*' => 'nullable',
-        'tgl_bayar.*' => 'nullable|date_format:d-m-Y',
-        'jml_bayar.*' => 'nullable|numeric',
-        'user_id_bayar.*' => 'nullable',
-        'file_picker_id.*' => 'nullable',
-    ];
+        $rules = [
+            'no_invoice' => 'required',
+            'supplier_id' => 'required',
+            'gudang_id' => 'required',
+            'tgl_invoice' => 'required|date_format:d-m-Y',
+            'tgl_jatuh_tempo' => 'required|date_format:d-m-Y',
+            'sub_total' => 'required|numeric',
+            'diskon' => 'required|numeric',
+            'total_bayar' => 'required|numeric',
+            'kurang_bayar' => 'required|numeric',
+            'terima_barang' => 'required',
+            'tgl_terima_barang' => 'nullable|date_format:d-m-Y',
+            'user_id_terima' => 'nullable',
+            'using_pembayaran' => 'nullable',
+            'qty.*' => 'required|numeric',
+            'harga_satuan.*' => 'required|numeric',
+            'harga_neto.*' => 'required|numeric',
+            'keterangan.*' => 'nullable',
+            'tgl_bayar.*' => 'nullable|date_format:d-m-Y',
+            'jml_bayar.*' => 'nullable|numeric',
+            'user_id_bayar.*' => 'nullable',
+            'file_picker_id.*' => 'nullable',
+        ];
 
-    // Validate the request data
-    $validator = Validator::make($request->all(), $rules);
+        // Validate the request data
+        $validator = Validator::make($request->all(), $rules);
 
-    // Check if validation fails
-    if ($validator->fails()) {
-        return response()->json([
-            'message' => 'Validation error',
-            'errors' => $validator->errors()
-        ], 422);
-    }
+        // Check if validation fails
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
+        // Set invoice data from the request
         $data_db['no_invoice'] = $request->input('no_invoice');
         $data_db['supplier_id'] = $request->input('supplier_id');
         $data_db['gudang_id'] = $request->input('gudang_id');
+        // Format date inputs
         $data_db['tgl_invoice'] = Carbon::createFromFormat('d-m-Y', $request->input('tgl_invoice'))->format('Y-m-d');
         $data_db['tgl_jatuh_tempo'] = Carbon::createFromFormat('d-m-Y', $request->input('tgl_jatuh_tempo'))->format('Y-m-d');
+        // Calculate totals and discounts
         $data_db['sub_total'] = (int)str_replace('.', '', trim($request->input('sub_total')));
         $data_db['diskon'] = (int)str_replace('.', '', trim($request->input('diskon')));
         $total = max(0, $data_db['sub_total'] - $data_db['diskon']);
         $data_db['total'] = $total;
         $data_db['total_bayar'] = (int)str_replace('.', '', trim($request->input('total_bayar')));
         $data_db['kurang_bayar'] = (int)str_replace('.', '', trim($request->input('kurang_bayar')));
+        // Set payment status
         $data_db['status'] = $data_db['kurang_bayar'] > 0 ? 'Belum Lunas' : 'Lunas';
-        $data_db['kurang_bayar'] = max(0, $data_db['total'] - $data_db['kurang_bayar']);
+        // If payment is less than total, set 'kurang_bayar' to 0
+        if ($data_db['total'] - $data_db['kurang_bayar'] < 0) {
+            $data_db['kurang_bayar'] = 0;
+        }
+        // Set delivery details
         $data_db['terima_barang'] = $request->input('terima_barang');
         $data_db['tgl_terima_barang'] = '0000-00-00';
         $data_db['user_id_terima'] = null;
@@ -133,36 +151,34 @@ class PembelianController extends Controller
             $data_db['tgl_terima_barang'] = Carbon::createFromFormat('d-m-Y', $request->input('tgl_terima_barang'))->format('Y-m-d');
             $data_db['user_id_terima'] = $request->input('user_id_terima');
         }
-        $id_pembelian = '';
+        // Update or create a new 'Pembelian' record
         if ($request->input('id')) {
-            $query = Pembelian::where('id', $request->input('id'))->update($data_db);
+            $pembelian = Pembelian::where('id', $request->input('id'))->update($data_db);
             $id_pembelian = $request->input('id');
         } else {
             $pembelian = Pembelian::create($data_db);
             $id_pembelian = $pembelian->id;
-
         }
-
-        // dd($request->input('using_pembayaran'));
-        // DB::table('pembelian_detail')->where('id_pembelian', $id_pembelian)->delete();
-        // $details = [];
-        // foreach ($request->input('qty') as $key => $val) {
-        //     $detail = [];
-        //     $detail['id'] = $id_pembelian;
-        //     $detail['barang_id'] = $request->input('barang_id')[$key];
-        //     $expired_date = Carbon::createFromFormat('d-m-Y', $request->input('expired_date')[$key]);
-        //     $detail['expired_date'] = $expired_date ? $expired_date->format('Y-m-d') : '';
-        //     $detail['qty'] = (int)str_replace('.', '', $val);
-        //     $detail['harga_satuan'] = (int)str_replace('.', '', $request->input('harga_satuan')[$key]);
-        //     $detail['harga_neto'] = (int)str_replace('.', '', $request->input('harga_neto')[$key]);
-        //     $detail['keterangan'] = $request->input('keterangan')[$key];
-        //     $details[] = $detail;
-        // }
-        // DB::table('pembelian_detail')->insert($details);
-
+        // Delete existing 'PembelianDetail' records and insert new ones
+        PembelianDetail::where('id_pembelian', $id_pembelian)->delete();
+        $details = [];
+        foreach ($request->input('qty') as $key => $val) {
+            $detail = [];
+            $detail['id_pembelian'] = $id_pembelian;
+            $detail['barang_id'] = $request->input('barang_id')[$key];
+            $expired_date = Carbon::createFromFormat('d-m-Y', $request->input('expired_date')[$key]);
+            $detail['expired_date'] = $expired_date ? $expired_date->format('Y-m-d') : '';
+            $detail['qty'] = (int)str_replace('.', '', $val);
+            $detail['harga_satuan'] = (int)str_replace('.', '', $request->input('harga_satuan')[$key]);
+            $detail['harga_neto'] = (int)str_replace('.', '', $request->input('harga_neto')[$key]);
+            $detail['keterangan'] = $request->input('keterangan')[$key];
+            $details[] = $detail;
+        }
+        PembelianDetail::insert($details);
+        // If payment is made, delete existing 'PembelianBayar' records and insert new ones
         if ($request->input('using_pembayaran')) {
             PembelianBayar::where('id_pembelian', $id_pembelian)->delete();
-             $pembelianBayarData = [];
+            $pembelianBayarData = [];
             foreach ($request->input('tgl_bayar') as $key => $val) {
                 $pembelianBayarData[] = [
                     'id_pembelian' => $id_pembelian,
@@ -171,25 +187,24 @@ class PembelianController extends Controller
                     'user_id_bayar' => $request->input('user_id_bayar')[$key]
                 ];
             }
-            // dd($pembelianBayarData);
             PembelianBayar::insert($pembelianBayarData);
         }
-        //  if ($request->input('id')) {
-        //     DB::table('pembelian_file')->where('id_pembelian', $id_pembelian)->delete();
-        // }
-        //  $pembelianFileData = [];
-        // foreach ($request->input('file_picker_id') as $index => $val) {
-        //     if ($val) {
-        //         $pembelianFileData[] = [
-        //             'file_picker_id' => $val,
-        //             'id_pembelian' => $id_pembelian,
-        //             'urut' => ($index + 1)
-        //         ];
-        //     }
-        // }
-        //  if (!empty($pembelianFileData)) {
-        //     DB::table('pembelian_file')->insert($pembelianFileData);
-        // }
+        if ($request->input('id')) {
+            DB::table('pembelian_file')->where('id_pembelian', $id_pembelian)->delete();
+        }
+        $pembelianFileData = [];
+        foreach ($request->input('file_picker_id') as $index => $val) {
+            if ($val) {
+                $pembelianFileData[] = [
+                    'file_picker_id' => $val,
+                    'id_pembelian' => $id_pembelian,
+                    'urut' => ($index + 1)
+                ];
+            }
+        }
+        if (!empty($pembelianFileData)) {
+            DB::table('pembelian_file')->insert($pembelianFileData);
+        }
 
         return ResponseFormatter::success([
             'data' => $pembelian
@@ -215,7 +230,25 @@ class PembelianController extends Controller
      */
     public function edit($id)
     {
-        //
+        // dd($id);
+        $pembelian = Pembelian::find($id);
+        $images = PembelianFile::leftJoin('file_picker', 'pembelian_file.file_picker_id', 'file_picker.id')
+            ->where('id_pembelian', $pembelian->id)
+            ->orderBy('urut')
+            ->get()->toArray();
+
+        $pembelian_detail = PembelianDetail::select('pembelian_detail.*', 'barang.nama_barang')
+            ->leftJoin('barang', 'barang.id', '=', 'pembelian_detail.barang_id')
+            ->where('id_pembelian', $pembelian->id)->get()->toArray();
+
+        $pembayaran = PembelianBayar::where('id_pembelian', $pembelian->id)->get()->toArray();
+
+
+        // dd($images);
+        $supplier = Supplier::pluck('nama_supplier', 'id');
+        $gudang = Gudang::pluck('nama_gudang', 'id');
+        $user = User::pluck('name', 'id');
+        return view('page.pembelian.form', compact('pembelian', 'images', 'pembelian_detail', 'pembayaran', 'supplier', 'gudang', 'user'));
     }
 
     /**

@@ -32,20 +32,20 @@ class Barang extends Model
         return $result;
     }
 
-    public function getDataBarang($id)
-    {
-        $barang = Barang::where('id', trim($id))->first();
-        // $images = [];
-        if ($barang) {
-            $images = BarangImage::where('id_barang', $barang->id)
-                ->leftJoin('file_picker', 'barang_image.file_picker_id', '=', 'file_picker.id')
-                ->orderBy('urut')
-                ->get();
-            // ->toArray();
-            // dd($images);
-            $barang['images'] = $images;
-        }
+    // public function getDataBarang($id)
+    // {
+    //     $barang = Barang::where('id', trim($id))->first();
+    //     // $images = [];
+    //     if ($barang) {
+    //         $images = BarangImage::where('id_barang', $barang->id)
+    //             ->leftJoin('file_picker', 'barang_image.file_picker_id', '=', 'file_picker.id')
+    //             ->orderBy('urut')
+    //             ->get();
+    //         // ->toArray();
+    //         // dd($images);
+    //         $barang['images'] = $images;
+    //     }
 
-        return $barang;
-    }
+    //     return $barang;
+    // }
 }

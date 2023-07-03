@@ -38,6 +38,7 @@
     <script src="{{ asset('assets/js/jwdfilepicker/jwdfilepicker.js') . '?' . date('YmdHis') }}"></script>
     <script src="{{ asset('assets/js/jwdfilepicker.js') . '?' . date('YmdHis') }}"></script>
     <script src="{{ asset('assets/js/dropzone/dropzone.min.js') . '?' . date('YmdHis') }}"></script>
+    <script src="{{ asset('assets/js/page/barang-images.js') . '?' . date('YmdHis') }}"></script>
     <script src="{{ asset('assets/js/page/pembelian.js') . '?' . date('YmdHis') }}"></script>
 @endpush
 
@@ -126,6 +127,67 @@
                                 ) !!}
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Image</label>
+                            <div class="col-sm-5">
+                                <div class="gallery-container" style="margin-top:0">
+                                    @php
+                                        $initial_item = false;
+                                        if (empty($images)) {
+                                            $initial_item = true;
+                                            $images[] = ['id_pembelian' => '', 'file_picker_id' => '', 'nama_file' => ''];
+                                        }
+
+                                        $display = $initial_item ? 'display:none' : '';
+                                    @endphp
+                                    <ul id="list-image-container" class="list-image-container">
+                                        @foreach ($images as $val)
+                                        {{-- {{$val['id_pembelian']}} --}}
+                                            @php
+                                                $data_initial_item = $initial_item ? 'true' : '';
+                                            @endphp
+                                            <li class="thumbnail-item" data-initial-item="{{ $data_initial_item }}"
+                                                id="barang-{{ $val['id_pembelian'] }}" style="{{ $display }}"
+                                                data-id-file="{{ $val['file_picker_id'] }}">
+                                                <div class="toolbox">
+                                                    @if (isset($id_kategori) && !empty($id_kategori))
+                                                        <div class="grip"><i class="fas fa-grip-horizontal"></i></div>
+                                                    @endif
+                                                    <ul class="right-menu">
+                                                        <li>
+                                                            <a class="grip" data-bs-toggle="tooltip"
+                                                                data-bs-placement="top" title="Move"
+                                                                href="javascript:void(0)">
+                                                                <i class="fas fa-grip-horizontal"></i>
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="text-danger delete-image" href="javascript:void(0)">
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="img-container">
+                                                    @php
+                                                        $src = '';
+                                                        if ($val['nama_file']) {
+                                                            $src = asset('assets/files/upload/' . $val['nama_file'] . '');
+                                                        }
+                                                    @endphp
+                                                    <img class="jwd-img-thumbnail" src="{{ $src }}" />
+                                                </div>
+                                                <input type="hidden" name="file_picker_id[]"
+                                                    value="{{ $val['file_picker_id'] }}" />
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    <a class="btn btn-primary form-text-14 btn-xs" id="add-image"
+                                        href="javascript:void(0)">Add
+                                        Image</a>
+                                </div>
+                            </div>
+                        </div>
                         <hr>
                         <div class="form-group row mb-3">
                             <label class="col-sm-2 col-form-label form-text-12 text-black text-right fw-bold">Produk</label>
@@ -180,6 +242,7 @@
                                                 $no = 1;
                                             @endphp
                                             @foreach ($pembelian_detail as $val)
+
                                                 <tr>
                                                     <td>{{ $no }}</td>
                                                     <td>
@@ -294,7 +357,8 @@
                             if (empty($pembelian) || $pembelian->tanda_terima == 'N') {
                                 $display = 'display:none';
                             }
-                            $tgl_terima_barang = Helper::set_value('tgl_terima_barang', Helper::format_tanggal(@$pembelian->tgl_terima_barang, 'dd-mm-yyyy'));
+                            $date = date('Y-m-d');
+                            $tgl_terima_barang = Helper::set_value('tgl_terima_barang', Helper::format_tanggal($pembelian->tgl_terima_barang == '0000-00-00'  ? $date : @$pembelian->tgl_terima_barang , 'dd-mm-yyyy'));
                             $user_id_terima = Helper::set_value('user_id_terima', @$pembelian->user_id_terima);
                         @endphp
                         <div class="terima-barang-container" style="{{ $display }}"">
@@ -323,7 +387,7 @@
                             </div>
                         </div>
                         <div class="form-group row mb-3">
-                            <div class="col-sm-8">
+                            <div class="col-sm-7">
                                 @php
                                     $display = '';
                                     $using_pembayaran = 1;

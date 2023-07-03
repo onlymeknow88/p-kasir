@@ -15,7 +15,7 @@ class CreatePembelianBayarTable extends Migration
     {
         Schema::create('pembelian_bayar', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('id_pembelian')->nullable();
+            $table->unsignedBigInteger('id_pembelian')->nullable();
             $table->date('tgl_bayar')->nullable();
             $table->unsignedInteger('jml_bayar')->nullable();
             $table->unsignedInteger('user_id_bayar')->nullable()->comment('Approval');
