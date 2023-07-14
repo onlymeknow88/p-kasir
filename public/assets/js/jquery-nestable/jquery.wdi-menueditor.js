@@ -58,8 +58,8 @@
 		addOptions: function() {
 			var addOptions = {
 				/* Changes: Add Close Button */
-				removeBtnHTML 	: '<button data-action="remove" type="button" class="fas fa-times pull-right text-green"></button>',
-				editBtnHTML 	: '<button data-action="edit" type="button" class="far fa-pen pull-right"></button>',
+				removeBtnHTML 	: '<button data-action="remove" type="button" class="fas fa-times pull-right text-red"></button>',
+				editBtnHTML 	: '<button data-action="edit" type="button" class="far fa-pen pull-right text-green"></button>',
 				editBtnCallback	: function(){},
 				beforeRemove		: function(){return true},
 			}

@@ -321,11 +321,19 @@ ul {
 }
 
 .btn {
-    &.del-row{
+    &.del-row,&.del-pembayaran{
         padding: 3px 8px;
         &:hover {
             background-color: $nero_black_2;
             border: 1px solid $hornet_sting_50;
+        }
+    }
+
+    &.add-pembayaran {
+        padding: 3px 8px;
+        &:hover {
+            background-color: $nero_black_2;
+            border: 1px solid $green_haze_50;
         }
     }
 }

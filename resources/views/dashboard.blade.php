@@ -30,5 +30,6 @@
 
 @section('content')
     <div class="col-lg-12">
+        {{$settingPiutang['periode_penjualan_piutang']->start_date}}
     </div>
 @endsection

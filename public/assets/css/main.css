@@ -222,12 +222,19 @@ ul {
   box-shadow: none !important;
 }
 
-.btn.del-row {
+.btn.del-row, .btn.del-pembayaran {
   padding: 3px 8px;
 }
-.btn.del-row:hover {
+.btn.del-row:hover, .btn.del-pembayaran:hover {
   background-color: #fafafa;
   border: 1px solid #ff0033;
+}
+.btn.add-pembayaran {
+  padding: 3px 8px;
+}
+.btn.add-pembayaran:hover {
+  background-color: #fafafa;
+  border: 1px solid #00a650;
 }
 
 input.form-control {

@@ -465,6 +465,15 @@ class ResponseFormatter
         return $exp_tgl[2] . ' ' . $bulan[ (int) $exp_tgl[1] ] . ' ' . $exp_tgl[0];
     }
 
+    public static function format_datedb($tgl) {
+        if ($tgl == '0000-00-00 00:00:00' || !$tgl) {
+            return false;
+        }
+        $exp = explode (' ', $tgl);
+        $exp_tgl = explode ('-', $exp[0]);
+        return $exp_tgl[2] . '-' . $exp_tgl[1] . '-' . $exp_tgl[0];
+    }
+
     public static function btn_link($data)
     {
         $attr = [];

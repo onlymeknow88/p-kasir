@@ -185,9 +185,9 @@ class PembelianReturController extends Controller
         $data_db['neto_retur'] = $neto_retur;
 
         if (!$request->id) {
-            $lockTables = ['pembelian_retur WRITE', 'setting WRITE', 'sessions WRITE'];
-            DB::transaction(function () use ($lockTables, &$data_db) {
-                DB::statement('LOCK TABLES ' . implode(', ', $lockTables));
+            // $lockTables = ['pembelian_retur WRITE', 'setting WRITE', 'sessions WRITE'];
+            // DB::transaction(function () use ($lockTables, &$data_db) {
+            //     DB::statement('LOCK TABLES ' . implode(', ', $lockTables));
                 $setting = SettingApp::where('type', 'nota_retur')->get()->keyBy('param');
                 $no_nota_retur_pattern = $setting['no_nota_retur']['value'];
                 $jml_digit = $setting['jml_digit']['value'];
@@ -200,9 +200,9 @@ class PembelianReturController extends Controller
                 $data_db['no_squence'] = $no_squence;
                 // dd($data_db);
 
-                $pembelian_retur = PembelianRetur::create($data_db);
-                DB::statement('UNLOCK TABLES');
-            });
+                // $pembelian_retur = PembelianRetur::create($data_db);
+                // DB::statement('UNLOCK TABLES');
+            // });
         } else {
             $id_pembelian_retur = $request->id;
             $data_db['user_id_update'] = Auth::user()->id;
@@ -220,14 +220,12 @@ class PembelianReturController extends Controller
             $pembelian_retur_id = $request->id;
         } else {
             $data_db['user_id_input'] = Auth::user()->id;
-            $id = PembelianRetur::latest()->first()->id;
+            $pembelian_retur_id = PembelianRetur::latest()->first()->id;
             // dd($id);
-            $pembelian_retur = PembelianRetur::findOrFail($id);
-            $pembelian_retur->update($data_db);
-            $pembelian_retur_id = $pembelian_retur->id;
+            $pembelian_retur = PembelianRetur::insert($data_db);
         }
 
-        // dd($pembelian_retur_id);
+
         // Update data_db_barang with id_pembelian_retur
         foreach ($data_db_barang as &$val) {
             $val['id_pembelian_retur'] = $pembelian_retur_id;

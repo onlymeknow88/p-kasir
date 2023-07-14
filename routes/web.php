@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\TransferGudang;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TesController;
 use App\Http\Controllers\UnitController;
@@ -12,6 +11,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\FilePickerController;
 use App\Http\Controllers\JenisHargaController;
 use App\Http\Controllers\BarcodeCetakController;
@@ -19,6 +19,8 @@ use App\Http\Controllers\Setting\MenuController;
 use App\Http\Controllers\Setting\RoleController;
 use App\Http\Controllers\SettingPajakController;
 use App\Http\Controllers\PembelianReturController;
+use App\Http\Controllers\PenjualanReturController;
+use App\Http\Controllers\PenjualanTempoController;
 use App\Http\Controllers\SettingInvoiceController;
 use App\Http\Controllers\TransferBarangController;
 use App\Http\Controllers\Setting\SettingAppController;
@@ -52,7 +54,7 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::post('/getDataBarang', [PembelianController::class, 'getDataBarang']);
         Route::get('/getDataDTListBarang', [PembelianController::class, 'getDataDTListBarang']);
         Route::get('/{id}/edit', [PembelianController::class, 'edit'])->name('edit');
-        route::resource('/', PembelianController::class)->except(['edit']);
+        Route::resource('/', PembelianController::class)->except(['edit']);
     });
 
     //pembelian
@@ -62,7 +64,32 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
         Route::get('/getDataDTListInvoice', [PembelianReturController::class, 'getDataDTListInvoice']);
         Route::get('/{id}/edit', [PembelianReturController::class, 'edit'])->name('edit');
         Route::delete('/destroy/{id}', [PembelianReturController::class, 'destroy'])->name('destroy');
-        route::resource('/', PembelianReturController::class)->except(['edit','destroy']);
+        Route::resource('/', PembelianReturController::class)->except(['edit','destroy']);
+    });
+
+    Route::prefix('penjualan-list')->name('penjualan-list.')->group(function () {
+        Route::match(['get', 'post'],'/getListCustomer', [PenjualanController::class, 'getListCustomer']);
+        Route::match(['get', 'post'],'/getDataDTCustomer', [PenjualanController::class, 'getDataDTCustomer']);
+        Route::match(['get', 'post'],'/getDataBarang', [PenjualanController::class, 'getDataBarang']);
+        Route::match(['get', 'post'],'/getDataDTListBarang', [PenjualanController::class, 'getDataDTListBarang']);
+        Route::match(['get', 'post'],'/ajaxGetBarangByBarcode', [PenjualanController::class, 'ajaxGetBarangByBarcode']);
+        Route::get('/{id}/edit', [PenjualanController::class, 'edit'])->name('edit');
+        Route::delete('/destroy/{id}', [PenjualanController::class, 'destroy'])->name('destroy');
+        Route::resource('/', PenjualanController::class)->except(['edit','destroy']);
+    });
+
+    Route::prefix('penjualan-retur')->name('penjualan-retur.')->group(function () {
+        Route::post('/getDataInvoice', [PenjualanReturController::class, 'getDataInvoice']);
+        Route::get('/getDataDTListInvoice', [PenjualanReturController::class, 'getDataDTListInvoice']);
+        Route::get('/{id}/edit', [PenjualanReturController::class, 'edit'])->name('edit');
+        Route::delete('/destroy/{id}', [PenjualanReturController::class, 'destroy'])->name('destroy');
+        Route::resource('/', PenjualanReturController::class)->except(['edit','destroy']);
+    });
+
+    Route::prefix('penjualan-tempo')->name('penjualan-tempo.')->group(function () {
+        Route::match(['get', 'post'],'/ajaxGetResumePenjualanTempo', [PenjualanTempoController::class, 'ajaxGetResumePenjualanTempo']);
+        Route::match(['get', 'post'],'/getDataDTPenjualanTempo', [PenjualanTempoController::class, 'getDataDTPenjualanTempo']);
+        Route::resource('/', PenjualanTempoController::class)->except(['edit','destroy']);
     });
 
     // Route::middleware(['allow.asset.access'])->group(function () {
